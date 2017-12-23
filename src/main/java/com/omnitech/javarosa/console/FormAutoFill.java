@@ -50,15 +50,19 @@ public class FormAutoFill {
         fec.jumpToIndex(FormIndex.createBeginningOfFormIndex());
 
 
-        //set up providers
+        //primitives
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT, TextProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_INTEGER, NumberProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DECIMAL, DecimalProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_BOOLEAN, BooleanProvider.class);
 
         //dates
-        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DATE, DecimalProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DATE, DateProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DATE_TIME, DateTimeProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TIME, TimeProvider.class);
+
+        //location
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_GEOPOINT, GPSProvider.class);
 
 
         addProvider(Constants.CONTROL_TEXTAREA, Constants.DATATYPE_TEXT, TextProvider.class);
