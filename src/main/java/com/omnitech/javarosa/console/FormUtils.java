@@ -6,6 +6,8 @@ import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.SelectMultiData;
 import org.javarosa.core.model.data.SelectOneData;
 import org.javarosa.core.model.data.helper.Selection;
+import org.javarosa.core.model.instance.TreeElement;
+import org.javarosa.form.api.FormEntryPrompt;
 import org.javarosa.xform.util.XFormUtils;
 
 import java.io.ByteArrayInputStream;
@@ -15,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,6 +25,15 @@ import java.util.stream.IntStream;
 public class FormUtils {
 
     public static Faker faker = new Faker();
+
+   public static String getAttribute(FormEntryPrompt qn, String name) {
+        Optional<TreeElement> generex = qn.getBindAttributes().stream().filter(x -> x.getName().equals(name)).findFirst();
+        if (generex.isPresent()) {
+            return generex.get().getValue().getValue().toString();
+        } else {
+            return null;
+        }
+    }
 
     static FormDef parseFromText(String text) throws IOException {
         InputStreamReader reader = new InputStreamReader(

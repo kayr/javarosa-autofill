@@ -1,30 +1,31 @@
-<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml"
+        xmlns:omni="http://omnitech.co.ug/javarosa">
     <h:head>
         <h:title>Simple Form</h:title>
         <model>
             <instance>
                 <sample_markup_study_simple_form_v1 id="0" name="Simple Form">
-                    <name />
-                    <sex />
-                    <is_pregnant />
-                    <what_is_your_age />
-                    <course_units />
-                    <score_math />
-                    <score_computer_science />
-                    <score_history />
-                    <total_score />
-                    <number_of_children />
+                    <name/>
+                    <sex/>
+                    <is_pregnant/>
+                    <what_is_your_age/>
+                    <course_units/>
+                    <score_math/>
+                    <score_computer_science/>
+                    <score_history/>
+                    <total_score/>
+                    <number_of_children/>
                     <child_details>
-                        <child_name />
-                        <child_sex />
-                        <child_age />
+                        <child_name/>
+                        <child_sex/>
+                        <child_age/>
                     </child_details>
-                    <region />
-                    <sub_hyphen_region />
-                    <city />
-                    <unique_id />
+                    <region/>
+                    <sub_hyphen_region/>
+                    <city/>
+                    <unique_id/>
                     <meta>
-                        <instanceID />
+                        <instanceID/>
                     </meta>
                 </sample_markup_study_simple_form_v1>
             </instance>
@@ -132,25 +133,29 @@
                     </item>
                 </dynamiclist>
             </instance>
-            <bind id="name" nodeset="/sample_markup_study_simple_form_v1/name" type="string" />
-            <bind id="sex" nodeset="/sample_markup_study_simple_form_v1/sex" type="string" />
-            <bind id="is_pregnant" nodeset="/sample_markup_study_simple_form_v1/is_pregnant" type="string" />
-            <bind id="what_is_your_age" nodeset="/sample_markup_study_simple_form_v1/what_is_your_age" type="int" />
-            <bind id="course_units" nodeset="/sample_markup_study_simple_form_v1/course_units" type="string" />
-            <bind id="score_math" nodeset="/sample_markup_study_simple_form_v1/score_math" type="int" />
-            <bind id="score_computer_science" nodeset="/sample_markup_study_simple_form_v1/score_computer_science" type="int" />
-            <bind id="score_history" nodeset="/sample_markup_study_simple_form_v1/score_history" type="int" />
-            <bind id="total_score" nodeset="/sample_markup_study_simple_form_v1/total_score" type="string" />
-            <bind id="number_of_children" nodeset="/sample_markup_study_simple_form_v1/number_of_children" type="int" />
-            <bind id="child_details" nodeset="/sample_markup_study_simple_form_v1/child_details" />
-            <bind id="child_name" nodeset="/sample_markup_study_simple_form_v1/child_details/child_name" type="string" />
-            <bind id="child_sex" nodeset="/sample_markup_study_simple_form_v1/child_details/child_sex" type="string" />
-            <bind id="child_age" nodeset="/sample_markup_study_simple_form_v1/child_details/child_age" type="int" />
-            <bind id="region" nodeset="/sample_markup_study_simple_form_v1/region" type="string" />
-            <bind id="sub_hyphen_region" nodeset="/sample_markup_study_simple_form_v1/sub_hyphen_region" type="string" />
-            <bind id="city" nodeset="/sample_markup_study_simple_form_v1/city" type="string" />
-            <bind id="unique_id" nodeset="/sample_markup_study_simple_form_v1/unique_id" type="string" calculate="once(concat('uuid:',uuid()))" />
-            <bind calculate="concat('uuid:', uuid())" nodeset="/sample_markup_study_simple_form_v1/meta/instanceID" readonly="true()" type="string" />
+            <bind id="name" nodeset="/sample_markup_study_simple_form_v1/name" type="string"/>
+            <bind id="sex" nodeset="/sample_markup_study_simple_form_v1/sex" type="string"/>
+            <bind id="is_pregnant" nodeset="/sample_markup_study_simple_form_v1/is_pregnant" type="string"/>
+            <bind id="what_is_your_age" nodeset="/sample_markup_study_simple_form_v1/what_is_your_age" type="int"
+                  omni:generex="random-number(3,7)"/>
+            <bind id="course_units" nodeset="/sample_markup_study_simple_form_v1/course_units" type="string"/>
+            <bind id="score_math" nodeset="/sample_markup_study_simple_form_v1/score_math" type="int"/>
+            <bind id="score_computer_science" nodeset="/sample_markup_study_simple_form_v1/score_computer_science"
+                  type="int"/>
+            <bind id="score_history" nodeset="/sample_markup_study_simple_form_v1/score_history" type="int"/>
+            <bind id="total_score" nodeset="/sample_markup_study_simple_form_v1/total_score" type="string"/>
+            <bind id="number_of_children" nodeset="/sample_markup_study_simple_form_v1/number_of_children" type="int"/>
+            <bind id="child_details" nodeset="/sample_markup_study_simple_form_v1/child_details"/>
+            <bind id="child_name" nodeset="/sample_markup_study_simple_form_v1/child_details/child_name" type="string"/>
+            <bind id="child_sex" nodeset="/sample_markup_study_simple_form_v1/child_details/child_sex" type="string"/>
+            <bind id="child_age" nodeset="/sample_markup_study_simple_form_v1/child_details/child_age" type="int"/>
+            <bind id="region" nodeset="/sample_markup_study_simple_form_v1/region" type="string"/>
+            <bind id="sub_hyphen_region" nodeset="/sample_markup_study_simple_form_v1/sub_hyphen_region" type="string"/>
+            <bind id="city" nodeset="/sample_markup_study_simple_form_v1/city" type="string"/>
+            <bind id="unique_id" nodeset="/sample_markup_study_simple_form_v1/unique_id" type="string"
+                  calculate="once(concat('uuid:',uuid()))"/>
+            <bind calculate="concat('uuid:', uuid())" nodeset="/sample_markup_study_simple_form_v1/meta/instanceID"
+                  readonly="true()" type="string"/>
         </model>
     </h:head>
     <h:body>
@@ -255,16 +260,18 @@
         </select1>
         <select1 ref="/sample_markup_study_simple_form_v1/sub_hyphen_region">
             <label>13. Sub-Region</label>
-            <itemset nodeset="instance('sub_hyphen_region')/dynamiclist/item[@parent=/sample_markup_study_simple_form_v1/region]">
-                <value ref="value" />
-                <label ref="label" />
+            <itemset
+                    nodeset="instance('sub_hyphen_region')/dynamiclist/item[@parent=/sample_markup_study_simple_form_v1/region]">
+                <value ref="value"/>
+                <label ref="label"/>
             </itemset>
         </select1>
         <select1 ref="/sample_markup_study_simple_form_v1/city">
             <label>14. City</label>
-            <itemset nodeset="instance('city')/dynamiclist/item[@parent=/sample_markup_study_simple_form_v1/sub_hyphen_region]">
-                <value ref="value" />
-                <label ref="label" />
+            <itemset
+                    nodeset="instance('city')/dynamiclist/item[@parent=/sample_markup_study_simple_form_v1/sub_hyphen_region]">
+                <value ref="value"/>
+                <label ref="label"/>
             </itemset>
         </select1>
     </h:body>

@@ -1,9 +1,12 @@
 package com.omnitech.javarosa.console;
 
+import com.omnitech.javarosa.console.functions.RandomNumber;
 import com.omnitech.javarosa.console.providers.*;
 import org.javarosa.core.model.*;
+import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
+import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryModel;
@@ -15,6 +18,7 @@ import org.javarosa.xform.util.XFormUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -25,6 +29,7 @@ public class FormAutoFill {
     private FormEntryModel      model;
     private FormEntryController fec;
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
+    private IAnswerProvider                          generexProvider   = new GenerexProvider();
 
     @SuppressWarnings("WeakerAccess")
     public FormAutoFill(FormDef formDef) {
@@ -43,13 +48,17 @@ public class FormAutoFill {
 
     private void init() {
         formDef.initialize(true, new InstanceInitializationFactory());
-
         // create FormEntryController from formdef
         model = new FormEntryModel(formDef);
         fec = new FormEntryController(model);
         fec.jumpToIndex(FormIndex.createBeginningOfFormIndex());
 
+        initAnswerProviders();
 
+        initFunctionHandlers();
+    }
+
+    private void initAnswerProviders() {
         //primitives
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT, TextProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_INTEGER, NumberProvider.class);
@@ -70,8 +79,12 @@ public class FormAutoFill {
 
         addProvider(Constants.CONTROL_SELECT_MULTI, Constants.DATATYPE_CHOICE_LIST, MultiSelectProvider.class);
         addProvider(Constants.CONTROL_SELECT_ONE, Constants.DATATYPE_CHOICE, SelectOneProvider.class);
+    }
 
+    private void initFunctionHandlers() {
+        EvaluationContext ec = formDef.getEvaluationContext();
 
+        ec.addFunctionHandler(new RandomNumber());
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -144,13 +157,24 @@ public class FormAutoFill {
     private void handleQuestion() {
 
         FormEntryPrompt questionPrompt = model.getQuestionPrompt();
+        IAnswerProvider answerProvider;
 
-        LOG.fine(questionPrompt.getQuestionText());
-
-        IAnswerProvider answerProvider = resolveProvider(questionPrompt);
+        if (hasGenerex(questionPrompt)) {
+            answerProvider = generexProvider;
+        } else {
+            answerProvider = resolveProvider(questionPrompt);
+        }
 
         fec.answerQuestion(currentIndex(), answerProvider.acquire(fec, questionPrompt), true);
 
+
+    }
+
+    private static boolean hasGenerex(FormEntryPrompt questionPrompt) {
+
+        List<TreeElement> bindAttributes = questionPrompt.getBindAttributes();
+
+        return bindAttributes.stream().anyMatch(t -> t.getName().equals("generex"));
     }
 
     @SuppressWarnings("WeakerAccess")
