@@ -1,6 +1,7 @@
 package com.omnitech.javarosa.console;
 
 import com.omnitech.javarosa.console.functions.RandomNumber;
+import com.omnitech.javarosa.console.functions.RandomRegex;
 import com.omnitech.javarosa.console.providers.*;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
@@ -85,6 +86,7 @@ public class FormAutoFill {
         EvaluationContext ec = formDef.getEvaluationContext();
 
         ec.addFunctionHandler(new RandomNumber());
+        ec.addFunctionHandler(new RandomRegex());
     }
 
     @SuppressWarnings("WeakerAccess")
