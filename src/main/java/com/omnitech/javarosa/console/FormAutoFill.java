@@ -38,11 +38,11 @@ public class FormAutoFill {
 
     }
 
-    static FormAutoFill fromXml(String xForm) throws IOException {
+    public static FormAutoFill fromXml(String xForm) throws IOException {
         return new FormAutoFill(FormUtils.parseFromText(xForm));
     }
 
-    static FormAutoFill fromResource(String resource) {
+    public static FormAutoFill fromResource(String resource) {
         return new FormAutoFill(XFormUtils.getFormFromResource(resource));
     }
 
@@ -224,4 +224,11 @@ public class FormAutoFill {
         return IOUtils.getText(payloadStream);
     }
 
+    public FormDef getFormDef() {
+        return formDef;
+    }
+
+    public FormEntryModel getModel() {
+        return model;
+    }
 }

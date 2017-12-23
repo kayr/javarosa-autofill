@@ -1,0 +1,22 @@
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml">
+    <h:head>
+        <h:title>d</h:title>
+        <model>
+            <instance>
+                <d_v1 id="0" name="d">
+                    <questions/>
+                    <meta>
+                        <instanceID/>
+                    </meta>
+                </d_v1>
+            </instance>
+            <bind id="questions" nodeset="/d_v1/questions" type="string"/>
+            <bind calculate="concat('uuid:', uuid())" nodeset="/d_v1/meta/instanceID" readonly="true()" type="string"/>
+        </model>
+    </h:head>
+    <h:body>
+        <input ref="/d_v1/questions">
+            <label>1. Questions</label>
+        </input>
+    </h:body>
+</h:html>
