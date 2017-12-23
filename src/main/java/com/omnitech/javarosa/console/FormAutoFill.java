@@ -1,8 +1,6 @@
 package com.omnitech.javarosa.console;
 
-import com.omnitech.javarosa.console.providers.MultiSelectProvider;
-import com.omnitech.javarosa.console.providers.SelectOneProvider;
-import com.omnitech.javarosa.console.providers.TextProvider;
+import com.omnitech.javarosa.console.providers.*;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
@@ -26,8 +24,9 @@ public class FormAutoFill {
     private FormDef             formDef;
     private FormEntryModel      model;
     private FormEntryController fec;
-    private Map<Integer, IAnswerProvider> answerProviderMap = new HashMap<>();
+    private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
 
+    @SuppressWarnings("WeakerAccess")
     public FormAutoFill(FormDef formDef) {
         this.formDef = formDef;
         init();
@@ -50,28 +49,51 @@ public class FormAutoFill {
         fec = new FormEntryController(model);
         fec.jumpToIndex(FormIndex.createBeginningOfFormIndex());
 
+
         //set up providers
-        addProvider(Constants.CONTROL_SELECT_MULTI, MultiSelectProvider.class);
-        addProvider(Constants.CONTROL_SELECT_ONE, SelectOneProvider.class);
-        addProvider(Constants.CONTROL_TEXTAREA, TextProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT, TextProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_INTEGER, NumberProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DECIMAL, DecimalProvider.class);
+
+        //dates
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DATE, DecimalProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_DATE_TIME, DateTimeProvider.class);
+        addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TIME, TimeProvider.class);
+
+
+        addProvider(Constants.CONTROL_TEXTAREA, Constants.DATATYPE_TEXT, TextProvider.class);
+        addProvider(Constants.CONTROL_TEXTAREA, Constants.DATATYPE_TEXT, TextProvider.class);
+
+        addProvider(Constants.CONTROL_SELECT_MULTI, Constants.DATATYPE_CHOICE_LIST, MultiSelectProvider.class);
+        addProvider(Constants.CONTROL_SELECT_ONE, Constants.DATATYPE_CHOICE, SelectOneProvider.class);
 
 
     }
 
-    public <T extends IAnswerProvider> void addProvider(int controlType, Class<T> provider) {
+    @SuppressWarnings("WeakerAccess")
+    public <T extends IAnswerProvider> void addProvider(int controlType, int dataType, Class<T> provider) {
         try {
-            addProvider(controlType, provider.newInstance());
+            addProvider(controlType, dataType, provider.newInstance());
         } catch (Exception x) {
             throw new RuntimeException(x);
         }
     }
 
-    public void addProvider(int controlType, IAnswerProvider provider) {
-        answerProviderMap.put(controlType, provider);
+    @SuppressWarnings("WeakerAccess")
+    public void addProvider(int controlType, int dataType, IAnswerProvider provider) {
+        answerProviderMap.put(ControlDataTypeKey.with(controlType, dataType), provider);
     }
 
 
-    public void next() {
+    FormAutoFill autoFill() {
+        while (!isEndOfForm()) {
+            next();
+        }
+        return this;
+    }
+
+
+    private void next() {
         int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
 
         switch (event) {
@@ -107,10 +129,11 @@ public class FormAutoFill {
     }
 
     public boolean hasNext() {
-        return !hasEnded();
+        return !isEndOfForm();
     }
 
-    public boolean hasEnded() {
+    @SuppressWarnings({"WeakerAccess", "BooleanMethodIsAlwaysInverted"})
+    public boolean isEndOfForm() {
         return fec.getModel().getEvent() == FormEntryController.EVENT_END_OF_FORM;
     }
 
@@ -121,15 +144,20 @@ public class FormAutoFill {
         LOG.fine(questionPrompt.getQuestionText());
 
         IAnswerProvider answerProvider = resolveProvider(questionPrompt);
+
         fec.answerQuestion(currentIndex(), answerProvider.acquire(fec, questionPrompt), true);
 
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected IAnswerProvider resolveProvider(FormEntryPrompt prompt) {
-        IAnswerProvider iAnswerProvider = answerProviderMap.get(prompt.getControlType());
+        IAnswerProvider iAnswerProvider = answerProviderMap.get(ControlDataTypeKey.fromPrompt(prompt));
+
         if (iAnswerProvider == null) {
-            iAnswerProvider = answerProviderMap.get(Constants.CONTROL_TEXTAREA);
+            iAnswerProvider = answerProviderMap.get(ControlDataTypeKey.with(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT));
         }
+
+
         return iAnswerProvider;
     }
 
@@ -138,7 +166,8 @@ public class FormAutoFill {
     }
 
 
-    public ByteArrayPayload getSubmissionXml() throws IOException {
+    @SuppressWarnings("WeakerAccess")
+    public ByteArrayPayload getSubmissionPayload() throws IOException {
         FormInstance            instance   = getInstance();
         XFormSerializingVisitor serializer = new XFormSerializingVisitor();
         return (ByteArrayPayload) serializer.createSerializedPayload(instance, getSubmissionDataReference());
@@ -162,8 +191,8 @@ public class FormAutoFill {
         return fec.getModel().getForm().getInstance();
     }
 
-    public String getSubmissionXmlString() throws IOException {
-        InputStream payloadStream = getSubmissionXml().getPayloadStream();
+    public String getSubmissionXml() throws IOException {
+        InputStream payloadStream = getSubmissionPayload().getPayloadStream();
         return IOUtils.getText(payloadStream);
     }
 

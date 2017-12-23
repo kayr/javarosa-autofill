@@ -2,25 +2,25 @@ package com.omnitech.javarosa.console
 
 import org.junit.Test
 
-import java.util.logging.Logger
-
-public class FormAutoFillTest {
+ class FormAutoFillTest {
 
     @Test
     void textParsing() {
 
-        Logger
-        def main = FormAutoFill.fromResource("/Form1.xml")
+        def string = FormAutoFill.fromResource("/Form1.xml")
+                                 .autoFill()
+                                 .getSubmissionXml()
+        println(string)
 
-        while (!main.hasEnded()) {
-            main.next()
-        }
+    }
 
-        def xml = main.getSubmissionXml()
-        def text = main.getSubmissionXmlString()
+     @Test
+    void textParsing2() {
 
-        println(text)
-
+        def string = FormAutoFill.fromResource("/simoshi.xml")
+                                 .autoFill()
+                                 .getSubmissionXml()
+        println(string)
 
     }
 
