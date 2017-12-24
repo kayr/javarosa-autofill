@@ -26,9 +26,11 @@ import java.util.logging.Logger;
 public class FormAutoFill {
 
     private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
+
     private FormDef             formDef;
     private FormEntryModel      model;
     private FormEntryController fec;
+
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
     private IAnswerProvider                          generexProvider   = new GenerexProvider();
 
