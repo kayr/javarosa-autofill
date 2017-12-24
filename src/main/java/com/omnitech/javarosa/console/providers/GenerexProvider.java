@@ -9,6 +9,7 @@ import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryPrompt;
 import org.javarosa.xpath.XPathParseTool;
 import org.javarosa.xpath.expr.XPathExpression;
+import org.javarosa.xpath.expr.XPathFuncExpr;
 import org.javarosa.xpath.parser.XPathSyntaxException;
 
 import java.util.Objects;
@@ -23,7 +24,11 @@ public class GenerexProvider implements IAnswerProvider {
             String          generex         = Objects.requireNonNull(FormUtils.getAttribute(prompt, "generex"));
             XPathExpression xPathExpression = XPathParseTool.parseXPath(generex);
 
-            return new UncastData(xPathExpression.eval(ec).toString());
+            Object eval = xPathExpression.eval(ec);
+            if (eval instanceof Number) {
+                eval = ((Number) eval).doubleValue();//XPathFuncExpr.toString() Only loves doubles... so we convert all numbers to doubles
+            }
+            return new UncastData(XPathFuncExpr.toString(eval));
         } catch (XPathSyntaxException e) {
             throw new RuntimeException(e);
         }
