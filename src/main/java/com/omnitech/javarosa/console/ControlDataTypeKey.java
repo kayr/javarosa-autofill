@@ -38,9 +38,6 @@ public class ControlDataTypeKey {
 
     @Override
     public String toString() {
-        return "ControlDataTypeKey{" +
-                "controlType=" + controlType +
-                ", dataType=" + dataType +
-                '}';
+        return "ControlDataTypeKey{" + "controlType=" + controlType + ", dataType=" + dataType + '}';
     }
 }
