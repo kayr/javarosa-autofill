@@ -182,7 +182,8 @@ public class FormAutoFill {
         IAnswerProvider iAnswerProvider = answerProviderMap.get(ControlDataTypeKey.fromPrompt(prompt));
 
         if (iAnswerProvider == null) {
-            iAnswerProvider = answerProviderMap.get(ControlDataTypeKey.with(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT));
+            ControlDataTypeKey key = ControlDataTypeKey.with(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT);
+            iAnswerProvider = answerProviderMap.get(key);
         }
 
 
