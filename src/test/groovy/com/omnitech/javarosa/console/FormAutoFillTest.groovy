@@ -3,7 +3,7 @@ package com.omnitech.javarosa.console
 import com.mifmif.common.regex.Generex
 import org.junit.Test
 
-class FormAutoFillTest {
+class FormAutoFillTest  implements LogConfig{
 
     @Test
     void textParsing() {
