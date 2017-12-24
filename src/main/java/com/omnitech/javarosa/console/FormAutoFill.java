@@ -146,9 +146,6 @@ public class FormAutoFill {
 
     }
 
-    public boolean hasNext() {
-        return !isEndOfForm();
-    }
 
     @SuppressWarnings({"WeakerAccess", "BooleanMethodIsAlwaysInverted"})
     public boolean isEndOfForm() {
