@@ -1,5 +1,6 @@
 package com.omnitech.javarosa.console;
 
+import com.omnitech.javarosa.console.functions.Fakers;
 import com.omnitech.javarosa.console.functions.RandomNumber;
 import com.omnitech.javarosa.console.functions.RandomRegex;
 import com.omnitech.javarosa.console.providers.*;
@@ -88,6 +89,8 @@ public class FormAutoFill {
 
         ec.addFunctionHandler(new RandomNumber());
         ec.addFunctionHandler(new RandomRegex());
+
+        Fakers.registerAll(formDef);
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -14,6 +14,22 @@ class TestUtils {
     }
 
 
+    static String formatXML(String string) {
+        def node = new XmlParser(false, false).parseText(string)
+        return nodeToString(node)
+    }
+
+    static String nodeToString(Node node) {
+        def writer = new StringWriter()
+        def printWriter = writer.newPrintWriter()
+        def wr = new XmlNodePrinter(printWriter).with {
+            preserveWhitespace = true
+            return it
+        }
+        wr.print(node)
+        IOUtils.closeWithWarning(printWriter)
+        return writer.toString()
+    }
 }
 
 

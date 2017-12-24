@@ -1,9 +1,8 @@
 package com.omnitech.javarosa.console
 
-import com.mifmif.common.regex.Generex
 import org.junit.Test
 
-class FormAutoFillTest  implements LogConfig{
+class FormAutoFillTest implements LogConfig {
 
     @Test
     void textParsing() {
@@ -11,7 +10,7 @@ class FormAutoFillTest  implements LogConfig{
         def string = FormAutoFill.fromResource("/Form1.xml")
                                  .autoFill()
                                  .getSubmissionXml()
-        println(string)
+        println(TestUtils.formatXML(string))
 
     }
 
