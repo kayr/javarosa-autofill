@@ -49,7 +49,6 @@ public class FormAutoFill {
 
     private void init() {
         formDef.initialize(true, new InstanceInitializationFactory());
-        // create FormEntryController from formdef
         model = new FormEntryModel(formDef);
         fec = new FormEntryController(model);
         fec.jumpToIndex(FormIndex.createBeginningOfFormIndex());
@@ -106,13 +105,13 @@ public class FormAutoFill {
 
     FormAutoFill autoFill() {
         while (!isEndOfForm()) {
-            next();
+            nextEvent();
         }
         return this;
     }
 
 
-    private void next() {
+    private void nextEvent() {
         int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
 
         switch (event) {

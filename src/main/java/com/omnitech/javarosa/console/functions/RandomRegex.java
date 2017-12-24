@@ -17,7 +17,6 @@ public class RandomRegex implements ISimpleFunctionHandler {
             throw new XPathArityException(getName(), "1 argument ", args.length);
         }
         Generex generex = new Generex(XPathFuncExpr.toString(args[0]));
-        String  random  = generex.random();
-        return random;
+        return generex.random();
     }
 }

@@ -2,10 +2,6 @@ package com.omnitech.javarosa.console;
 
 import com.github.javafaker.Faker;
 import org.javarosa.core.model.FormDef;
-import org.javarosa.core.model.SelectChoice;
-import org.javarosa.core.model.data.SelectMultiData;
-import org.javarosa.core.model.data.SelectOneData;
-import org.javarosa.core.model.data.helper.Selection;
 import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.form.api.FormEntryPrompt;
 import org.javarosa.xform.util.XFormUtils;
@@ -26,7 +22,10 @@ public class FormUtils {
 
     public static Faker faker = new Faker();
 
-   public static String getAttribute(FormEntryPrompt qn, String name) {
+    private static List<Boolean> booleans = duplicate(Arrays.asList(true, true, false, false), 8);
+
+
+    public static String getAttribute(FormEntryPrompt qn, String name) {
         Optional<TreeElement> generex = qn.getBindAttributes().stream().filter(x -> x.getName().equals(name)).findFirst();
         if (generex.isPresent()) {
             return generex.get().getValue().getValue().toString();
@@ -41,21 +40,6 @@ public class FormUtils {
         return XFormUtils.getFormRaw(reader);
     }
 
-    public static SelectOneData selectOneData(List<SelectChoice> choices) {
-        SelectChoice selectChoice = getRandom(_duplicate(choices, 5));
-        return new SelectOneData(new Selection(selectChoice));
-    }
-
-    public static SelectMultiData selectMultiData(List<SelectChoice> choices) {
-        List<Selection> selections =
-                getRandomMany(_duplicate(choices, 5))
-                        .stream()
-                        .distinct()
-                        .map(Selection::new)
-                        .collect(Collectors.toList());
-        return new SelectMultiData(selections);
-    }
-
     public static boolean randomBoolean() {
         return getRandom(booleans);
     }
@@ -66,8 +50,6 @@ public class FormUtils {
         return choices.get(randomIndex);
     }
 
-
-    private static List<Boolean> booleans = _duplicate(Arrays.asList(true, true, false, false), 8);
 
     @SuppressWarnings("WeakerAccess")
     public static <T> List<T> getRandomMany(List<T> choices) {
@@ -85,7 +67,7 @@ public class FormUtils {
                       .collect(Collectors.toList());
     }
 
-    private static <T> List<T> _duplicate(List<T> items, int times) {
+    public static <T> List<T> duplicate(List<T> items, int times) {
         List<T> dupes = new ArrayList<>(items.size() * times);
         IntStream.rangeClosed(0, times).forEach(i -> dupes.addAll(items));
         return dupes;
