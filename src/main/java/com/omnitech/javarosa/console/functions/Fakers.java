@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import com.omnitech.javarosa.console.FormUtils;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.condition.EvaluationContext;
+import org.javarosa.xpath.XPathTypeMismatchException;
 import org.javarosa.xpath.expr.XPathFuncExpr;
 
 import java.lang.reflect.InvocationTargetException;
@@ -15,8 +16,17 @@ import java.util.LinkedList;
 public class Fakers {
     static Faker faker = FormUtils.faker;
 
+
     public static void registerAll(FormDef formDef) {
         formDef.getEvaluationContext().addFunctionHandler(new Fake());
+    }
+
+    private static long _long(Object[] args, int i) {
+        return ((java.lang.Number) args[i]).longValue();
+    }
+
+    private static int _int(Object[] args, int i) {
+        return ((java.lang.Number) args[i]).intValue();
     }
 
     static class Fake implements ISimpleFunctionHandler {
@@ -53,4 +63,34 @@ public class Fakers {
     }
 
 
+    public static class Number implements ISimpleFunctionHandler {
+        @Override
+        public String getName() {
+            return "random-number";
+        }
+
+
+        @Override
+        public Object eval(Object[] args, EvaluationContext ec) {
+            boolean allNumbers = args.length == 0 || Arrays.stream(args).allMatch(a -> a instanceof java.lang.Number);
+
+            if (!allNumbers) {
+                throw new XPathTypeMismatchException(getName() + "() Only Supports Int Parameters");
+            }
+
+            switch (args.length) {
+                case 0:
+                    return faker.number().randomNumber();
+                case 1:
+                    return faker.number().numberBetween(_long(args, 0), Integer.MAX_VALUE);
+                case 2:
+                    return faker.number().numberBetween(_long(args, 0), _long(args, 1));
+                case 3:
+                    return faker.number().randomDouble(_int(args, 0), _long(args, 1), _long(args, 2));
+            }
+            return null;
+        }
+
+
+    }
 }

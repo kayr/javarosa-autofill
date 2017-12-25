@@ -3,7 +3,7 @@ package com.omnitech.javarosa.console.functions
 import com.omnitech.javarosa.console.FormAutoFill
 import org.javarosa.xpath.XPathTypeMismatchException
 
-public class RandomNumberTest extends GroovyTestCase {
+public class NumberTest extends GroovyTestCase {
 
 
     void testEval() {
@@ -12,16 +12,16 @@ public class RandomNumberTest extends GroovyTestCase {
 
         def ec = autoFiller.getFormDef().evaluationContext
 
-        def answer = new RandomNumber().eval([1_000_000_000.0] as Object[], ec)
+        def answer = new Fakers.Number().eval([1_000_000_000.0] as Object[], ec)
         assert answer > 1_000_000_000
 
-        answer = new RandomNumber().eval([2.0, 7.0] as Object[], ec)
+        answer = new Fakers.Number().eval([2.0, 7.0] as Object[], ec)
         assert answer >= 2.0 && answer <= 7.0
 
-        answer = new RandomNumber().eval([2, 1, 2] as Object[], ec)
+        answer = new Fakers.Number().eval([2, 1, 2] as Object[], ec)
         assert answer >= 1.0 && answer <= 2.0
 
-        answer = new RandomNumber().eval([] as Object[], ec)
+        answer = new Fakers.Number().eval([] as Object[], ec)
         assert answer
     }
 
@@ -33,7 +33,7 @@ public class RandomNumberTest extends GroovyTestCase {
         def ec = autoFiller.getFormDef().evaluationContext
 
         shouldFail(XPathTypeMismatchException) {
-            new RandomNumber().eval([1_000_000_000.0, ""] as Object[], ec)
+            new Fakers.Number().eval([1_000_000_000.0, ""] as Object[], ec)
         }
 
     }
