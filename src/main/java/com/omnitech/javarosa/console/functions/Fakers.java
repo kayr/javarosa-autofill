@@ -17,7 +17,6 @@ public class Fakers {
 
     public static void registerAll(FormDef formDef) {
         formDef.getEvaluationContext().addFunctionHandler(new Fake());
-        formDef.getEvaluationContext().addFunctionHandler(new Name());
     }
 
     static class Fake implements ISimpleFunctionHandler {
@@ -53,19 +52,5 @@ public class Fakers {
         }
     }
 
-    static class Name implements ISimpleFunctionHandler {
-
-        @Override
-        public String getName() {
-            return "fake-name";
-        }
-
-        @Override
-        public Object eval(Object[] args, EvaluationContext ec) {
-
-            return faker.name().fullName();
-
-        }
-    }
 
 }
