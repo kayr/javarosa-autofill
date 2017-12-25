@@ -86,7 +86,6 @@ public class FormAutoFill {
     private void initFunctionHandlers() {
         EvaluationContext ec = formDef.getEvaluationContext();
 
-        ec.addFunctionHandler(new Fakers.Number());
         ec.addFunctionHandler(new RandomRegex());
 
         Fakers.registerAll(formDef);

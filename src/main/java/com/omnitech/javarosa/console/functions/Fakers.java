@@ -19,6 +19,7 @@ public class Fakers {
 
     public static void registerAll(FormDef formDef) {
         formDef.getEvaluationContext().addFunctionHandler(new Fake());
+        formDef.getEvaluationContext().addFunctionHandler(new Number());
     }
 
     private static long _long(Object[] args, int i) {
