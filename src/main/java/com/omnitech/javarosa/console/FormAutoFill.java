@@ -5,6 +5,7 @@ import com.omnitech.javarosa.console.functions.RandomRegex;
 import com.omnitech.javarosa.console.providers.*;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
+import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
 import org.javarosa.core.model.instance.TreeElement;
@@ -110,6 +111,16 @@ public class FormAutoFill {
         while (!isEndOfForm()) {
             nextEvent();
         }
+
+        ValidateOutcome validate = formDef.validate(true);
+
+        if (validate != null) {
+            FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
+            IAnswerData     answer    = questionPrompt.getAnswerValue();
+            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
+
+        }
+
         return this;
     }
 
@@ -166,7 +177,11 @@ public class FormAutoFill {
             answerProvider = resolveProvider(questionPrompt);
         }
 
-        fec.answerQuestion(currentIndex(), answerProvider.acquire(fec, questionPrompt), true);
+        IAnswerData answer = answerProvider.acquire(fec, questionPrompt);
+        int         status = fec.answerQuestion(currentIndex(), answer, true);
+
+        if (status != FormEntryController.ANSWER_OK)
+            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
 
 
     }

@@ -1,0 +1,81 @@
+
+## Simple Form
+
+
+Name
+
+
+Sex
+>male
+>female
+
+
+@boolean
+Is pregnant
+
+
+@number
+What is your Age
+
+
+Course units
+>>Computer Science
+>>Math
+>>History
+
+
+@number
+Score math
+
+
+@number
+Score Computer Science
+
+
+@number
+Score History
+
+Total score
+
+@number
+Number of children
+
+repeat{ Child details
+
+    Child Name
+
+    Child Sex
+    >male
+    >female
+
+    @number
+    Child Age
+
+}
+
+
+dynamic{
+Region,	Sub-Region,	    City
+Washington,	King,	    Seattle
+Washington,	King,	    Redmond
+Washington,	Pierce,	    Tacoma
+Washington,	Pierce,	    Puyallup
+Texas,	    King-Texas,	Dumont
+Texas,	    King-Texas,	Finney
+Texas,	    Cameron,	brownsville
+Texas,	    Cameron,	harlingen
+Africa,	    Uganda,	    Kampala
+Africa,	    Uganda,	    Masaka
+Africa,	    Uganda,	    Mbale
+Africa,	    Uganda,	    Mbarara
+Africa,	    Kenya,	    Nairobi
+Africa,	    Kenya,	    Kisumu
+Africa,	    Kenya,	    Eldoret
+Europe,	    Netherlands,Netherlandis
+Europe,	    Netherlands,Another Netherlands
+}
+
+@absoluteid unique_id
+@calculate once(concat('uuid:',uuid()))
+@invisible
+Unique Id

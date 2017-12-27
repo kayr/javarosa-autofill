@@ -2,6 +2,8 @@ package com.omnitech.javarosa.console
 
 import org.javarosa.core.model.FormDef
 import org.javarosa.xform.util.XFormUtils
+import org.openxdata.markup.Converter
+import org.openxdata.markup.FORMAT
 
 class TestUtils {
 
@@ -30,6 +32,20 @@ class TestUtils {
         IOUtils.closeWithWarning(printWriter)
         return writer.toString()
     }
+
+    static FormAutoFill formAutoFillFromMkp(String mkp) {
+        return FormAutoFill.fromXml(mkp2Oxd(resourceText(mkp)))
+    }
+
+    static String mkpResource2Oxd(String mkp) {
+        return mkp2Oxd(resourceText(mkp))
+    }
+
+    static String mkp2Oxd(String mkp) {
+        return Converter.from(FORMAT.MARKUP).to(FORMAT.ODK).convert(mkp)
+    }
+
+
 }
 
 
