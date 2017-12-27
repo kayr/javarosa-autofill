@@ -181,7 +181,7 @@ public class FormAutoFill {
         int         status = fec.answerQuestion(currentIndex(), answer, true);
 
         if (status != FormEntryController.ANSWER_OK)
-            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
+            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getBind().getReference() + "]");
 
 
     }

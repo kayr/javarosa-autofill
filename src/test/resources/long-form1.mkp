@@ -1,0 +1,506 @@
+//Allowed Attributes: [@readonly, @required, @id, @absoluteid, @invisible, @comment, @skiplogic, @skipaction, @hideif, @appearance, @style (on forms), @enableif, @disableif, @showif, @validif, @message, @calculate, @parent, @hint, @default]
+//Allowed Types: [@number, @decimal, @date, @boolean, @time, @datetime, @picture, @video, @audio, @picture, @gps, @barcode, @longtext, @trigger]
+//Use Ctrl + K for auto-completion
+//This is a product of http://omnitech.co.ug and http://www.openxdata.org
+
+
+### IICS Survey
+
+
+@style pages
+@bindxpath generex
+## School Questionnaire
+
+
+@id visit
+*Type of visit
+  >$baseline School Baseline Visit
+  >$update School Information Update
+
+
+@id school
+@showif $visit = 'update'
+@appearance field-list
+group {
+
+    @id school_prompt
+    @comment Select name of the school you are visiting.
+    @appearance ex:org.odk.collect.android.activities.entities.PrefillActivity(table_name='school',returnFld='__code;school_name')
+    * Select the school Name
+
+
+    @readonly
+    @invisible
+    @id __code
+    School ID
+}
+
+
+@appearance field-list
+group {
+
+    @id visit_date
+    @date
+    *Date of Visit
+
+
+    @id interviewer
+    *Name Name of Interviewer
+
+
+    @id interviewer_mobile
+    @validif regex(., "^07[0-9]{8}$")
+    @bind:generex random-regex('07[0-9]{8}')
+    @message "Please enter a valid phone number. e.g. 0778345678"
+    * Mobile Number
+}
+
+
+@appearance field-list
+group {
+
+    @id school_name
+    *School Name:
+
+
+    @id address
+    *School Address:
+
+
+    // @showif $visit = 'update'
+    // @id __code
+    // School ID:
+    @showif $visit = 'baseline'
+    @id phone
+    @validif regex(., "^[0-9]{10}$")
+    @message "Please enter a valid phone number. e.g. 0778345678"
+    @bind:generex random-regex('[0-9]{10}')
+    *School Telephone
+
+
+    @showif $visit = 'baseline'
+    @id email
+    @validif regex(., '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,5}')
+    @bind:generex fake('internet','emailAddress')
+    @message put a valid email
+    Email
+}
+
+
+@showif $visit = 'baseline'
+@id district
+@appearance minimal w4
+*District
+  >Jinja
+  >Kampala
+  >Mukono
+  >Wakiso
+
+
+@showif $visit = 'baseline'
+@appearance minimal w2
+@parent district
+*Subcounty
+$> subcounty
+
+
+@appearance field-list
+group {
+
+    @id headteacher
+    *Name of Director/Head Teacher:
+
+
+    @id director_phone
+    @validif regex(., "^07[0-9]{8}$")
+    @message "Please enter a valid phone number. e.g. 0778345678"
+    @bind:generex random-regex('07[0-9]{8}')
+    *Telephone of Director/Head Teacher:
+
+
+    @id school_level
+    *Level of school
+      >Nursery
+      >Primary
+      >Primary and Nursery
+      >Secondary
+      >Vocational
+}
+
+
+@id enrolment
+@appearance field-list
+group { Provide enrolment figures
+
+    @id boarding
+    @number
+    *Boarding Students
+
+
+    @id day
+    @number
+    * Day School Students
+
+
+    @id teacher_no
+    @number
+    * Teachers
+
+
+    @id non_teacher_no
+    @number
+    * Non Teaching Staff
+}
+
+
+@id totals
+@appearance field-list
+group { Total for staff and pupils
+
+    @id total_enrolment
+    @readonly
+    @comment this is calculated automatically
+    @number
+    @calculate $boarding + $day
+    *Total both Day and Boarding
+
+
+    @id total_traff
+    @readonly
+    @comment this is calculated automatically
+    @number
+    @calculate $non_teacher_no + $teacher_no
+    * Total number of Staff
+}
+
+
+@id owner
+*Ownership
+  >>State
+  >>Private
+
+
+@appearance field-list
+group {
+
+    @id boil_water
+    @boolean
+    *Does the school boil water?
+
+
+    @id spend_fuel
+    @number
+    *How much does the school spend on fuel a term (UGX)?
+
+
+    @id spend_trucks
+    @number
+    *How many trucks of firewood does the school spend on fuel a term?
+
+
+    @id stoves
+    *Which of the following stove(s) are used in the kitchen
+      >>$stone 3-Stone
+      >>$improved Improved
+      >>$sigiri Sigiri
+      >>$own Construction
+}
+
+
+@showif $stoves = 'stone'
+@id info_stone
+@appearance field-list
+group {Information on 3-Stone use in the kitchen:
+
+    @showif $stoves = 'stone'
+    @id quantity_stone
+    @number
+    *Quantity
+
+
+    @showif $stoves = 'stone'
+    @id pan_size_stone
+    *Size of saucepan
+      >>size 1
+      >>size 2
+
+
+    @showif $stoves = 'stone'
+    @id rings_stone
+    *Rings / handles
+
+
+    @showif $stoves = 'stone'
+    @id fuel_stone
+    *Fuel Used
+      >option 1
+      >option 2
+}
+
+
+@showif $stoves = 'improved'
+@id info_improved
+@appearance field-list
+group {Information on Improved cookstove use in the kitchen:
+
+    @showif $stoves = 'improved'
+    @id quantity_improved
+    @number
+    *Quantity
+
+
+    @showif $stoves = 'improved'
+    @id pan_size_improved
+    *Size of saucepan
+      >>size 1
+      >>size 2
+
+
+    @showif $stoves = 'improved'
+    @id rings_improved
+    *Rings / handles
+
+
+    @showif $stoves = 'improved'
+    @id fuel_improved
+    *Fuel Used
+      >option 1
+      >option 2
+}
+
+
+@showif $stoves = 'sigiri'
+@id info_sigiri
+@appearance field-list
+group {Information on Sigiri use in the kitchen:
+
+    @showif $stoves = 'sigiri'
+    @id quantity_sigiri
+    @number
+    *Quantity
+
+
+    @showif $stoves = 'sigiri'
+    @id pan_size_sigiri
+    *Size of saucepan
+      >>size 1
+      >>size 2
+
+
+    @showif $stoves = 'sigiri'
+    @id rings_sigiri
+    *Rings / handles
+
+
+    @showif $stoves = 'sigiri'
+    @id fuel_sigiri
+    *Fuel Used
+      >option 1
+      >option 2
+}
+
+
+@showif $stoves = 'own'
+@id info_own
+@appearance field-list
+group {Information on Construction setup in the kitchen:
+
+    @showif $stoves = 'own'
+    @id quantity_construction
+    @number
+    *Quantity
+
+
+    @showif $stoves = 'own'
+    @id pan_size_construction
+    *Size of saucepans
+      >>size 1
+      >>size 2
+
+
+    @showif $stoves = 'own'
+    @id rings_construction
+    *Rings / handles
+
+
+    @showif $stoves = 'own'
+    @id fuel_construction
+    *Fuel Used
+      >option 1
+      >option 2
+}
+
+
+@id improved_stoves
+Are there any improved cook stoves in use?
+  >$yes Yes
+  >No
+
+
+@showif $improved_stoves = 'yes'
+@id improved_stove_details
+repeat{Details of improved cook stoves
+
+    @appearance field-list
+    group {Information on Sigiri use in the kitchen:
+
+        @showif $improved_stoves = 'yes'
+        @id manufacturer
+        *Manufacturer
+
+
+        @showif $improved_stoves = 'yes'
+        @id ics_size
+        *Size of Saucepan
+          >size 1
+          >size 2
+
+
+        @showif $improved_stoves = 'yes'
+        @id ics_ring
+        @boolean
+        *Rings and Handles in saucepans?
+
+
+        @showif $improved_stoves = 'yes'
+        @id ics_condition
+        @appearance textarea w4
+        *Condition
+          >Good
+          >Needs repair
+
+
+        @showif $improved_stoves = 'yes'
+        @id ics_repair
+        @appearance textarea w4
+        *Please explain condition that needs repair
+    }
+}
+
+
+@id cook_holiday
+@boolean
+*Does the school cook during holiday periods?
+
+
+@id cook_special
+*Does the school cook for special occasions?
+  >$yes Yes
+  >No
+
+
+@appearance field-list
+group {
+
+    @showif $cook_special = 'yes'
+    @id cook_add
+    @boolean
+    *Does the school use any extra/additional stoves for special occasions?
+
+
+    @showif $cook_special = 'yes'
+    @id cook_times
+    *How often do you cook for special occasions per term?
+      >1 to 3,
+      >4 to 6
+      >7 to 10
+      >More than 10
+
+
+    @showif $cook_special = 'yes'
+    @id cook_same
+    *Do you cook for the same number of people on special occasions?
+      >Yes
+      >$no No
+}
+
+
+@showif $cook_same = 'no'
+@id cook_extra
+@boolean
+For how many extra people do you cook for each special occasion?
+
+
+@id picture
+@picture
+*Picture of facility
+
+
+@id gps
+@gps
+*GPS location
+
+
+@id you_score
+@validif .<= 10
+@message Score cannot be more than 10
+@number
+@bind:generex random-number(0,10)
+*Internal Assessment: School Management's level of cooperation (provide score from 1 to 10)
+
+
+@appearance w2
+@id date_entry
+@calculate now()
+@datetime
+@readonly
+@invisible
+@comment This is picked automatically
+*Date and time of data entry
+
+
+dynamic_instance{
+    "root","subcounty"
+    "jinja","Budondo"
+    "jinja","Busedde"
+    "jinja","Butagaya"
+    "jinja","Buwenge"
+    "jinja","Buwenge Tc"
+    "jinja","Buyengo"
+    "jinja","Central Division"
+    "jinja","Kakira"
+    "jinja","Mafubira"
+    "jinja","Masese/walukuba"
+    "jinja","Mpumudde/kimaka"
+    "kampala","$kampala_central_division Central Division"
+    "kampala","Kawempe Division"
+    "kampala","Makindye Division"
+    "kampala","Nakawa Division"
+    "kampala","Rubaga Division"
+    "mukono","Goma"
+    "mukono","Kasawo"
+    "mukono","Kimenyedde"
+    "mukono","Kkome Islands"
+    "mukono","Kyampisi"
+    "mukono","Mukono Tc"
+    "mukono","Nabaale"
+    "mukono","Nagojje"
+    "mukono","Nakisunga"
+    "mukono","Nama"
+    "mukono","Ntenjeru"
+    "mukono","Ntunda"
+    "mukono","Seeta-namuganga"
+    "wakiso","Busukuma"
+    "wakiso","Division A"
+    "wakiso","Division B"
+    "wakiso","Gombe"
+    "wakiso","Kakiri"
+    "wakiso","Kasanje"
+    "wakiso","Katabi"
+    "wakiso","Kira"
+    "wakiso","Masulita"
+    "wakiso","Nabweru"
+    "wakiso","Namayumba"
+    "wakiso","Nangabo"
+    "wakiso","Nsangi"
+    "wakiso","Ssabagabo-makindye"
+    "wakiso","Ssisa"
+    "wakiso","Wakiso"
+    "wakiso","Wakiso Tc"
+}
+
+
+@absoluteid unique_id
+@calculate once(concat('uuid:',uuid()))
+@invisible
+Unique Id

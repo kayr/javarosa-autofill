@@ -23,7 +23,7 @@ public class MultiSelectProvider implements IAnswerProvider {
 
     private static SelectMultiData selectMultiData(List<SelectChoice> choices) {
         List<Selection> selections =
-                FormUtils.getRandomMany(FormUtils.duplicate(choices, 5))
+                FormUtils.getRandomMany(FormUtils.duplicate(choices, 2))
                          .stream()
                          .distinct()
                          .map(Selection::new)

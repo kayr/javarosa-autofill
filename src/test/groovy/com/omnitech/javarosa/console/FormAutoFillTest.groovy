@@ -3,6 +3,7 @@ package com.omnitech.javarosa.console
 import groovy.test.GroovyAssert
 import org.junit.Test
 import org.openxdata.markup.Converter
+import org.openxdata.markup.FLAGS
 import org.openxdata.markup.Form
 import org.openxdata.markup.IFormElement
 
@@ -75,5 +76,26 @@ class FormAutoFillTest implements LogConfig {
 
     }
 
+    @Test
+    void textLargeForm() {
 
+        def form = Converter.markup2Form(resourceText('/long-form1.mkp'),FLAGS.of(FLAGS.ODK_OXD_MODE))
+
+
+        def result = TestUtils.formAutoFillFromMkp(form)
+                              .autoFill()
+                              .getSubmissionXml()
+//FormUtils.faker.internet().emailAddress()
+
+        100.times {
+            result = TestUtils.formAutoFillFromMkp(form)
+                              .autoFill()
+                              .getSubmissionXml()
+        }
+        println(TestUtils.formatXML(result))
+
+//        assertAllNodeAnswers(form, result)
+
+
+    }
 }

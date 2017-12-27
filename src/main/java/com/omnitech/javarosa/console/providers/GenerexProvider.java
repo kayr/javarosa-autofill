@@ -30,7 +30,7 @@ public class GenerexProvider implements IAnswerProvider {
             }
             return new UncastData(XPathFuncExpr.toString(eval));
         } catch (XPathSyntaxException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + prompt.getQuestion().getBind().getReference(), e);
         }
 
     }

@@ -22,7 +22,7 @@ public class FormUtils {
 
     public static Faker faker = new Faker();
 
-    private static List<Boolean> booleans = duplicate(Arrays.asList(true, true, false, false), 8);
+    private static List<Boolean> booleans = duplicate(Arrays.asList(true, false,false), 5);
 
 
     public static String getAttribute(FormEntryPrompt qn, String name) {
