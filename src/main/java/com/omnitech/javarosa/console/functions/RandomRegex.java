@@ -12,7 +12,7 @@ public class RandomRegex implements ISimpleFunctionHandler {
     }
 
     @Override
-    public Object eval(Object[] args, EvaluationContext ec) {
+    public Object evalImpl(Object[] args, EvaluationContext ec) {
         if (args.length != 1) {
             throw new XPathArityException(getName(), "1 argument ", args.length);
         }

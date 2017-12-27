@@ -32,7 +32,7 @@ public class NumberTest extends GroovyTestCase {
 
         def ec = autoFiller.getFormDef().evaluationContext
 
-        shouldFail(XPathTypeMismatchException) {
+        shouldFailWithCause(XPathTypeMismatchException) {
             new Fakers.Number().eval([1_000_000_000.0, ""] as Object[], ec)
         }
 

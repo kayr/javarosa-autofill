@@ -13,7 +13,7 @@ public class RandomRegexTest implements SmallFormEvaluator {
     public void eval() {
         assert evalXpath("random-regex('077[0-9]{10}')").toString().startsWith('077')
         assert evalXpath("random-regex('077[0-9]{10}')").toString().startsWith('077')
-        shouldFail(XPathArityException) {
+        shouldFailWithCause(XPathArityException) {
             evalXpath("random-regex()").toString().startsWith('077')
         }
 
