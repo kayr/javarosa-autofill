@@ -4,6 +4,7 @@ import org.javarosa.core.model.FormDef
 import org.javarosa.xform.util.XFormUtils
 import org.openxdata.markup.Converter
 import org.openxdata.markup.FORMAT
+import org.openxdata.markup.Form
 
 class TestUtils {
 
@@ -35,6 +36,10 @@ class TestUtils {
 
     static FormAutoFill formAutoFillFromMkp(String mkp) {
         return FormAutoFill.fromXml(mkp2Oxd(resourceText(mkp)))
+    }
+
+    static FormAutoFill formAutoFillFromMkp(Form mkp) {
+        return FormAutoFill.fromXml(Converter.from(FORMAT.FORM).to(FORMAT.ODK).convert(mkp).toString())
     }
 
     static String mkpResource2Oxd(String mkp) {

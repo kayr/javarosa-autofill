@@ -14,7 +14,7 @@ class FormAutoFillTest implements LogConfig {
         def form = Converter.markup2Form(resourceText('/simpleform.mkp'))
 
 
-        def result = TestUtils.formAutoFillFromMkp("/simpleform.mkp")
+        def result = TestUtils.formAutoFillFromMkp(form)
                               .autoFill()
                               .getSubmissionXml()
 
@@ -29,13 +29,39 @@ class FormAutoFillTest implements LogConfig {
     }
 
     @Test
-    void textParsing2() {
+    void testWithValidationTelNumberShouldFail() {
 
+        def mkp = '''## Form
+
+                      @validif regex(., "07[0-9]{10}")
+                      @message Provide right format
+                      Tel Number'''
+
+        def form = Converter.markup2Form(mkp)
         GroovyAssert.shouldFail(IllegalArgumentException) {
-            FormAutoFill.fromResource("/simoshi.xml")
-                        .autoFill()
-                        .getSubmissionXml()
+            TestUtils.formAutoFillFromMkp(form)
+                     .autoFill()
+                     .getSubmissionXml()
         }
+
+    }
+
+    @Test
+    void testWithGenerexNumberShouldPass() {
+
+        def mkp = '''
+                      @bindxpath generex
+                      ## Form
+
+                      @validif regex(., "07[0-9]{10}")
+                      @message Provide right format
+                      @bind:generex random-regex('07[0-9]{10}')
+                      Tel Number'''
+
+        def form = Converter.markup2Form(mkp)
+        TestUtils.formAutoFillFromMkp(form)
+                 .autoFill()
+                 .getSubmissionXml()
 
     }
 
