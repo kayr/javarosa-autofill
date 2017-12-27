@@ -3,6 +3,8 @@ package com.omnitech.javarosa.console
 import groovy.test.GroovyAssert
 import org.junit.Test
 import org.openxdata.markup.Converter
+import org.openxdata.markup.Form
+import org.openxdata.markup.IFormElement
 
 import static com.omnitech.javarosa.console.TestUtils.resourceText
 
@@ -18,14 +20,20 @@ class FormAutoFillTest implements LogConfig {
                               .autoFill()
                               .getSubmissionXml()
 
-        def node = new XmlParser().parseText(result)
+
+        assertAllNodeAnswers(form, result)
+
+
+    }
+
+    private Iterable<IFormElement> assertAllNodeAnswers(Form form, String xml) {
+        def node = new XmlParser().parseText(xml)
+
         def allNodes = node.'**'
 
-        form.allElementsWithIds.each { q ->
+        return form.allElementsWithIds.each { q ->
             assert allNodes.find { it.name() == q.id }.text()
         }
-
-
     }
 
     @Test
@@ -59,9 +67,11 @@ class FormAutoFillTest implements LogConfig {
                       Tel Number'''
 
         def form = Converter.markup2Form(mkp)
-        TestUtils.formAutoFillFromMkp(form)
-                 .autoFill()
-                 .getSubmissionXml()
+        def xml = TestUtils.formAutoFillFromMkp(form)
+                           .autoFill()
+                           .getSubmissionXml()
+
+        assertAllNodeAnswers(form, xml)
 
     }
 
