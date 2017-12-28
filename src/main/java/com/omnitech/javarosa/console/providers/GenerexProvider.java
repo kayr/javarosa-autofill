@@ -1,5 +1,6 @@
 package com.omnitech.javarosa.console.providers;
 
+import com.omnitech.javarosa.console.AutoFillException;
 import com.omnitech.javarosa.console.FormUtils;
 import com.omnitech.javarosa.console.IAnswerProvider;
 import org.javarosa.core.model.condition.EvaluationContext;
@@ -30,7 +31,7 @@ public class GenerexProvider implements IAnswerProvider {
             }
             return new UncastData(XPathFuncExpr.toString(eval));
         } catch (XPathSyntaxException e) {
-            throw new RuntimeException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + prompt.getQuestion().getBind().getReference(), e);
+            throw new AutoFillException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + prompt.getQuestion().getBind().getReference(), e);
         }
 
     }

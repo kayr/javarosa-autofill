@@ -2,6 +2,7 @@ package com.omnitech.javarosa.console;
 
 import com.omnitech.javarosa.console.functions.Fakers;
 import com.omnitech.javarosa.console.functions.RandomRegex;
+import com.omnitech.javarosa.console.functions.RandomSelectFromFile;
 import com.omnitech.javarosa.console.providers.*;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
@@ -88,6 +89,7 @@ public class FormAutoFill {
         EvaluationContext ec = formDef.getEvaluationContext();
 
         ec.addFunctionHandler(new RandomRegex());
+        ec.addFunctionHandler(new RandomSelectFromFile());
 
         Fakers.registerAll(formDef);
     }
@@ -97,7 +99,7 @@ public class FormAutoFill {
         try {
             addProvider(controlType, dataType, provider.newInstance());
         } catch (Exception x) {
-            throw new RuntimeException(x);
+            throw new AutoFillException(x);
         }
     }
 
@@ -116,7 +118,7 @@ public class FormAutoFill {
 
         if (validate != null) {
             FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
-            IAnswerData     answer    = questionPrompt.getAnswerValue();
+            IAnswerData     answer         = questionPrompt.getAnswerValue();
             throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
 
         }

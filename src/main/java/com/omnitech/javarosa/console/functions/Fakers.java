@@ -1,6 +1,7 @@
 package com.omnitech.javarosa.console.functions;
 
 import com.github.javafaker.Faker;
+import com.omnitech.javarosa.console.AutoFillException;
 import com.omnitech.javarosa.console.FormUtils;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.condition.EvaluationContext;
@@ -59,7 +60,7 @@ public class Fakers {
             return DateUtils.parseTime(s);
         }
 
-        throw new RuntimeException("Invalid Date Format: " + s);
+        throw new AutoFillException("Invalid Date Format: " + s);
 
     }
 
@@ -91,7 +92,7 @@ public class Fakers {
             case "days":
                 return TimeUnit.DAYS;
             default:
-                throw new RuntimeException("Time Unit [" + unitString + "] not supported");
+                throw new AutoFillException("Time Unit [" + unitString + "] not supported");
 
         }
     }
@@ -109,7 +110,7 @@ public class Fakers {
             try {
                 return resolveValue(args);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new AutoFillException(e);
             }
         }
 

@@ -1,5 +1,6 @@
 package com.omnitech.javarosa.console.functions;
 
+import com.omnitech.javarosa.console.AutoFillException;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.condition.IFunctionHandler;
 
@@ -27,9 +28,9 @@ public interface ISimpleFunctionHandler extends IFunctionHandler {
         try {
             return evalImpl(args, ec);
         } catch (Throwable x) {
-            throw new RuntimeException("Error evaluating function[" + getName() + "()]: " + x.getMessage(), x);
+            throw new AutoFillException("Error evaluating function[" + getName() + "()]: " + x.getMessage(), x);
         }
     }
 
-    Object evalImpl(Object[] args, EvaluationContext ec);
+    Object evalImpl(Object[] args, EvaluationContext ec) throws Exception;
 }
