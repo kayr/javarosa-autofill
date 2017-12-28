@@ -30,11 +30,11 @@ class RandomSelectFromFileTest implements SmallFormEvaluator {
 
     }
 
-    private String setAutoFillBasePath(String bas) {
+    private static String setAutoFillBasePath(String bas) {
         return System.setProperty(RandomSelectFromFile.AUTO_FILL_BASE_PATH, bas)
     }
 
-    private void resetBasePath() {
+    private static void resetBasePath() {
         System.properties.remove(RandomSelectFromFile.AUTO_FILL_BASE_PATH)
     }
 
