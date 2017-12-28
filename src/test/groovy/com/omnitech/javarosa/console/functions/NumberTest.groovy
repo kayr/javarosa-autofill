@@ -3,7 +3,7 @@ package com.omnitech.javarosa.console.functions
 import com.omnitech.javarosa.console.FormAutoFill
 import org.javarosa.xpath.XPathTypeMismatchException
 
-public class NumberTest extends GroovyTestCase {
+class NumberTest extends GroovyTestCase {
 
 
     void testEval() {

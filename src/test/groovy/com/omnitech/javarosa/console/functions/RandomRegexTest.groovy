@@ -4,13 +4,12 @@ import com.omnitech.javarosa.console.SmallFormEvaluator
 import org.javarosa.xpath.XPathArityException
 import org.junit.Test
 
-import static groovy.util.GroovyAssert.shouldFail
-import static groovy.util.GroovyAssert.shouldFailWithCause
+import static groovy.test.GroovyAssert.shouldFailWithCause
 
-public class RandomRegexTest implements SmallFormEvaluator {
+class RandomRegexTest implements SmallFormEvaluator {
 
     @Test
-    public void eval() {
+    void eval() {
         assert evalXpath("random-regex('077[0-9]{10}')").toString().startsWith('077')
         assert evalXpath("random-regex('077[0-9]{10}')").toString().startsWith('077')
         shouldFailWithCause(XPathArityException) {
