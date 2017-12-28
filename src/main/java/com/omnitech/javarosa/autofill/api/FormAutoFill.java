@@ -1,10 +1,9 @@
 package com.omnitech.javarosa.autofill.api;
 
 import com.omnitech.javarosa.autofill.api.functions.Fakers;
-import com.omnitech.javarosa.autofill.api.providers.*;
 import com.omnitech.javarosa.autofill.api.functions.RandomRegex;
 import com.omnitech.javarosa.autofill.api.functions.RandomSelectFromFile;
-import com.omnitech.javarosa.console.providers.*;
+import com.omnitech.javarosa.autofill.api.providers.*;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.data.IAnswerData;
