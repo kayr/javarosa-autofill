@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FormAutoFill {
@@ -132,19 +133,19 @@ public class FormAutoFill {
 
         switch (event) {
             case FormEntryController.EVENT_BEGINNING_OF_FORM:
-                LOG.fine("----------Form Begin");
+                LOG.info("Event: -> Form Begin");
                 break;
             case FormEntryController.EVENT_END_OF_FORM:
-                LOG.fine("----------Form End");
+                LOG.info("Event: -> Form End");
                 break;
             case FormEntryController.EVENT_GROUP:
-                LOG.fine("----------Form Group");
+                LOG.finer("----------Form Group");
                 break;
             case FormEntryController.EVENT_PROMPT_NEW_REPEAT:
-                LOG.fine("----------Form New Repeat");
+                LOG.finer("----------Form New Repeat");
                 boolean randomBoolean = FormUtils.randomBoolean();
                 if (randomBoolean) {
-                    LOG.info("Adding new repeat");
+                    LOG.fine("Adding new repeat");
                     fec.newRepeat();
                 }
                 break;
@@ -152,10 +153,10 @@ public class FormAutoFill {
                 handleQuestion();
                 break;
             case FormEntryController.EVENT_REPEAT:
-                LOG.fine("----------Form Repeat");
+                LOG.finer("----------Form Repeat");
                 break;
             case FormEntryController.EVENT_REPEAT_JUNCTURE:
-                LOG.fine("----------Form EVENT_REPEAT_JUNCTURE");
+                LOG.finer("----------Form EVENT_REPEAT_JUNCTURE");
                 break;
         }
 
@@ -181,6 +182,10 @@ public class FormAutoFill {
 
         IAnswerData answer = answerProvider.acquire(fec, questionPrompt);
         int         status = fec.answerQuestion(currentIndex(), answer, true);
+
+        if (LOG.isLoggable(Level.FINEST)) {
+            LOG.finest("Answer for Question[" + questionPrompt.getQuestion().getBind().getReference() + "] = " + answer.getValue());
+        }
 
         if (status != FormEntryController.ANSWER_OK)
             throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getBind().getReference() + "]");

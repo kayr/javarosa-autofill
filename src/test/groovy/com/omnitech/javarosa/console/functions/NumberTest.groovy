@@ -22,7 +22,7 @@ class NumberTest extends GroovyTestCase {
         assert answer >= 1.0 && answer <= 2.0
 
         answer = new Fakers.Number().eval([] as Object[], ec)
-        assert answer
+        assert answer != null
     }
 
 
