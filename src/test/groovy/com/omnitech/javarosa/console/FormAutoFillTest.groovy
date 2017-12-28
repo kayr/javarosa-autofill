@@ -27,7 +27,7 @@ class FormAutoFillTest implements LogConfig {
 
     }
 
-    private Iterable<IFormElement> assertAllNodeAnswers(Form form, String xml) {
+    private static Iterable<IFormElement> assertAllNodeAnswers(Form form, String xml) {
         def node = new XmlParser().parseText(xml)
 
         def allNodes = node.'**'
@@ -79,23 +79,29 @@ class FormAutoFillTest implements LogConfig {
     @Test
     void textLargeForm() {
 
-        def form = Converter.markup2Form(resourceText('/long-form1.mkp'),FLAGS.of(FLAGS.ODK_OXD_MODE))
+        def form = Converter.markup2Form(resourceText('/long-form1.mkp'), FLAGS.of(FLAGS.ODK_OXD_MODE))
 
 
-        def result = TestUtils.formAutoFillFromMkp(form)
-                              .autoFill()
-                              .getSubmissionXml()
-//FormUtils.faker.internet().emailAddress()
 
         100.times {
-            result = TestUtils.formAutoFillFromMkp(form)
-                              .autoFill()
-                              .getSubmissionXml()
+            TestUtils.formAutoFillFromMkp(form)
+                     .autoFill()
+                     .getSubmissionXml()
         }
-        println(TestUtils.formatXML(result))
-
-//        assertAllNodeAnswers(form, result)
 
 
     }
+
+//    @Test
+//    void testSelectMulti() {
+//        def items = [1, 2]
+//
+//        Map<Integer, Integer> stats = items.collectEntries { [it, 0] }
+//        100.times {
+//            def many = FormUtils.getRandomMany(items)
+//            items.each { num -> if (many.contains(num)) stats[num] = stats[num] + 1 }
+//        }
+//
+//        println(stats)
+//    }
 }

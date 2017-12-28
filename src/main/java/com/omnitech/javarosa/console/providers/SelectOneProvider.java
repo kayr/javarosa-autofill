@@ -21,7 +21,7 @@ public class SelectOneProvider implements IAnswerProvider {
     }
 
     private static SelectOneData selectOneData(List<SelectChoice> choices) {
-        SelectChoice selectChoice = FormUtils.getRandom(FormUtils.duplicate(choices, 2));
+        SelectChoice selectChoice = FormUtils.getRandom(choices);
         return new SelectOneData(new Selection(selectChoice));
     }
 }

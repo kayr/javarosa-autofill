@@ -22,7 +22,7 @@ public class FormUtils {
 
     public static Faker faker = new Faker();
 
-    private static List<Boolean> booleans = duplicate(Arrays.asList(true, false,false), 5);
+    private static List<Boolean> booleans = duplicate(Arrays.asList(true, false), 5);
 
 
     public static String getAttribute(FormEntryPrompt qn, String name) {
@@ -63,10 +63,11 @@ public class FormUtils {
 
     private static <T> List<T> _getRandomChoices(List<T> choices) {
         return choices.stream()
-                      .filter(c -> getRandom(booleans))
+                      .filter(c -> randomBoolean())
                       .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public static <T> List<T> duplicate(List<T> items, int times) {
         List<T> dupes = new ArrayList<>(items.size() * times);
         IntStream.rangeClosed(0, times).forEach(i -> dupes.addAll(items));
