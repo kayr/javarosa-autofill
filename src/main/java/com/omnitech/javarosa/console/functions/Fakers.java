@@ -22,7 +22,7 @@ public class Fakers {
     static Faker faker = FormUtils.faker;
 
 
-    public static void registerAll(FormDef formDef) {
+    public static void registerAllHandlers(FormDef formDef) {
 
         EvaluationContext ec = formDef.getEvaluationContext();
 

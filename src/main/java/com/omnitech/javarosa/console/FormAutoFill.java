@@ -20,6 +20,7 @@ import org.javarosa.xform.util.XFormUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,10 +90,11 @@ public class FormAutoFill {
     private void initFunctionHandlers() {
         EvaluationContext ec = formDef.getEvaluationContext();
 
-        ec.addFunctionHandler(new RandomRegex());
-        ec.addFunctionHandler(new RandomSelectFromFile());
+        Arrays.asList(
+                new RandomRegex(),
+                new RandomSelectFromFile()).forEach(ec::addFunctionHandler);
 
-        Fakers.registerAll(formDef);
+        Fakers.registerAllHandlers(formDef);
     }
 
     @SuppressWarnings("WeakerAccess")
