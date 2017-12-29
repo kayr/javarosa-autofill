@@ -16,6 +16,9 @@ dependencies {
     compile group: 'com.github.javafaker', name: 'javafaker', version: '0.13'//ds
     compile group: 'com.github.mifmif', name: 'generex', version: '1.0.2'
 
+    //SUBMISSION API
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.5.0'
+
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile 'org.codehaus.groovy:groovy-all:2.3.11'
