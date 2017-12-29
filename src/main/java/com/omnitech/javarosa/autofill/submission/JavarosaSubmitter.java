@@ -42,10 +42,7 @@ public class JavarosaSubmitter {
 
     public boolean submit(String payload) throws IOException {
         init();
-        // req.setHeader(DATE_HEADER,
-        //                DateFormat.format("E, dd MMM yyyy hh:mm:ss zz", g)
-
-
+        // req.setHeader(DATE_HEADER, DateFormat.format("E, dd MMM yyyy hh:mm:ss zz", g)
         Request build = new Request.Builder().addHeader("User-Agent", "Javarosa-AutoFill")
                                              .addHeader("X-OpenRosa-Version", "1.0")
                                              .url(submitUrl())
