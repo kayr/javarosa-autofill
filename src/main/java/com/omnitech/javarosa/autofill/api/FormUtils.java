@@ -7,7 +7,6 @@ import org.javarosa.form.api.FormEntryPrompt;
 import org.javarosa.xform.util.XFormUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,10 +33,15 @@ public class FormUtils {
         }
     }
 
-    static FormDef parseFromText(String text) throws IOException {
-        InputStreamReader reader = new InputStreamReader(
-                new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
-        return XFormUtils.getFormRaw(reader);
+    public static FormDef parseFromText(String text) {
+        try (InputStreamReader reader = new InputStreamReader(
+                new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)))) {
+
+            return XFormUtils.getFormRaw(reader);
+
+        } catch (Exception e) {
+            throw new AutoFillException("Error Parsing XML: ", e);
+        }
     }
 
     public static boolean randomBoolean() {

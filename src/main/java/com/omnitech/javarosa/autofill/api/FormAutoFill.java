@@ -45,8 +45,9 @@ public class FormAutoFill {
 
     }
 
-    public static FormAutoFill fromXml(String xForm) throws IOException {
+    public static FormAutoFill fromXml(String xForm) {
         return new FormAutoFill(FormUtils.parseFromText(xForm));
+
     }
 
     public static FormAutoFill fromResource(String resource) {
@@ -112,7 +113,7 @@ public class FormAutoFill {
     }
 
 
-    FormAutoFill autoFill() {
+    public FormAutoFill autoFill() {
         while (!isEndOfForm()) {
             nextEvent();
         }
@@ -245,9 +246,12 @@ public class FormAutoFill {
         return fec.getModel().getForm().getInstance();
     }
 
-    public String getSubmissionXml() throws IOException {
-        InputStream payloadStream = getSubmissionPayload().getPayloadStream();
-        return IOUtils.getText(payloadStream);
+    public String getSubmissionXml() {
+        try (InputStream payloadStream = getSubmissionPayload().getPayloadStream();) {
+            return IOUtils.getText(payloadStream);
+        } catch (IOException e) {
+            throw new AutoFillException(e);
+        }
     }
 
     public FormDef getFormDef() {
