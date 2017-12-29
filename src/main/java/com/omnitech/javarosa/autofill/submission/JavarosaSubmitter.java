@@ -79,13 +79,6 @@ public class JavarosaSubmitter {
             httpClient =
                     new OkHttpClient.Builder()
                             .addInterceptor(new BasicAuthInterceptor(username, password))
-                            .authenticator((route, response) -> {
-                                if (responseCount(response) >= 3) {
-                                    return null; // If we've failed 3 times, give up. - in real life, never give up!!
-                                }
-                                String credential = Credentials.basic(username, password);
-                                return response.request().newBuilder().header("Authorization", credential).build();
-                            })
                             .build();
 
             if (serverUrl.endsWith("/")) {
