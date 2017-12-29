@@ -4,6 +4,7 @@ import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.FormAutoFill;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
@@ -17,7 +18,12 @@ public class DataGenerator {
     private String serverUrl;
     private int    numberOfItems;
     private boolean initilized = false;
+    BiConsumer<Integer, String> dataListener;
 
+    public DataGenerator setDataListener(BiConsumer<Integer, String> dataListener) {
+        this.dataListener = dataListener;
+        return this;
+    }
 
     private boolean dryRun = false;
 
@@ -36,6 +42,10 @@ public class DataGenerator {
 
 
         String submissionXml = formAutoFill.autoFill().getSubmissionXml();
+
+        if (dataListener != null) {
+            dataListener.accept(iteration, submissionXml);
+        }
 
         if (dryRun) {
             System.out.println("Generated: " + submissionXml);

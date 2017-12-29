@@ -1,9 +1,11 @@
 package com.omnitech.javarosa.autofill.submission;
 
+import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.IOUtils;
-import com.omnitech.javarosa.autofill.submission.DataGenerator;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,12 +45,34 @@ public class Console {
                                                          .setPassword(properties.getProperty(PASSWORD))
                                                          .setFormDefXMl(readFile(properties, FORM_DEF))
                                                          .setNumberOfItems(Integer.parseInt(properties.getProperty(NUMBER_OF_ITEMS)))
-                                                         .setDryRun(properties.getOrDefault(DRY_RUN, "true").equals("true"));
+                                                         .setDryRun(properties.getOrDefault(DRY_RUN, "true").equals("true"))
+                                                         .setDataListener((i, s) -> saveData(i, s, path));
 
         dataGenerator.start();
 
 
     }
+
+    static private void saveData(Integer iteration, String data, Path path) {
+        Path submitDataPath = path.resolveSibling("__submit_data");
+
+        if (!submitDataPath.toFile().exists()) {
+            if (!submitDataPath.toFile().mkdirs()) {
+                throw new AutoFillException("Failed to create out xml path: " + submitDataPath);
+            }
+        }
+
+        Path dataPath = submitDataPath.resolve(StringUtils.leftPad(iteration.toString(), 4, '0') + ".xml");
+
+        try {
+            Files.write(dataPath, data.getBytes(Charset.defaultCharset()));
+        } catch (IOException e) {
+            throw new AutoFillException(e);
+        }
+
+
+    }
+
 
     private static void asserPropertiesExist(Properties properties) {
         ALL_PROPERTIES.forEach(p -> {
