@@ -34,8 +34,8 @@ class TestUtils {
         return writer.toString()
     }
 
-    static FormAutoFill formAutoFillFromMkp(String mkp) {
-        return FormAutoFill.fromXml(mkp2Oxd(resourceText(mkp)))
+    static FormAutoFill formAutoFillFromMkp(String markupResource) {
+        return FormAutoFill.fromXml(mkp2Oxd(resourceText(markupResource)))
     }
 
     static FormAutoFill formAutoFillFromMkp(Form mkp) {

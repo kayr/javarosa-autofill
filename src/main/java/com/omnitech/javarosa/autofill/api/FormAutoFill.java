@@ -34,6 +34,7 @@ public class FormAutoFill {
         Std.setErr(new NullPrintStream());
         Std.setOut(new NullPrintStream());
     }
+
     private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
 
     private FormDef             formDef;
@@ -91,6 +92,12 @@ public class FormAutoFill {
 
         addProvider(Constants.CONTROL_SELECT_MULTI, Constants.DATATYPE_CHOICE_LIST, MultiSelectProvider.class);
         addProvider(Constants.CONTROL_SELECT_ONE, Constants.DATATYPE_CHOICE, SelectOneProvider.class);
+
+        //Video Picture
+        addProvider(Constants.CONTROL_VIDEO_CAPTURE, Constants.DATATYPE_BINARY, VideoProvider.class);
+        addProvider(Constants.CONTROL_IMAGE_CHOOSE, Constants.DATATYPE_BINARY, ImageProvider.class);
+        addProvider(Constants.CONTROL_AUDIO_CAPTURE, Constants.DATATYPE_BINARY, AudioProvider.class);
+
     }
 
     private void initFunctionHandlers() {

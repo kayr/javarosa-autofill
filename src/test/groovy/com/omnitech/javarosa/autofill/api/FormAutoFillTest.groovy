@@ -92,6 +92,35 @@ class FormAutoFillTest implements LogConfig {
 
     }
 
+    @Test
+    void testFormWithPics() {
+
+        def form = '''
+            ## Form
+            
+            @picture
+            Picture
+            
+            @audio
+            Audio
+            
+            @video
+            Video
+'''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(form))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        def node = new XmlParser().parseText(xml)
+
+        assert node.picture.text().startsWith('data:image/jpg')
+        assert node.audio.text().startsWith('data:audio/mp3')
+        assert node.video.text().startsWith('data:video/mp4')
+
+
+    }
+
 //    @Test
 //    void testSelectMulti() {
 //        def items = [1, 2]

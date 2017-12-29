@@ -10,6 +10,23 @@ public class IOUtils {
 
     private static Logger LOG = Logger.getLogger(IOUtils.class.getName());
 
+    public static byte[] getBytes(InputStream is) throws IOException {
+        ByteArrayOutputStream answer = new ByteArrayOutputStream();
+        // reading the content of the file within a byte buffer
+        byte[] byteBuffer = new byte[8192];
+        int nbByteRead /* = 0*/;
+        try {
+            while ((nbByteRead = is.read(byteBuffer)) != -1) {
+                // appends buffer
+                answer.write(byteBuffer, 0, nbByteRead);
+            }
+        } finally {
+            closeWithWarning(is);
+        }
+        return answer.toByteArray();
+    }
+
+
     /**
      * Read the content of this InputStream and return it as a String.
      * The stream is closed before this method returns.
@@ -23,6 +40,8 @@ public class IOUtils {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         return getText(reader);
     }
+
+
 
     /**
      * Read the content of this InputStream using specified charset and return
