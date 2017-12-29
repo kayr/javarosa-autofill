@@ -25,3 +25,23 @@ dependencies {
     testCompile 'org.openxdata:oxdmarkup-parser:0.22-SNAPSHOT'
 
 }
+
+
+jar {
+    baseName = rootProject.name
+    version = version
+
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+    manifest {
+        attributes 'Main-Class': 'com.omnitech.javarosa.autofill.cmd.Console'
+    }
+
+    // Some of the dependencies are signed jars. When combined into a big jar, the corresponding signature files
+    // don't match with big jar, so the runtime refuses to run the jar. The fix is to exclude the signature files.
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}

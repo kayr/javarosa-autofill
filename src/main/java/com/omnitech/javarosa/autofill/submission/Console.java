@@ -1,4 +1,4 @@
-package com.omnitech.javarosa.autofill.cmd;
+package com.omnitech.javarosa.autofill.submission;
 
 import com.omnitech.javarosa.autofill.api.IOUtils;
 import com.omnitech.javarosa.autofill.submission.DataGenerator;
@@ -18,9 +18,10 @@ public class Console {
             PASSWORD                     = "password",
             SERVER                       = "server",
             FORM_DEF                     = "form",
+            NUMBER_OF_ITEMS              = "numberOfItems",
             DRY_RUN                      = "dryRun";
 
-    private static final List<String> ALL_PROPERTIES = Arrays.asList(USERNAME, PASSWORD, SERVER, FORM_DEF);
+    private static final List<String> ALL_PROPERTIES = Arrays.asList(USERNAME, PASSWORD, SERVER, FORM_DEF, NUMBER_OF_ITEMS);
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
@@ -41,7 +42,8 @@ public class Console {
                                                          .setUsername(properties.getProperty(USERNAME))
                                                          .setPassword(properties.getProperty(PASSWORD))
                                                          .setFormDefXMl(readFile(properties, FORM_DEF))
-                                                         .setDryRun(properties.getOrDefault(DRY_RUN, "true") == "true");
+                                                         .setNumberOfItems(Integer.parseInt(properties.getProperty(NUMBER_OF_ITEMS)))
+                                                         .setDryRun(properties.getOrDefault(DRY_RUN, "true").equals("true"));
 
         dataGenerator.start();
 

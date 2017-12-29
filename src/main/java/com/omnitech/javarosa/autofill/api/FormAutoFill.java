@@ -4,6 +4,7 @@ import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import com.omnitech.javarosa.autofill.api.functions.RandomRegex;
 import com.omnitech.javarosa.autofill.api.functions.RandomSelectFromFile;
 import com.omnitech.javarosa.autofill.api.providers.*;
+import org.javarosa.core.io.Std;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.data.IAnswerData;
@@ -29,6 +30,10 @@ import java.util.logging.Logger;
 
 public class FormAutoFill {
 
+    static {
+        Std.setErr(new NullPrintStream());
+        Std.setOut(new NullPrintStream());
+    }
     private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
 
     private FormDef             formDef;
@@ -136,10 +141,10 @@ public class FormAutoFill {
 
         switch (event) {
             case FormEntryController.EVENT_BEGINNING_OF_FORM:
-                LOG.info("Event: -> Form Begin");
+                LOG.fine("Event: -> Form Begin");
                 break;
             case FormEntryController.EVENT_END_OF_FORM:
-                LOG.info("Event: -> Form End");
+                LOG.fine("Event: -> Form End");
                 break;
             case FormEntryController.EVENT_GROUP:
                 LOG.finer("----------Form Group");
@@ -247,7 +252,7 @@ public class FormAutoFill {
     }
 
     public String getSubmissionXml() {
-        try (InputStream payloadStream = getSubmissionPayload().getPayloadStream();) {
+        try (InputStream payloadStream = getSubmissionPayload().getPayloadStream()) {
             return IOUtils.getText(payloadStream);
         } catch (IOException e) {
             throw new AutoFillException(e);

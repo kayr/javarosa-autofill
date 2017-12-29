@@ -2,8 +2,6 @@ package com.omnitech.javarosa.autofill.submission;
 
 import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.FormAutoFill;
-import com.omnitech.javarosa.autofill.api.FormUtils;
-import org.javarosa.core.model.FormDef;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -11,7 +9,7 @@ import java.util.stream.IntStream;
 
 public class DataGenerator {
 
-    static Logger LOG = Logger.getLogger(DataGenerator.class.getName());
+    private static Logger LOG = Logger.getLogger(DataGenerator.class.getName());
 
     private String formDefXMl;
     private String username;
@@ -24,7 +22,6 @@ public class DataGenerator {
     private boolean dryRun = false;
 
     private JavarosaSubmitter submitter;
-    private FormDef           formDef;
 
     public void start() {
         init();
@@ -35,7 +32,8 @@ public class DataGenerator {
     private void generateAndMayBeSubmit(int iteration) {
         LOG.info("Generating Form: " + iteration);
 
-        FormAutoFill formAutoFill = new FormAutoFill(formDef);
+        FormAutoFill formAutoFill = FormAutoFill.fromXml(formDefXMl);
+
 
         String submissionXml = formAutoFill.autoFill().getSubmissionXml();
 
@@ -52,7 +50,6 @@ public class DataGenerator {
     }
 
 
-
     private void init() {
         if (initilized) return;
 
@@ -60,24 +57,14 @@ public class DataGenerator {
                                            .setUsername(username)
                                            .setPassword(password);
 
-        formDef = FormUtils.parseFromText(formDefXMl);
-
 
         initilized = true;
     }
 
 
-    public String getFormDefXMl() {
-        return formDefXMl;
-    }
-
     public DataGenerator setFormDefXMl(String formDefXMl) {
         this.formDefXMl = formDefXMl;
         return this;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public DataGenerator setUsername(String username) {
@@ -85,17 +72,9 @@ public class DataGenerator {
         return this;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public DataGenerator setPassword(String password) {
         this.password = password;
         return this;
-    }
-
-    public String getServerUrl() {
-        return serverUrl;
     }
 
     public DataGenerator setServerUrl(String serverUrl) {
@@ -103,17 +82,9 @@ public class DataGenerator {
         return this;
     }
 
-    public int getNumberOfItems() {
-        return numberOfItems;
-    }
-
     public DataGenerator setNumberOfItems(int numberOfItems) {
         this.numberOfItems = numberOfItems;
         return this;
-    }
-
-    public boolean isDryRun() {
-        return dryRun;
     }
 
     public DataGenerator setDryRun(boolean dryRun) {
