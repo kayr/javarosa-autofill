@@ -3,6 +3,7 @@ package com.omnitech.javarosa.autofill.submission;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class JavarosaSubmitter {
 
@@ -76,6 +77,9 @@ public class JavarosaSubmitter {
             httpClient =
                     new OkHttpClient.Builder()
                             .addInterceptor(new BasicAuthInterceptor(username, password))
+                            .writeTimeout(30, TimeUnit.SECONDS)
+                            .readTimeout(30, TimeUnit.SECONDS)
+                            .connectTimeout(10, TimeUnit.SECONDS)
                             .build();
 
             if (serverUrl.endsWith("/")) {

@@ -1,1 +1,1 @@
-java -jar ..\build\libs\javarosa-console-1.0-SNAPSHOT.jar autofill.properties
+java -jar ..\build\libs\javarosa-autofill-1.0-SNAPSHOT.jar autofill.properties
