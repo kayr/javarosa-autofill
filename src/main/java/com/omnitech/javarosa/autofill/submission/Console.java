@@ -38,7 +38,7 @@ public class Console {
         Properties properties = new Properties();
         properties.load(Files.newInputStream(path));
 
-        asserPropertiesExist(properties);
+        assertPropertiesExist(properties,ALL_PROPERTIES);
 
         DataGenerator dataGenerator = new DataGenerator().setServerUrl(properties.getProperty(SERVER))
                                                          .setUsername(properties.getProperty(USERNAME))
@@ -74,8 +74,8 @@ public class Console {
     }
 
 
-    private static void asserPropertiesExist(Properties properties) {
-        ALL_PROPERTIES.forEach(p -> {
+    private static void assertPropertiesExist(Properties properties,List<String> propertyList) {
+        propertyList.forEach(p -> {
             if (!properties.containsKey(p)) throw new RuntimeException("Property Not Found: " + p);
         });
     }
