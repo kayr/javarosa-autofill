@@ -1,0 +1,15 @@
+package com.omnitech.javarosa.autofill.api.functions
+
+import com.omnitech.javarosa.autofill.api.SmallFormEvaluator
+import org.junit.Test
+
+public class VariableTest implements SmallFormEvaluator {
+
+    @Test
+    void testSettingAndRetrieving() {
+        evalXpath("val('var1',5)") == 5
+        evalXpath("val('var1')") == 5
+    }
+
+
+}

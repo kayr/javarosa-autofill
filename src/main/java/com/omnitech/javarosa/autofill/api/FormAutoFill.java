@@ -3,6 +3,7 @@ package com.omnitech.javarosa.autofill.api;
 import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import com.omnitech.javarosa.autofill.api.functions.RandomRegex;
 import com.omnitech.javarosa.autofill.api.functions.RandomSelectFromFile;
+import com.omnitech.javarosa.autofill.api.functions.Variable;
 import com.omnitech.javarosa.autofill.api.providers.*;
 import org.javarosa.core.io.Std;
 import org.javarosa.core.model.*;
@@ -104,6 +105,7 @@ public class FormAutoFill {
         EvaluationContext ec = formDef.getEvaluationContext();
 
         Arrays.asList(
+                new Variable(),
                 new RandomRegex(),
                 new RandomSelectFromFile()).forEach(ec::addFunctionHandler);
 
@@ -158,11 +160,7 @@ public class FormAutoFill {
                 break;
             case FormEntryController.EVENT_PROMPT_NEW_REPEAT:
                 LOG.finer("----------Form New Repeat");
-                boolean randomBoolean = FormUtils.randomBoolean();
-                if (randomBoolean) {
-                    LOG.fine("Adding new repeat");
-                    fec.newRepeat();
-                }
+                handleRepeat();
                 break;
             case FormEntryController.EVENT_QUESTION:
                 handleQuestion();
@@ -176,6 +174,16 @@ public class FormAutoFill {
         }
 
 
+    }
+
+    private void handleRepeat() {
+        IFormElement formElement = model.getQuestionPrompt().getFormElement();
+
+        boolean randomBoolean = FormUtils.randomBoolean();
+        if (randomBoolean) {
+            LOG.fine("Adding new repeat");
+            fec.newRepeat();
+        }
     }
 
 
