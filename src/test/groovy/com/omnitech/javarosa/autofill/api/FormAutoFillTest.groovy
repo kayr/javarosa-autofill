@@ -8,6 +8,7 @@ import org.openxdata.markup.Form
 import org.openxdata.markup.IFormElement
 
 import static TestUtils.resourceText
+import static com.omnitech.javarosa.autofill.api.TestUtils.formatXML
 
 class FormAutoFillTest implements LogConfig {
 
@@ -119,6 +120,71 @@ class FormAutoFillTest implements LogConfig {
         assert node.video.text().startsWith('data:video/mp4')
 
 
+    }
+
+    @Test
+    void testFixedRepeat() {
+
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    //@bind:generex 'tt'
+                    One 
+                    
+                    //@bind:generex $one
+                    repeat { Details
+                    
+                                        @bind:generex 'tt'
+
+                        R1
+                        
+                        R2
+                    
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        println(formatXML(xml))
+    }
+
+    @Test
+    void testFixedRepeatin() {
+
+//        FormUtils.faker.bool().bool()
+
+
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    //@bind:generex 'tt'
+                    One 
+                    
+                   // @bind:generex $one
+                    repeat { Details
+                    
+                        @bind:generex 'tt'
+                        R1
+                        
+                        R2
+                        
+                         @bind:generex random-boolean()
+                        repeat{ Details 3
+                             @bind:generex 'r22'
+                             R11
+                        
+                        }
+                    
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        println(formatXML(xml))
     }
 
 //    @Test

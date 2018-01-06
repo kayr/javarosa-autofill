@@ -1,17 +1,14 @@
 package com.omnitech.javarosa.autofill.api;
 
-import com.omnitech.javarosa.autofill.api.functions.Fakers;
-import com.omnitech.javarosa.autofill.api.functions.RandomRegex;
-import com.omnitech.javarosa.autofill.api.functions.RandomSelectFromFile;
-import com.omnitech.javarosa.autofill.api.functions.Variable;
+import com.omnitech.javarosa.autofill.api.functions.*;
 import com.omnitech.javarosa.autofill.api.providers.*;
 import org.javarosa.core.io.Std;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.data.IAnswerData;
+import org.javarosa.core.model.data.UncastData;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
-import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryModel;
@@ -24,8 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +40,9 @@ public class FormAutoFill {
     private FormEntryController fec;
 
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
-    private IAnswerProvider                          generexProvider   = new GenerexProvider();
+    private Map<String, String>                      genExpressionMap  = new HashMap<>();
+    private GenerexProvider                          generexProvider   = new GenerexProvider(genExpressionMap);
+
 
     @SuppressWarnings("WeakerAccess")
     public FormAutoFill(FormDef formDef) {
@@ -107,6 +106,7 @@ public class FormAutoFill {
         Arrays.asList(
                 new Variable(),
                 new RandomRegex(),
+                new EvalAll(),
                 new RandomSelectFromFile()).forEach(ec::addFunctionHandler);
 
         Fakers.registerAllHandlers(formDef);
@@ -177,10 +177,19 @@ public class FormAutoFill {
     }
 
     private void handleRepeat() {
-        IFormElement formElement = model.getQuestionPrompt().getFormElement();
+        IFormElement formElement = model.getCaptionPrompt().getFormElement();
 
-        boolean randomBoolean = FormUtils.randomBoolean();
-        if (randomBoolean) {
+        Optional<String> generex = hasGenerex(formElement);
+
+        boolean createNewRepeat = generex
+                .map(gx -> {
+                    UncastData data = generexProvider.acquire(formDef, formElement, generex.get());
+                    return "1".equals(data.getValue());
+                })
+                .orElseGet(FormUtils::randomBoolean);
+
+
+        if (createNewRepeat) {
             LOG.fine("Adding new repeat");
             fec.newRepeat();
         }
@@ -195,16 +204,16 @@ public class FormAutoFill {
     private void handleQuestion() {
 
         FormEntryPrompt questionPrompt = model.getQuestionPrompt();
-        IAnswerProvider answerProvider;
 
-        if (hasGenerex(questionPrompt)) {
-            answerProvider = generexProvider;
-        } else {
-            answerProvider = resolveProvider(questionPrompt);
-        }
 
-        IAnswerData answer = answerProvider.acquire(fec, questionPrompt);
-        int         status = fec.answerQuestion(currentIndex(), answer, true);
+        Optional<String> generex = hasGenerex(questionPrompt.getQuestion());
+
+        IAnswerData answer = generex
+                .map(gx -> (IAnswerData) generexProvider.acquire(formDef, questionPrompt.getQuestion(), gx))
+                .orElseGet(() -> resolveProvider(questionPrompt).acquire(fec, questionPrompt));
+
+
+        int status = fec.answerQuestion(currentIndex(), answer, true);
 
         if (LOG.isLoggable(Level.FINEST)) {
             LOG.finest("Answer for Question[" + questionPrompt.getQuestion().getBind().getReference() + "] = " + answer.getValue());
@@ -216,12 +225,22 @@ public class FormAutoFill {
 
     }
 
-    private static boolean hasGenerex(FormEntryPrompt questionPrompt) {
+    private Optional<String> hasGenerex(IFormElement formElement) {
 
-        List<TreeElement> bindAttributes = questionPrompt.getBindAttributes();
 
-        return bindAttributes.stream().anyMatch(t -> t.getName().equals("generex"));
+        String hasGenerexMapping = genExpressionMap.get(FormUtils.resolveVariable(formElement));
+
+        if (hasGenerexMapping != null) {
+            return Optional.of(hasGenerexMapping);
+        }
+
+        FormIndex      index     = currentIndex();
+        XPathReference reference = FormUtils.getSafeXpathReference(formElement, index);
+
+
+        return FormUtils.getBindAttribute(formDef, reference, "generex");
     }
+
 
     @SuppressWarnings("WeakerAccess")
     protected IAnswerProvider resolveProvider(FormEntryPrompt prompt) {
@@ -278,7 +297,5 @@ public class FormAutoFill {
         return formDef;
     }
 
-    public FormEntryModel getModel() {
-        return model;
-    }
+
 }

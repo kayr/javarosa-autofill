@@ -41,7 +41,7 @@ public class JavarosaSubmitter {
     }
 
 
-    public boolean submit(String payload) throws IOException {
+    public void submit(String payload) throws IOException {
         init();
         // req.setHeader(DATE_HEADER, DateFormat.format("E, dd MMM yyyy hh:mm:ss zz", g)
         Request build = new Request.Builder().addHeader("User-Agent", "Javarosa-AutoFill")
@@ -61,7 +61,6 @@ public class JavarosaSubmitter {
             throw new RuntimeException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
         }
 
-        return true;
     }
 
     private String submitUrl() {

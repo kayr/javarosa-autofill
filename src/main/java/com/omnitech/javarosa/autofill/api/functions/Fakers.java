@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public class Fakers {
-    static Faker faker = FormUtils.faker;
+    static final Faker faker = FormUtils.faker;
 
 
     public static void registerAllHandlers(FormDef formDef) {
@@ -30,6 +30,7 @@ public class Fakers {
                       new Number(),
                       new DateBetween(),
                       new DateFuture(),
+                      new RandomBoolean(),
                       new DatePast()).forEach(ec::addFunctionHandler);
     }
 
@@ -233,6 +234,19 @@ public class Fakers {
         }
 
 
+    }
+
+    public static class RandomBoolean implements ISimpleFunctionHandler {
+
+        @Override
+        public Object evalImpl(Object[] args, EvaluationContext ec) {
+            return faker.bool().bool() ? "1" : "0";
+        }
+
+        @Override
+        public String getName() {
+            return "random-boolean";
+        }
     }
 
 

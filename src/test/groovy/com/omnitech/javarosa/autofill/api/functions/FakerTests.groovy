@@ -12,6 +12,7 @@ class FakerTests extends GroovyTestCase implements SmallFormEvaluator {
 
     void testEval() {
         assert !evalXpath("fake('name','firstName')").toString().isEmpty()
+        println evalXpath("fake('bool')")
         shouldFail(RuntimeException) {
             evalXpath("fake('name','firstNames')")
         }

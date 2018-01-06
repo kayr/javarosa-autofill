@@ -2,37 +2,32 @@ package com.omnitech.javarosa.autofill.api.providers;
 
 import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.FormUtils;
-import com.omnitech.javarosa.autofill.api.IAnswerProvider;
+import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.IFormElement;
 import org.javarosa.core.model.condition.EvaluationContext;
-import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.UncastData;
-import org.javarosa.form.api.FormEntryController;
-import org.javarosa.form.api.FormEntryPrompt;
-import org.javarosa.xpath.XPathParseTool;
-import org.javarosa.xpath.expr.XPathExpression;
-import org.javarosa.xpath.expr.XPathFuncExpr;
 import org.javarosa.xpath.parser.XPathSyntaxException;
 
-import java.util.Objects;
+import java.util.Map;
 
-public class GenerexProvider implements IAnswerProvider {
+public class GenerexProvider {
 
-    @Override
-    public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
-        EvaluationContext ec = fec.getModel().getForm().getEvaluationContext();
+    private final Map<String, String> genExpressionMap;
+
+    public GenerexProvider(Map<String, String> genExpressionMap) {
+        this.genExpressionMap = genExpressionMap;
+    }
+
+    public UncastData acquire(FormDef fec, IFormElement prompt, String generex) {
+        EvaluationContext ec = fec.getEvaluationContext();
 
         try {
-            String          generex         = Objects.requireNonNull(FormUtils.getAttribute(prompt, "generex"));
-            XPathExpression xPathExpression = XPathParseTool.parseXPath(generex);
 
-            Object eval = xPathExpression.eval(ec);
-            if (eval instanceof Number) {
-                eval = ((Number) eval).doubleValue();//XPathFuncExpr.toString() Only loves doubles... so we convert all numbers to doubles
-            }
-            return new UncastData(XPathFuncExpr.toString(eval));
+            return FormUtils.evalXpathString(ec, generex);
         } catch (XPathSyntaxException e) {
-            throw new AutoFillException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + prompt.getQuestion().getBind().getReference(), e);
+            throw new AutoFillException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + prompt.getBind().getReference(), e);
         }
 
     }
+
 }
