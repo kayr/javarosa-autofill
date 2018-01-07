@@ -1,7 +1,7 @@
 package com.omnitech.javarosa.autofill.api.providers;
 
-import com.omnitech.javarosa.autofill.api.FormUtils;
 import com.omnitech.javarosa.autofill.api.IAnswerProvider;
+import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.SelectMultiData;
@@ -23,11 +23,11 @@ public class MultiSelectProvider implements IAnswerProvider {
 
     private static SelectMultiData selectMultiData(List<SelectChoice> choices) {
         List<Selection> selections =
-                FormUtils.getRandomMany(choices)
-                         .stream()
-                         .distinct()
-                         .map(Selection::new)
-                         .collect(Collectors.toList());
+                Fakers.getRandomMany(choices)
+                      .stream()
+                      .distinct()
+                      .map(Selection::new)
+                      .collect(Collectors.toList());
         return new SelectMultiData(selections);
     }
 }

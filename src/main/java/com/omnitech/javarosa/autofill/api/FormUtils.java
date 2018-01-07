@@ -1,6 +1,7 @@
 package com.omnitech.javarosa.autofill.api;
 
 import com.github.javafaker.Faker;
+import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.GroupDef;
 import org.javarosa.core.model.IDataReference;
@@ -21,8 +22,6 @@ import java.util.stream.IntStream;
 
 public class FormUtils {
 
-    public static final Faker faker = new Faker();
-
     public static String resolveVariable(IFormElement iFormElement) {
         Object        bind      = iFormElement.getBind().getReference();
         TreeReference reference = (TreeReference) bind;
@@ -40,32 +39,6 @@ public class FormUtils {
         }
     }
 
-    public static boolean randomBoolean() {
-        return faker.bool().bool();
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static <T> T getRandom(List<T> choices) {
-        int randomIndex = faker.number().numberBetween(0, choices.size() - 1);
-        return choices.get(randomIndex);
-    }
-
-
-    @SuppressWarnings("WeakerAccess")
-    public static <T> List<T> getRandomMany(List<T> choices) {
-        List<T> temporaryChoices = _getRandomChoices(choices);
-        while (temporaryChoices.isEmpty()) {
-            temporaryChoices = _getRandomChoices(choices);
-        }
-        return temporaryChoices;
-
-    }
-
-    private static <T> List<T> _getRandomChoices(List<T> choices) {
-        return choices.stream()
-                      .filter(c -> randomBoolean())
-                      .collect(Collectors.toList());
-    }
 
     @SuppressWarnings("WeakerAccess")
     public static Optional<TreeElement> getTreeElement(FormDef formDef, IDataReference reference) {

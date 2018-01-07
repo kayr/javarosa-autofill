@@ -8,7 +8,6 @@ import org.openxdata.markup.Form
 import org.openxdata.markup.IFormElement
 
 import static TestUtils.resourceText
-import static com.omnitech.javarosa.autofill.api.TestUtils.formatXML
 
 class FormAutoFillTest implements LogConfig {
 
@@ -182,15 +181,11 @@ class FormAutoFillTest implements LogConfig {
                            .autoFill()
                            .getSubmissionXml()
 
-        println(formatXML(xml))
-
         def node = new XmlParser().parseText(xml)
         assert node.details.r1
         assert node.details.size() == 3
         assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
         assert node.details.details_3.r11.every { !it.text().isEmpty() && it.text() == 'r22' }
-
-
     }
 
 //    @Test

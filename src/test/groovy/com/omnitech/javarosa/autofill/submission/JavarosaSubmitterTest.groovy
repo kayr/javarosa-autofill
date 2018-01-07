@@ -1,10 +1,12 @@
 package com.omnitech.javarosa.autofill.submission
 
+import org.junit.Ignore
 import org.junit.Test
 
  class JavarosaSubmitterTest {
 
     @Test
+    @Ignore
      void submit() {
 
         def payload = new JavarosaSubmitter().setUsername('admin')

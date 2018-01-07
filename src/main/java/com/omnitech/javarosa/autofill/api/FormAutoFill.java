@@ -34,13 +34,13 @@ public class FormAutoFill {
 
     private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
 
-    private FormDef             formDef;
-    private FormEntryModel      model;
-    private FormEntryController fec;
-
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
     private Map<String, String>                      genExpressionMap  = new HashMap<>();
     private GenerexProvider                          generexProvider   = new GenerexProvider();
+
+    private FormDef             formDef;
+    private FormEntryModel      model;
+    private FormEntryController fec;
 
 
     @SuppressWarnings("WeakerAccess")
@@ -178,14 +178,14 @@ public class FormAutoFill {
     private void handleRepeat() {
         IFormElement formElement = model.getCaptionPrompt().getFormElement();
 
-        Optional<String> generex = hasGenerex(formElement);
+        Optional<String> generex = getGenerex(formElement);
 
         boolean createNewRepeat = generex
                 .map(gx -> {
                     IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
                     return Boolean.TRUE.equals(data.getValue());
                 })
-                .orElseGet(FormUtils::randomBoolean);
+                .orElseGet(Fakers::randomBoolean);
 
 
         if (createNewRepeat) {
@@ -205,7 +205,7 @@ public class FormAutoFill {
         FormEntryPrompt questionPrompt = model.getQuestionPrompt();
 
 
-        Optional<String> generex = hasGenerex(questionPrompt.getQuestion());
+        Optional<String> generex = getGenerex(questionPrompt.getQuestion());
 
         IAnswerData answer = generex
                 .map(gx -> generexProvider.acquire(formDef, questionPrompt.getQuestion(), currentIndex(), gx))
@@ -224,7 +224,7 @@ public class FormAutoFill {
 
     }
 
-    private Optional<String> hasGenerex(IFormElement formElement) {
+    private Optional<String> getGenerex(IFormElement formElement) {
 
 
         String hasGenerexMapping = genExpressionMap.get(FormUtils.resolveVariable(formElement));

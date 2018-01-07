@@ -1,6 +1,5 @@
 package com.omnitech.javarosa.autofill.api.functions;
 
-import com.omnitech.javarosa.autofill.api.FormUtils;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.xpath.expr.XPathFuncExpr;
 
@@ -39,7 +38,7 @@ public class RandomSelectFromFile implements ISimpleFunctionHandler {
         List<String> lines    = Files.lines(path).collect(Collectors.toList());
 
 
-        return FormUtils.getRandom(lines);
+        return Fakers.getRandom(lines);
     }
 
 

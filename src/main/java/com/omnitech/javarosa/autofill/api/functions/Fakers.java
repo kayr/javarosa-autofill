@@ -2,7 +2,6 @@ package com.omnitech.javarosa.autofill.api.functions;
 
 import com.github.javafaker.Faker;
 import com.omnitech.javarosa.autofill.api.AutoFillException;
-import com.omnitech.javarosa.autofill.api.FormUtils;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.utils.DateUtils;
@@ -12,92 +11,13 @@ import org.javarosa.xpath.expr.XPathFuncExpr;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Fakers {
-    static final Faker faker = FormUtils.faker;
 
-
-    public static void registerAllHandlers(FormDef formDef) {
-
-        EvaluationContext ec = formDef.getEvaluationContext();
-
-        Arrays.asList(new Fake(),
-                      new Number(),
-                      new DateBetween(),
-                      new DateFuture(),
-                      new RandomBoolean(),
-                      new DatePast()).forEach(ec::addFunctionHandler);
-    }
-
-    private static long _long(Object[] args, int i) {
-        return ((java.lang.Number) args[i]).longValue();
-    }
-
-    private static int _int(Object[] args, int i) {
-        return ((java.lang.Number) args[i]).intValue();
-    }
-
-    private static java.util.Date parseDate(Object object) {
-        String s = XPathFuncExpr.toString(object).trim();
-
-        if (object instanceof java.util.Date) {
-            return (java.util.Date) object;
-        }
-
-        if (isDate(s)) {
-            return DateUtils.parseDate(s);
-        }
-
-        if (isDateTime(s)) {
-            return DateUtils.parseDateTime(s);
-        }
-
-        if (isTime(s)) {
-            return DateUtils.parseTime(s);
-        }
-
-        throw new AutoFillException("Invalid Date Format: " + s);
-
-    }
-
-    private static boolean isDateTime(String s) {
-        return s.contains(":") && s.contains("-");
-    }
-
-    private static boolean isTime(String s) {
-        return s.contains(":") && !s.contains("-");
-    }
-
-    private static boolean isDate(String s) {
-        return s.contains("-") && !s.contains(":");
-    }
-
-    private static TimeUnit toTimeUnit(String unitString) {
-        String lowerCaseStr = unitString.toLowerCase();
-        switch (lowerCaseStr) {
-            case "second":
-            case "seconds":
-                return TimeUnit.SECONDS;
-            case "minute":
-            case "minutes":
-                return TimeUnit.MINUTES;
-            case "hour":
-            case "hours":
-                return TimeUnit.HOURS;
-            case "day":
-            case "days":
-                return TimeUnit.DAYS;
-            default:
-                throw new AutoFillException("Time Unit [" + unitString + "] not supported");
-
-        }
-    }
-
+    public static final Faker faker = new Faker();
 
     static class Fake implements ISimpleFunctionHandler {
 
@@ -247,6 +167,108 @@ public class Fakers {
         public String getName() {
             return "random-boolean";
         }
+    }
+
+
+    public static void registerAllHandlers(FormDef formDef) {
+
+        EvaluationContext ec = formDef.getEvaluationContext();
+
+        Arrays.asList(new Fake(),
+                      new Number(),
+                      new DateBetween(),
+                      new DateFuture(),
+                      new RandomBoolean(),
+                      new DatePast()).forEach(ec::addFunctionHandler);
+    }
+
+    private static long _long(Object[] args, int i) {
+        return ((java.lang.Number) args[i]).longValue();
+    }
+
+    private static int _int(Object[] args, int i) {
+        return ((java.lang.Number) args[i]).intValue();
+    }
+
+    private static java.util.Date parseDate(Object object) {
+        String s = XPathFuncExpr.toString(object).trim();
+
+        if (object instanceof java.util.Date) {
+            return (java.util.Date) object;
+        }
+
+        if (isDate(s)) {
+            return DateUtils.parseDate(s);
+        }
+
+        if (isDateTime(s)) {
+            return DateUtils.parseDateTime(s);
+        }
+
+        if (isTime(s)) {
+            return DateUtils.parseTime(s);
+        }
+
+        throw new AutoFillException("Invalid Date Format: " + s);
+
+    }
+
+    private static boolean isDateTime(String s) {
+        return s.contains(":") && s.contains("-");
+    }
+
+    private static boolean isTime(String s) {
+        return s.contains(":") && !s.contains("-");
+    }
+
+    private static boolean isDate(String s) {
+        return s.contains("-") && !s.contains(":");
+    }
+
+    private static TimeUnit toTimeUnit(String unitString) {
+        String lowerCaseStr = unitString.toLowerCase();
+        switch (lowerCaseStr) {
+            case "second":
+            case "seconds":
+                return TimeUnit.SECONDS;
+            case "minute":
+            case "minutes":
+                return TimeUnit.MINUTES;
+            case "hour":
+            case "hours":
+                return TimeUnit.HOURS;
+            case "day":
+            case "days":
+                return TimeUnit.DAYS;
+            default:
+                throw new AutoFillException("Time Unit [" + unitString + "] not supported");
+
+        }
+    }
+
+
+    public static boolean randomBoolean() {
+        return faker.bool().bool();
+    }
+
+    public static <T> T getRandom(List<T> choices) {
+        int randomIndex = faker.number().numberBetween(0, choices.size() - 1);
+        return choices.get(randomIndex);
+    }
+
+    public static <T> List<T> getRandomMany(List<T> choices) {
+        List<T> temporaryChoices = _getRandomChoices(choices);
+        while (temporaryChoices.isEmpty()) {
+            temporaryChoices = _getRandomChoices(choices);
+        }
+        return temporaryChoices;
+
+    }
+
+    private static <T> List<T> _getRandomChoices(List<T> choices) {
+        return choices.stream()
+                      .filter(c -> randomBoolean())
+                      .collect(Collectors.toList());
     }
 
 

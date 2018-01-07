@@ -1,7 +1,7 @@
 package com.omnitech.javarosa.autofill.api.providers;
 
-import com.omnitech.javarosa.autofill.api.FormUtils;
 import com.omnitech.javarosa.autofill.api.IAnswerProvider;
+import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.SelectOneData;
@@ -21,7 +21,7 @@ public class SelectOneProvider implements IAnswerProvider {
     }
 
     private static SelectOneData selectOneData(List<SelectChoice> choices) {
-        SelectChoice selectChoice = FormUtils.getRandom(choices);
+        SelectChoice selectChoice = Fakers.getRandom(choices);
         return new SelectOneData(new Selection(selectChoice));
     }
 }
