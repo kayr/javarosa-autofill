@@ -1,5 +1,6 @@
 package com.omnitech.javarosa.autofill.api
 
+import com.omnitech.javarosa.autofill.api.functions.Fakers
 import groovy.test.GroovyAssert
 import org.junit.Test
 import org.openxdata.markup.Converter
@@ -193,11 +194,25 @@ class FormAutoFillTest implements LogConfig {
 //        def items = [1, 2]
 //
 //        Map<Integer, Integer> stats = items.collectEntries { [it, 0] }
+//
+//        Map<Integer, Integer> singleStats = items.collectEntries { [it, 0] }
+//
+//
 //        100.times {
-//            def many = FormUtils.getRandomMany(items)
+//            def many = Fakers.getRandomMany(items)
 //            items.each { num -> if (many.contains(num)) stats[num] = stats[num] + 1 }
+//
+//            def one = Fakers.getRandom(items)
+//
+//            singleStats[one] = singleStats[one] + 1
 //        }
 //
+//
+//
+//        println("Multiple Starts")
 //        println(stats)
+//
+//        println("Single stats")
+//        println(singleStats)
 //    }
 }

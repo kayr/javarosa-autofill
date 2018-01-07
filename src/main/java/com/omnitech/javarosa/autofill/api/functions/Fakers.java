@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Fakers {
 
@@ -252,8 +253,21 @@ public class Fakers {
     }
 
     public static <T> T getRandom(List<T> choices) {
-        int randomIndex = faker.number().numberBetween(0, choices.size() - 1);
+        if (choices.size() < 3) {
+            choices = _duplicate(choices, 2);
+        }
+        int randomIndex = faker.number().numberBetween(0, choices.size());
         return choices.get(randomIndex);
+    }
+
+    private static <T> List<T> _duplicate(List<T> items, int number) {
+
+        ArrayList<T> list = new ArrayList<>(items.size() * number);
+
+        IntStream.rangeClosed(1, number).forEach(i -> list.addAll(items));
+
+        return list;
+
     }
 
     public static <T> List<T> getRandomMany(List<T> choices) {
