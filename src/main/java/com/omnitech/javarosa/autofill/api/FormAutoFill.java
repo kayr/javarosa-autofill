@@ -104,6 +104,7 @@ public class FormAutoFill {
 
         Arrays.asList(
                 new FnValue(),
+                new FnSelectCell(),
                 new FnRandomRegex(),
                 new FnEvalAll(),
                 new FnRandomSelectFromFile()).forEach(ec::addFunctionHandler);

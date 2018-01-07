@@ -4,6 +4,7 @@ import com.omnitech.javarosa.autofill.api.FormAutoFill
 import com.omnitech.javarosa.autofill.api.SmallFormEvaluator
 import groovy.time.TimeCategory
 import org.javarosa.xpath.XPathTypeMismatchException
+import org.junit.Test
 
 import static org.javarosa.core.model.utils.DateUtils.getDate
 
@@ -181,6 +182,8 @@ class FakerTests extends GroovyTestCase implements SmallFormEvaluator {
 
 
     }
+
+
 
     static void assertBetween(def value, def start, def end) {
         assert value >= start && value <= end

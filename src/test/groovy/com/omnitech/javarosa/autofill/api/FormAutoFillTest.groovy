@@ -1,6 +1,5 @@
 package com.omnitech.javarosa.autofill.api
 
-import com.omnitech.javarosa.autofill.api.functions.Fakers
 import groovy.test.GroovyAssert
 import org.junit.Test
 import org.openxdata.markup.Converter
@@ -154,6 +153,42 @@ class FormAutoFillTest implements LogConfig {
 
     @Test
     void testFixedRepeatin() {
+
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    One 
+                    
+                    @bind:generex count($details) < 3
+                    repeat { Details
+                    
+                        @bind:generex 'tt'
+                        R1
+                        
+                        R2
+                        
+                        @bind:generex random-boolean()
+                        repeat{ Details 3
+                             @bind:generex 'r22'
+                             R11
+                        
+                        }
+                    
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        def node = new XmlParser().parseText(xml)
+        assert node.details.r1
+        assert node.details.size() == 3
+        assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
+        assert node.details.details_3.r11.every { !it.text().isEmpty() && it.text() == 'r22' }
+    }
+    @Test
+    void testSettingValueInMemory() {
 
         def f = '''
                     @bindxpath generex

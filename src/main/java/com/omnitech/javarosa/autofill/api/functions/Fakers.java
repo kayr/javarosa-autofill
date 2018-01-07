@@ -183,11 +183,11 @@ public class Fakers {
                       new FnDatePast()).forEach(ec::addFunctionHandler);
     }
 
-    private static long _long(Object[] args, int i) {
+    static long _long(Object[] args, int i) {
         return ((java.lang.Number) args[i]).longValue();
     }
 
-    private static int _int(Object[] args, int i) {
+    static int _int(Object[] args, int i) {
         return ((java.lang.Number) args[i]).intValue();
     }
 

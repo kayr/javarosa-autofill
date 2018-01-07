@@ -6,7 +6,7 @@ import org.javarosa.xpath.XPathTypeMismatchException
 class FnNumberTest extends GroovyTestCase {
 
 
-    void testEval() {
+    void testRandomNumber() {
 
         def autoFiller = FormAutoFill.fromResource("/SmallForm.xml")
 
