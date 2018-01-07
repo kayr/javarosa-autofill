@@ -5,7 +5,7 @@ import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.xpath.XPathArityException;
 import org.javarosa.xpath.expr.XPathFuncExpr;
 
-public class RandomRegex implements ISimpleFunctionHandler {
+public class FnRandomRegex implements ISimpleFunctionHandler {
     @Override
     public String getName() {
         return "random-regex";

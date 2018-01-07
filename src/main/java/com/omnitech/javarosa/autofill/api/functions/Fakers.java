@@ -19,7 +19,7 @@ public class Fakers {
 
     public static final Faker faker = new Faker();
 
-    static class Fake implements ISimpleFunctionHandler {
+    static class FnFake implements ISimpleFunctionHandler {
 
         @Override
         public String getName() {
@@ -53,7 +53,7 @@ public class Fakers {
     }
 
 
-    public static class Number implements ISimpleFunctionHandler {
+    public static class FnNumber implements ISimpleFunctionHandler {
         @Override
         public String getName() {
             return "random-number";
@@ -86,7 +86,7 @@ public class Fakers {
 
 
     //random-date-between(from,to)
-    public static class DateBetween implements ISimpleFunctionHandler {
+    public static class FnDateBetween implements ISimpleFunctionHandler {
 
         @Override
         public String getName() {
@@ -107,7 +107,7 @@ public class Fakers {
     }
 
     //random-future-date(atmost,unit,refdate)
-    public static class DateFuture implements ISimpleFunctionHandler {
+    public static class FnDateFuture implements ISimpleFunctionHandler {
 
         @Override
         public String getName() {
@@ -132,7 +132,7 @@ public class Fakers {
     }
 
     //random-past-date(atmost,unit,refdate)
-    public static class DatePast implements ISimpleFunctionHandler {
+    public static class FnDatePast implements ISimpleFunctionHandler {
 
         @Override
         public String getName() {
@@ -156,7 +156,7 @@ public class Fakers {
 
     }
 
-    public static class RandomBoolean implements ISimpleFunctionHandler {
+    public static class FnBoolean implements ISimpleFunctionHandler {
 
         @Override
         public Object evalImpl(Object[] args, EvaluationContext ec) {
@@ -174,12 +174,12 @@ public class Fakers {
 
         EvaluationContext ec = formDef.getEvaluationContext();
 
-        Arrays.asList(new Fake(),
-                      new Number(),
-                      new DateBetween(),
-                      new DateFuture(),
-                      new RandomBoolean(),
-                      new DatePast()).forEach(ec::addFunctionHandler);
+        Arrays.asList(new FnFake(),
+                      new FnNumber(),
+                      new FnDateBetween(),
+                      new FnDateFuture(),
+                      new FnBoolean(),
+                      new FnDatePast()).forEach(ec::addFunctionHandler);
     }
 
     private static long _long(Object[] args, int i) {

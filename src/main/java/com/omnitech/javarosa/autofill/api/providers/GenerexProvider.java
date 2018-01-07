@@ -38,7 +38,7 @@ public class GenerexProvider {
 
     }
 
-    private int getDataType(FormDef fec, IFormElement prompt, FormIndex index) {
+    private static int getDataType(FormDef fec, IFormElement prompt, FormIndex index) {
 
         TreeElement treeElement = fec.getMainInstance()
                                      .resolveReference(FormUtils.getSafeXpathReference(prompt, index.getReference()));

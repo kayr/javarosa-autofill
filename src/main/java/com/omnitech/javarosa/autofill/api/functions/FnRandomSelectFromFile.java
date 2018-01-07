@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RandomSelectFromFile implements ISimpleFunctionHandler {
+public class FnRandomSelectFromFile implements ISimpleFunctionHandler {
 
     public static final String AUTO_FILL_BASE_PATH = "autofill.base.path";
 

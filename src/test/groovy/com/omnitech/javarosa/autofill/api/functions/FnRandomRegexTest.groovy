@@ -6,7 +6,7 @@ import org.junit.Test
 
 import static groovy.test.GroovyAssert.shouldFailWithCause
 
-class RandomRegexTest implements SmallFormEvaluator {
+class FnRandomRegexTest implements SmallFormEvaluator {
 
     @Test
     void eval() {

@@ -26,7 +26,7 @@ class FakerTests extends GroovyTestCase implements SmallFormEvaluator {
         def ec = autoFiller.getFormDef().evaluationContext
 
         shouldFailWithCause(XPathTypeMismatchException) {
-            new Fakers.Number().eval([1_000_000_000.0, ""] as Object[], ec)
+            new Fakers.FnNumber().eval([1_000_000_000.0, ""] as Object[], ec)
         }
 
     }

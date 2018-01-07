@@ -65,12 +65,12 @@ public class FormAutoFill {
         fec = new FormEntryController(model);
         fec.jumpToIndex(FormIndex.createBeginningOfFormIndex());
 
-        initAnswerProviders();
+        registerAnswerProviders();
 
-        initFunctionHandlers();
+        registerFunctionHandlers();
     }
 
-    private void initAnswerProviders() {
+    private void registerAnswerProviders() {
         //primitives
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_TEXT, TextProvider.class);
         addProvider(Constants.CONTROL_INPUT, Constants.DATATYPE_INTEGER, NumberProvider.class);
@@ -99,14 +99,14 @@ public class FormAutoFill {
 
     }
 
-    private void initFunctionHandlers() {
+    private void registerFunctionHandlers() {
         EvaluationContext ec = formDef.getEvaluationContext();
 
         Arrays.asList(
-                new Variable(),
-                new RandomRegex(),
-                new EvalAll(),
-                new RandomSelectFromFile()).forEach(ec::addFunctionHandler);
+                new FnValue(),
+                new FnRandomRegex(),
+                new FnEvalAll(),
+                new FnRandomSelectFromFile()).forEach(ec::addFunctionHandler);
 
         Fakers.registerAllHandlers(formDef);
     }

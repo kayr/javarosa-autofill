@@ -6,7 +6,7 @@ import org.junit.Test
 
 import java.nio.file.NoSuchFileException
 
-class RandomSelectFromFileTest implements SmallFormEvaluator {
+class FnRandomSelectFromFileTest implements SmallFormEvaluator {
 
     @Test
     void testRandomFromFile() {
@@ -31,11 +31,11 @@ class RandomSelectFromFileTest implements SmallFormEvaluator {
     }
 
     private static String setAutoFillBasePath(String bas) {
-        return System.setProperty(RandomSelectFromFile.AUTO_FILL_BASE_PATH, bas)
+        return System.setProperty(FnRandomSelectFromFile.AUTO_FILL_BASE_PATH, bas)
     }
 
     private static void resetBasePath() {
-        System.properties.remove(RandomSelectFromFile.AUTO_FILL_BASE_PATH)
+        System.properties.remove(FnRandomSelectFromFile.AUTO_FILL_BASE_PATH)
     }
 
 

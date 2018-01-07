@@ -4,7 +4,7 @@ import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.xpath.XPathArityException;
 import org.javarosa.xpath.expr.XPathFuncExpr;
 
-public class Variable implements ISimpleFunctionHandler {
+public class FnValue implements ISimpleFunctionHandler {
     @Override
     public Object evalImpl(Object[] args, EvaluationContext ec)  {
 

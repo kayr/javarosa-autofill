@@ -3,7 +3,7 @@ package com.omnitech.javarosa.autofill.api.functions
 import com.omnitech.javarosa.autofill.api.SmallFormEvaluator
 import org.junit.Test
 
-class VariableTest implements SmallFormEvaluator {
+class FnValueTest implements SmallFormEvaluator {
 
     @Test
     void testSettingAndRetrieving() {
