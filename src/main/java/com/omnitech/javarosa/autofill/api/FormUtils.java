@@ -1,23 +1,18 @@
 package com.omnitech.javarosa.autofill.api;
 
 import com.github.javafaker.Faker;
-import org.javarosa.core.model.*;
-import org.javarosa.core.model.condition.EvaluationContext;
-import org.javarosa.core.model.data.*;
+import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.GroupDef;
+import org.javarosa.core.model.IDataReference;
+import org.javarosa.core.model.IFormElement;
 import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.model.xform.XPathReference;
 import org.javarosa.xform.util.XFormUtils;
-import org.javarosa.xpath.XPathParseTool;
-import org.javarosa.xpath.expr.XPathExpression;
-import org.javarosa.xpath.expr.XPathFuncExpr;
-import org.javarosa.xpath.parser.XPathSyntaxException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,9 +22,6 @@ import java.util.stream.IntStream;
 public class FormUtils {
 
     public static final Faker faker = new Faker();
-
-    private static final List<Boolean> booleans = duplicate(Arrays.asList(true, false), 5);
-
 
     public static String resolveVariable(IFormElement iFormElement) {
         Object        bind      = iFormElement.getBind().getReference();
@@ -49,7 +41,7 @@ public class FormUtils {
     }
 
     public static boolean randomBoolean() {
-        return getRandom(booleans);
+        return faker.bool().bool();
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -73,13 +65,6 @@ public class FormUtils {
         return choices.stream()
                       .filter(c -> randomBoolean())
                       .collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public static <T> List<T> duplicate(List<T> items, int times) {
-        List<T> dupes = new ArrayList<>(items.size() * times);
-        IntStream.rangeClosed(0, times).forEach(i -> dupes.addAll(items));
-        return dupes;
     }
 
     @SuppressWarnings("WeakerAccess")
