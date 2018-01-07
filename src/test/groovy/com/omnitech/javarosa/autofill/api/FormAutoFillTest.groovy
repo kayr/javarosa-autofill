@@ -122,21 +122,20 @@ class FormAutoFillTest implements LogConfig {
 
     }
 
+
     @Test
-    void testFixedRepeat() {
+    void testFixedRepeatReal() {
 
         def f = '''
                     @bindxpath generex
+                    @id f
                     ## f
                     
-                    //@bind:generex 'tt'
                     One 
                     
-                    //@bind:generex $one
                     repeat { Details
                     
-                                        @bind:generex 'tt'
-
+                        @bind:generex 'tt'
                         R1
                         
                         R2
@@ -147,23 +146,22 @@ class FormAutoFillTest implements LogConfig {
                            .autoFill()
                            .getSubmissionXml()
 
-        println(formatXML(xml))
+        def node = new XmlParser().parseText(xml)
+
+        assert node.details.r1
+        assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
     }
 
     @Test
     void testFixedRepeatin() {
 
-//        FormUtils.faker.bool().bool()
-
-
         def f = '''
                     @bindxpath generex
                     ## f
                     
-                    //@bind:generex 'tt'
                     One 
                     
-                   // @bind:generex $one
+                    @bind:generex count($details) < 3
                     repeat { Details
                     
                         @bind:generex 'tt'
@@ -171,7 +169,7 @@ class FormAutoFillTest implements LogConfig {
                         
                         R2
                         
-                         @bind:generex random-boolean()
+                        @bind:generex random-boolean()
                         repeat{ Details 3
                              @bind:generex 'r22'
                              R11
@@ -185,6 +183,14 @@ class FormAutoFillTest implements LogConfig {
                            .getSubmissionXml()
 
         println(formatXML(xml))
+
+        def node = new XmlParser().parseText(xml)
+        assert node.details.r1
+        assert node.details.size() == 3
+        assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
+        assert node.details.details_3.r11.every { !it.text().isEmpty() && it.text() == 'r22' }
+
+
     }
 
 //    @Test

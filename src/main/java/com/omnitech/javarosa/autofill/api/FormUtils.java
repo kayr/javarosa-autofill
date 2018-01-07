@@ -3,7 +3,7 @@ package com.omnitech.javarosa.autofill.api;
 import com.github.javafaker.Faker;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
-import org.javarosa.core.model.data.UncastData;
+import org.javarosa.core.model.data.*;
 import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.model.xform.XPathReference;
@@ -89,24 +89,14 @@ public class FormUtils {
     }
 
 
-    public static UncastData evalXpathString(EvaluationContext ec, String xpath) throws XPathSyntaxException {
-        XPathExpression xPathExpression = XPathParseTool.parseXPath(xpath);
-
-        Object eval = xPathExpression.eval(ec);
-        if (eval instanceof Number) {
-            eval = ((Number) eval).doubleValue();//XPathFuncExpr.toString() Only loves doubles... so we convert all numbers to doubles
-        }
-        return new UncastData(XPathFuncExpr.toString(eval));
-    }
-
     public static Optional<String> getBindAttribute(FormDef formDef, IDataReference element, String attribute) {
         Optional<TreeElement> treeElement1 = getTreeElement(formDef, element);
         return treeElement1.map(te -> te.getBindAttributeValue(null, attribute));
 
     }
 
-    public static XPathReference getSafeXpathReference(IFormElement formElement, FormIndex index) {
-        XPathReference reference = new XPathReference(index.getReference());
+    public static XPathReference getSafeXpathReference(IFormElement formElement, TreeReference index) {
+        XPathReference reference = new XPathReference(index);
 
         if (formElement instanceof GroupDef) {
             GroupDef groupDef = (GroupDef) formElement;

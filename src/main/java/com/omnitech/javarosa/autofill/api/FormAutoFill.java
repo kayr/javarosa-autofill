@@ -6,7 +6,6 @@ import org.javarosa.core.io.Std;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.data.IAnswerData;
-import org.javarosa.core.model.data.UncastData;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
@@ -41,7 +40,7 @@ public class FormAutoFill {
 
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
     private Map<String, String>                      genExpressionMap  = new HashMap<>();
-    private GenerexProvider                          generexProvider   = new GenerexProvider(genExpressionMap);
+    private GenerexProvider                          generexProvider   = new GenerexProvider();
 
 
     @SuppressWarnings("WeakerAccess")
@@ -183,8 +182,8 @@ public class FormAutoFill {
 
         boolean createNewRepeat = generex
                 .map(gx -> {
-                    UncastData data = generexProvider.acquire(formDef, formElement, generex.get());
-                    return "1".equals(data.getValue());
+                    IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
+                    return Boolean.TRUE.equals(data.getValue());
                 })
                 .orElseGet(FormUtils::randomBoolean);
 
@@ -209,7 +208,7 @@ public class FormAutoFill {
         Optional<String> generex = hasGenerex(questionPrompt.getQuestion());
 
         IAnswerData answer = generex
-                .map(gx -> (IAnswerData) generexProvider.acquire(formDef, questionPrompt.getQuestion(), gx))
+                .map(gx -> generexProvider.acquire(formDef, questionPrompt.getQuestion(), currentIndex(), gx))
                 .orElseGet(() -> resolveProvider(questionPrompt).acquire(fec, questionPrompt));
 
 
@@ -235,7 +234,7 @@ public class FormAutoFill {
         }
 
         FormIndex      index     = currentIndex();
-        XPathReference reference = FormUtils.getSafeXpathReference(formElement, index);
+        XPathReference reference = FormUtils.getSafeXpathReference(formElement, index.getReference());
 
 
         return FormUtils.getBindAttribute(formDef, reference, "generex");

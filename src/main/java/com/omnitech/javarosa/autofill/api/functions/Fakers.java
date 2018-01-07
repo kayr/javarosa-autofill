@@ -240,7 +240,7 @@ public class Fakers {
 
         @Override
         public Object evalImpl(Object[] args, EvaluationContext ec) {
-            return faker.bool().bool() ? "1" : "0";
+            return faker.bool().bool();
         }
 
         @Override
