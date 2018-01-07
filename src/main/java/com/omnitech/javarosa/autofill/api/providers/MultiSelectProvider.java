@@ -1,6 +1,5 @@
 package com.omnitech.javarosa.autofill.api.providers;
 
-import com.omnitech.javarosa.autofill.api.IAnswerProvider;
 import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import org.javarosa.core.model.SelectChoice;
 import org.javarosa.core.model.data.IAnswerData;

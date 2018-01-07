@@ -1,7 +1,6 @@
 package com.omnitech.javarosa.autofill.api.providers;
 
 import com.omnitech.javarosa.autofill.api.AutoFillException;
-import com.omnitech.javarosa.autofill.api.IAnswerProvider;
 import com.omnitech.javarosa.autofill.api.IOUtils;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.StringData;

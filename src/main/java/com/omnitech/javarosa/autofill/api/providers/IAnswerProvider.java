@@ -1,4 +1,4 @@
-package com.omnitech.javarosa.autofill.api;
+package com.omnitech.javarosa.autofill.api.providers;
 
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.form.api.FormEntryController;

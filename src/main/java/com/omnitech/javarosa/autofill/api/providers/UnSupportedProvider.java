@@ -1,6 +1,5 @@
 package com.omnitech.javarosa.autofill.api.providers;
 
-import com.omnitech.javarosa.autofill.api.IAnswerProvider;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.data.UncastData;
 import org.javarosa.form.api.FormEntryController;

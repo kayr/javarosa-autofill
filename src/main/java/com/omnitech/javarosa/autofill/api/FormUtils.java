@@ -1,7 +1,5 @@
 package com.omnitech.javarosa.autofill.api;
 
-import com.github.javafaker.Faker;
-import com.omnitech.javarosa.autofill.api.functions.Fakers;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.GroupDef;
 import org.javarosa.core.model.IDataReference;
@@ -14,9 +12,7 @@ import org.javarosa.xform.util.XFormUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
