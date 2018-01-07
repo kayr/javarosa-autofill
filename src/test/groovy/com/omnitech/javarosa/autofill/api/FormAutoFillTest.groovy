@@ -187,6 +187,7 @@ class FormAutoFillTest implements LogConfig {
         assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
         assert node.details.details_3.r11.every { !it.text().isEmpty() && it.text() == 'r22' }
     }
+
     @Test
     void testSettingValueInMemory() {
 
@@ -194,34 +195,35 @@ class FormAutoFillTest implements LogConfig {
                     @bindxpath generex
                     ## f
                     
-                    One 
                     
-                    @bind:generex count($details) < 3
-                    repeat { Details
+                    @id pr
+                    repeat{ Patient Records
                     
-                        @bind:generex 'tt'
-                        R1
+                      @bind:generex select-cell(val('patient-record',random-select-from-file('src/test/resources/data/patientdata.csv')),0)
+                      Name
+                      
+                      @bind:generex select-cell(val('patient-record'),1)
+                      ID
+
+                      @bind:generex select-cell(val('patient-record'),2)                      
+                      Disease
                         
-                        R2
-                        
-                        @bind:generex random-boolean()
-                        repeat{ Details 3
-                             @bind:generex 'r22'
-                             R11
-                        
-                        }
                     
-                    } '''
+                    } 
+                  
+                   
+                    '''
 
         def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
                            .autoFill()
                            .getSubmissionXml()
 
         def node = new XmlParser().parseText(xml)
-        assert node.details.r1
-        assert node.details.size() == 3
-        assert node.details.r1.every { !it.text().isEmpty() && it.text() == 'tt' }
-        assert node.details.details_3.r11.every { !it.text().isEmpty() && it.text() == 'r22' }
+
+        node.pr.every {
+            assert it.text() in ['John Johons1Malaria', 'Richard Galix2Polio', 'Galiwango3Cold']
+            assert it.'*'.every { !it.text().isEmpty() }
+        }
     }
 
 //    @Test
