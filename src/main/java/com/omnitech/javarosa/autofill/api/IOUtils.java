@@ -1,7 +1,14 @@
 package com.omnitech.javarosa.autofill.api;
 
+import com.omnitech.javarosa.autofill.api.functions.FnRandomSelectFromFile;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Methods copied from groovy
@@ -14,7 +21,7 @@ public class IOUtils {
         ByteArrayOutputStream answer = new ByteArrayOutputStream();
         // reading the content of the file within a byte buffer
         byte[] byteBuffer = new byte[8192];
-        int nbByteRead /* = 0*/;
+        int    nbByteRead /* = 0*/;
         try {
             while ((nbByteRead = is.read(byteBuffer)) != -1) {
                 // appends buffer
@@ -40,7 +47,6 @@ public class IOUtils {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         return getText(reader);
     }
-
 
 
     /**
@@ -130,5 +136,26 @@ public class IOUtils {
                 /* ignore */
             }
         }
+    }
+
+    public static List<String> loadFile(String filePath) throws IOException {
+        String basePathEnv  = System.getenv(FnRandomSelectFromFile.AUTO_FILL_BASE_PATH);
+        String basePathProp = System.getProperty(FnRandomSelectFromFile.AUTO_FILL_BASE_PATH);
+        String basePath     = basePathEnv != null ? basePathEnv : basePathProp;
+
+        Path path = basePath != null ? Paths.get(basePath, filePath) : Paths.get(filePath);
+        return Files.lines(path).collect(Collectors.toList());
+    }
+
+//    @SuppressWarnings({"UnusedReturnValue", "unchecked"})
+//    public static <T extends Throwable> T sneakyThrow(Throwable t) throws T {
+//        throw (T) t;
+//    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable, R> R sneakyThrow(Throwable t) throws T {
+
+        throw (T) t; // ( ͡° ͜ʖ ͡°)
+
     }
 }

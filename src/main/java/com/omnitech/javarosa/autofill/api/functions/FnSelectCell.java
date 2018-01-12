@@ -25,7 +25,7 @@ public class FnSelectCell implements ISimpleFunctionHandler {
 
         String[] tokenArray = csvInstance.getTokenArray();
 
-        return tokenArray[Fakers._int(args, 1)];
+        return tokenArray[FunctionUtils._int(args, 1)];
     }
 
 

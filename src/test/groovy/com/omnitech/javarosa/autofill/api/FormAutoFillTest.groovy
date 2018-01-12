@@ -12,7 +12,7 @@ import static TestUtils.resourceText
 class FormAutoFillTest implements LogConfig {
 
     @Test
-    void textParsing() {
+    void testAutoFillSimpleForm() {
 
         def form = Converter.markup2Form(resourceText('/simpleform.mkp'))
 
@@ -123,7 +123,7 @@ class FormAutoFillTest implements LogConfig {
 
 
     @Test
-    void testFixedRepeatReal() {
+    void testGenerexInRepeat() {
 
         def f = '''
                     @bindxpath generex
@@ -152,7 +152,7 @@ class FormAutoFillTest implements LogConfig {
     }
 
     @Test
-    void testFixedRepeatin() {
+    void testFixedRepeatSize() {
 
         def f = '''
                     @bindxpath generex

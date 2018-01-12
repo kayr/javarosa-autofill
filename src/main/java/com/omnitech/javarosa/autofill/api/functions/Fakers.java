@@ -73,12 +73,12 @@ public class Fakers {
                 case 0:
                     return faker.number().randomNumber();
                 case 1:
-                    return faker.number().numberBetween(_long(args, 0), Integer.MAX_VALUE);
+                    return faker.number().numberBetween(FunctionUtils._long(args, 0), Integer.MAX_VALUE);
                 case 2:
-                    return faker.number().numberBetween(_long(args, 0), _long(args, 1));
+                    return faker.number().numberBetween(FunctionUtils._long(args, 0), FunctionUtils._long(args, 1));
                 case 3:
                 default:
-                    return faker.number().randomDouble(_int(args, 0), _long(args, 1), _long(args, 2));
+                    return faker.number().randomDouble(FunctionUtils._int(args, 0), FunctionUtils._long(args, 1), FunctionUtils._long(args, 2));
             }
         }
 
@@ -123,7 +123,7 @@ public class Fakers {
             }
 
             Date     refDate = args.length == 2 ? new Date() : parseDate(args[2]);
-            int      atMost  = _int(args, 0);
+            int      atMost  = FunctionUtils._int(args, 0);
             TimeUnit unit    = toTimeUnit(XPathFuncExpr.toString(args[1]));
 
             return faker.date().future(atMost, unit, refDate);
@@ -148,7 +148,7 @@ public class Fakers {
             }
 
             Date     refDate = args.length == 2 ? new Date() : parseDate(args[2]);
-            int      atMost  = _int(args, 0);
+            int      atMost  = FunctionUtils._int(args, 0);
             TimeUnit unit    = toTimeUnit(XPathFuncExpr.toString(args[1]));
 
             return faker.date().past(atMost, unit, refDate);
@@ -181,14 +181,6 @@ public class Fakers {
                       new FnDateFuture(),
                       new FnBoolean(),
                       new FnDatePast()).forEach(ec::addFunctionHandler);
-    }
-
-    static long _long(Object[] args, int i) {
-        return ((java.lang.Number) args[i]).longValue();
-    }
-
-    static int _int(Object[] args, int i) {
-        return ((java.lang.Number) args[i]).intValue();
     }
 
     private static java.util.Date parseDate(Object object) {
