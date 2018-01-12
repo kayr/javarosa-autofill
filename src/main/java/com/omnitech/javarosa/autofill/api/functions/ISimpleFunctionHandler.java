@@ -29,7 +29,7 @@ public interface ISimpleFunctionHandler extends IFunctionHandler {
         try {
             return evalImpl(args, ec);
         } catch (Throwable x) {
-            throw new AutoFillException("Error evaluating function[" + getName() + "()]: " + x.getMessage(), x);
+            throw new AutoFillException("Error evaluating function[" + getName() + "()]: " + x.getClass().getSimpleName() + ":" + x.getMessage(), x);
         }
     }
 
