@@ -28,12 +28,10 @@ public class Fakers {
         }
 
         @Override
-        public Object evalImpl(Object[] args, EvaluationContext ec) {
-            try {
+        public Object evalImpl(Object[] args, EvaluationContext ec) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
                 return resolveChainCall(args);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new AutoFillException(e);
-            }
+
         }
 
         private static Object resolveChainCall(Object[] methodNames) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -43,7 +41,6 @@ public class Fakers {
             while (!stack.isEmpty()) {
                 String methodName = XPathFuncExpr.toString(stack.pop());
                 Method method     = context.getClass().getMethod(methodName);
-                //noinspection JavaReflectionInvocation
                 context = method.invoke(context);
             }
 
