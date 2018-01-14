@@ -78,6 +78,12 @@ class FunctionsTest implements SmallFormEvaluator {
         resetBasePath()
     }
 
+    @Test
+    void testEvalAll() {
+        assert evalXpath('eval-all(2,3,8,9.8)') == 9.8
+    }
+
+
     private static String setAutoFillBasePath(String bas) {
         return System.setProperty(FnRandomSelectFromFile.AUTO_FILL_BASE_PATH, bas)
     }
