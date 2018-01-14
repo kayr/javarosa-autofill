@@ -2,6 +2,7 @@ package com.omnitech.javarosa.autofill.api.providers;
 
 import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.FormUtils;
+import com.omnitech.javarosa.autofill.api.IOUtils;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.condition.Recalculate;
@@ -11,7 +12,9 @@ import org.javarosa.xpath.XPathParseTool;
 import org.javarosa.xpath.expr.XPathExpression;
 import org.javarosa.xpath.parser.XPathSyntaxException;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GenerexProvider {
 
@@ -52,7 +55,7 @@ public class GenerexProvider {
 
     private static Object evalXpathString(EvaluationContext ec, String xpath) throws XPathSyntaxException {
 
-        XPathExpression xPathExpression = XPathParseTool.parseXPath(xpath);
+        XPathExpression xPathExpression = parseXpath(xpath);
 
         Object eval = xPathExpression.eval(ec);
 
@@ -61,6 +64,20 @@ public class GenerexProvider {
         }
 
         return eval;
+    }
+
+    private static Map<String, XPathExpression> xpathParseCache = new ConcurrentHashMap<>();
+
+    private static XPathExpression parseXpath(String xpath) throws XPathSyntaxException {
+
+        return xpathParseCache.computeIfAbsent(xpath, (xp) -> {
+            try {
+                return XPathParseTool.parseXPath(xp);
+            } catch (XPathSyntaxException e) {
+                return IOUtils.sneakyThrow(e);
+            }
+        });
+
     }
 
 }
