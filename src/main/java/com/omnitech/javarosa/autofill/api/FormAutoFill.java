@@ -107,7 +107,8 @@ public class FormAutoFill {
                 new FnSelectCell(),
                 new FnRandomRegex(),
                 new FnEvalAll(),
-                new FnRandomSelectFromFile()).forEach(ec::addFunctionHandler);
+                new FnRandomSelectFromFile())
+              .forEach(ec::addFunctionHandler);
 
         ListFunctions.registerAll(formDef);
 

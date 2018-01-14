@@ -30,15 +30,15 @@ public class Fakers {
         @Override
         public Object evalImpl(Object[] args, EvaluationContext ec) {
             try {
-                return resolveValue(args);
+                return resolveChainCall(args);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 throw new AutoFillException(e);
             }
         }
 
-        private Object resolveValue(Object[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        private static Object resolveChainCall(Object[] methodNames) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             Deque<Object> stack = new LinkedList<>();
-            stack.addAll(Arrays.asList(args));
+            stack.addAll(Arrays.asList(methodNames));
             Object context = faker;
             while (!stack.isEmpty()) {
                 String methodName = XPathFuncExpr.toString(stack.pop());
