@@ -258,6 +258,16 @@ public class FormAutoFill {
         return iAnswerProvider;
     }
 
+    public FormAutoFill addGenerex(String id, String generex) {
+        genExpressionMap.put(id, generex);
+        return this;
+    }
+
+    public FormAutoFill addGenerex(Map<String, String> generexMap) {
+        genExpressionMap.putAll(generexMap);
+        return this;
+    }
+
     private FormIndex currentIndex() {
         return model.getFormIndex();
     }

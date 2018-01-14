@@ -226,6 +226,37 @@ class FormAutoFillTest implements LogConfig {
         }
     }
 
+    @Test
+    void testExternalGenerex() {
+        def m = """
+                ## F
+                
+                One 
+                
+                Two
+                
+                repeat{ Repeat
+                    Three
+                    
+                   
+                    Four
+                }
+                
+"""
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(m))
+                           .addGenerex('one', "'ONE'")
+                           .addGenerex('four', "'FOUR'")
+                           .autoFill()
+                           .getSubmissionXml()
+
+        def node = new XmlSlurper().parseText(xml)
+
+        assert node.one.text() == 'ONE'
+        assert node.repeat.four[0].text() == 'FOUR'
+
+    }
+
 //    @Test
 //    void testSelectMulti() {
 //        def items = [1, 2]
