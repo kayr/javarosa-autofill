@@ -4,6 +4,7 @@ import com.omnitech.javarosa.autofill.api.AutoFillException;
 import com.omnitech.javarosa.autofill.api.FormAutoFill;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -12,13 +13,21 @@ public class DataGenerator {
 
     private static Logger LOG = Logger.getLogger(DataGenerator.class.getName());
 
-    private String formDefXMl;
-    private String username;
-    private String password;
-    private String serverUrl;
-    private int    numberOfItems;
+    private String                      formDefXMl;
+    private String                      username;
+    private String                      password;
+    private String                      serverUrl;
+    private int                         numberOfItems;
+    private BiConsumer<Integer, String> dataListener;
+    private Map<String, String>         generexMap;
+
+    public DataGenerator setGenerexMap(Map<String, String> generexMap) {
+        this.generexMap = generexMap;
+        return this;
+    }
+
     private boolean initilized = false;
-    BiConsumer<Integer, String> dataListener;
+
 
     public DataGenerator setDataListener(BiConsumer<Integer, String> dataListener) {
         this.dataListener = dataListener;
@@ -40,6 +49,9 @@ public class DataGenerator {
 
         FormAutoFill formAutoFill = FormAutoFill.fromXml(formDefXMl);
 
+        if (generexMap != null) {
+            formAutoFill.addGenerex(generexMap);
+        }
 
         String submissionXml = formAutoFill.autoFill().getSubmissionXml();
 

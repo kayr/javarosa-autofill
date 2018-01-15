@@ -5,14 +5,11 @@ import com.omnitech.javarosa.autofill.api.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class Console {
 
@@ -21,7 +18,8 @@ public class Console {
             SERVER                       = "server",
             FORM_DEF                     = "form",
             NUMBER_OF_ITEMS              = "numberOfItems",
-            DRY_RUN                      = "dryRun";
+            DRY_RUN                      = "dryRun",
+            GENEREX_FILE                 = "generex";
 
     private static final List<String> ALL_PROPERTIES = Arrays.asList(USERNAME, PASSWORD, SERVER, FORM_DEF, NUMBER_OF_ITEMS);
 
@@ -33,12 +31,12 @@ public class Console {
         }
 
 
-        Path path = Paths.get(args[0]);
+        String filePath = args[0];
+        Path   path     = Paths.get(filePath);
 
-        Properties properties = new Properties();
-        properties.load(Files.newInputStream(path));
+        Properties properties = getProperties(path);
 
-        assertPropertiesExist(properties,ALL_PROPERTIES);
+        assertPropertiesExist(properties, ALL_PROPERTIES);
 
         DataGenerator dataGenerator = new DataGenerator().setServerUrl(properties.getProperty(SERVER))
                                                          .setUsername(properties.getProperty(USERNAME))
@@ -48,9 +46,29 @@ public class Console {
                                                          .setDryRun(properties.getOrDefault(DRY_RUN, "true").equals("true"))
                                                          .setDataListener((i, s) -> saveData(i, s, path));
 
+        String generexFile = properties.getProperty(GENEREX_FILE);
+
+        if (generexFile != null) {
+            Map<String, String> propes = new HashMap<>();
+
+            Path generexPath = Paths.get(generexFile);
+
+            Properties generexProperties = getProperties(generexPath);
+            generexProperties.keySet().forEach(s -> propes.put(s.toString(), generexProperties.getProperty(s.toString())));
+            dataGenerator.setGenerexMap(propes);
+        }
+
+
         dataGenerator.start();
 
 
+    }
+
+    private static Properties getProperties(Path path) throws IOException {
+        Properties properties;
+        properties = new Properties();
+        properties.load(Files.newInputStream(path));
+        return properties;
     }
 
     static private void saveData(Integer iteration, String data, Path path) {
@@ -65,7 +83,7 @@ public class Console {
         Path dataPath = submitDataPath.resolve(StringUtils.leftPad(iteration.toString(), 4, '0') + ".xml");
 
         try {
-            Files.write(dataPath, data.getBytes(Charset.defaultCharset()));
+            Files.write(dataPath, data.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new AutoFillException(e);
         }
@@ -74,7 +92,7 @@ public class Console {
     }
 
 
-    private static void assertPropertiesExist(Properties properties,List<String> propertyList) {
+    private static void assertPropertiesExist(Properties properties, List<String> propertyList) {
         propertyList.forEach(p -> {
             if (!properties.containsKey(p)) throw new RuntimeException("Property Not Found: " + p);
         });
