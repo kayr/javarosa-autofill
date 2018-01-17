@@ -14,7 +14,7 @@ import java.util.Base64;
 public class VideoProvider implements IAnswerProvider {
     @Override
     public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/com/omnitech/javarosa/autofill/resouces/SampleVideo_720x480_1mb.mp4");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/com/github/kayr/javarosa/autofill/resouces/SampleVideo_720x480_1mb.mp4");
 
         Base64.Encoder encoder = Base64.getEncoder();
 

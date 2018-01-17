@@ -25,14 +25,22 @@ public class Console {
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
-            System.out.println("Please Provide Config Properties File With the following properties:");
-            System.out.println(ALL_PROPERTIES);
-            return;
+            startWizard();
+        } else if (args.length == 1) {
+            processPropertiesFile(args[0]);
         }
 
 
-        String filePath = args[0];
-        Path   path     = Paths.get(filePath);
+    }
+
+
+    private static void startWizard() {
+
+        new WizardPlayer().start();
+    }
+
+    private static void processPropertiesFile(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
 
         Properties properties = getProperties(path);
 
@@ -60,8 +68,6 @@ public class Console {
 
 
         dataGenerator.start();
-
-
     }
 
     private static Properties getProperties(Path path) throws IOException {
@@ -71,7 +77,7 @@ public class Console {
         return properties;
     }
 
-    static private void saveData(Integer iteration, String data, Path path) {
+    public static void saveData(Integer iteration, String data, Path path) {
         Path submitDataPath = path.resolveSibling("__submit_data");
 
         if (!submitDataPath.toFile().exists()) {

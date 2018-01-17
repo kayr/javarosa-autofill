@@ -14,7 +14,7 @@ import java.util.Base64;
 public class ImageProvider implements IAnswerProvider {
     @Override
     public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
-        InputStream resourceAsStream = getClass().getResourceAsStream("/com/omnitech/javarosa/autofill/resouces/SampleJPGImage_50kbmb.jpg");
+        InputStream resourceAsStream = getClass().getResourceAsStream("/com/github/kayr/javarosa/autofill/resouces/SampleJPGImage_50kbmb.jpg");
 
         Base64.Encoder encoder = Base64.getEncoder();
 

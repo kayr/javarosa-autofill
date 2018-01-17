@@ -18,6 +18,8 @@ dependencies {
 
     //SUBMISSION API
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.5.0'
+    compile 'org.jooq:joox-java-6:1.6.0'
+    compile 'org.beryx:text-io:3.1.3'
 
 
     testCompile group: 'junit', name: 'junit', version: '4.12'

@@ -59,9 +59,7 @@ public class DataGenerator {
             dataListener.accept(iteration, submissionXml);
         }
 
-        if (dryRun) {
-            System.out.println("Generated: " + submissionXml);
-        } else {
+        if (!dryRun) {
             try {
                 submitter.submit(submissionXml);
             } catch (IOException e) {

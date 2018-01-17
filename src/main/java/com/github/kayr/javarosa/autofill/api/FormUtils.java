@@ -12,6 +12,8 @@ import org.javarosa.xform.util.XFormUtils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -71,5 +73,18 @@ public class FormUtils {
             }
         }
         return reference;
+    }
+
+    public static List<IFormElement> getChildren(IFormElement element) {
+        List<IFormElement> elements = new ArrayList<>();
+        element.getChildren().forEach(c -> {
+            if (!(c instanceof FormDef)) elements.add(c);
+            List<IFormElement> children = c.getChildren();
+            if (children != null && !children.isEmpty()) {
+                elements.addAll(getChildren(c));
+            }
+        });
+
+        return elements;
     }
 }
