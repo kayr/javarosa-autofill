@@ -1,5 +1,6 @@
 package com.github.kayr.javarosa.autofill.submission;
 
+import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import okhttp3.*;
 import org.joox.Match;
 import org.w3c.dom.Document;
@@ -86,7 +87,12 @@ public class JavarosaSubmitter {
 
         Response response = httpClient.newCall(build).execute();
 
+        if (!response.isSuccessful()) {
+            throw new AutoFillException("HTTP Call Failed: "+response.toString());
+        }
+
         String xmlResponse = response.body().string();
+
 
         return parseXform(xmlResponse);
     }

@@ -27,15 +27,15 @@ public class WizardPlayer {
     private TextTerminal term   = textIO.getTextTerminal();
 
     private JavarosaSubmitter submitter = new JavarosaSubmitter();
+    private String            serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
+    private String            username  = "admin";
+    private String            password  = "admin";
 
     private List<JavarosaSubmitter.XForm> xForms;
     private JavarosaSubmitter.XForm       xForm;
     private Path                          generexPath;
     private Integer                       numberOfRecords;
     private Boolean                       dryRun;
-    private String                        serverUrl;
-    private String                        username;
-    private String                        password;
 
 
     public void start() {
@@ -81,18 +81,22 @@ public class WizardPlayer {
 
 
             serverUrl = textIO.newStringInputReader()
-                              .withDefaultValue(submitter.getServerUrl())
+                              .withDefaultValue(serverUrl)
                               .read("URL");
 
             username = textIO.newStringInputReader()
-                             .withDefaultValue(submitter.getUsername())
+                             .withDefaultValue(username)
                              .read("UserName");
 
             password = textIO.newStringInputReader()
-                             .withDefaultValue(submitter.getPassword())
+                             .withInputMasking(true)
+                             .withDefaultValue(password)
                              .read("Password");
 
-            submitter.reInit();
+            submitter.setUsername(username)
+                     .setPassword(password)
+                     .setServerUrl(serverUrl)
+                     .reInit();
 
             try {
                 xForms = submitter.formList();
