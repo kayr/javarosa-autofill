@@ -51,8 +51,8 @@ public class FormUtils {
 
     }
 
-    public static XPathReference getSafeXpathReference(IFormElement formElement, TreeReference index) {
-        XPathReference reference = new XPathReference(index);
+    public static XPathReference getSafeXpathReference(IFormElement formElement, TreeReference pTreeRefrence) {
+        XPathReference reference = new XPathReference(pTreeRefrence);
 
         if (formElement instanceof GroupDef) {
             GroupDef groupDef = (GroupDef) formElement;

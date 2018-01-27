@@ -3,11 +3,14 @@ package com.github.kayr.javarosa.autofill.submission;
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.api.IOUtils;
+import org.beryx.textio.StringInputReader;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
 import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.IDataReference;
 import org.javarosa.core.model.IFormElement;
+import org.javarosa.core.model.instance.TreeReference;
 
 import java.awt.*;
 import java.io.IOException;
@@ -19,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class WizardPlayer {
@@ -214,23 +218,38 @@ public class WizardPlayer {
         submitter.reInit();
     }
 
+    static class Val<T> {
+        T v;
+
+        Val(T t) {
+            this.v = t;
+        }
+    }
 
     private void selectGenerexFile() {
-        String filePath = textIO.newStringInputReader()
-                                .withValueChecker((val, itemName) -> {
-                                    if (!Paths.get(appendExtension(val)).toFile().exists()) {
-                                        return Collections.singletonList("File Does Not Exist");
-                                    }
+        String defaultValue = FileUtil.cleanFileName(xForm.getName_Id());
 
-                                    return null;
-                                })
-                                .withDefaultValue(FileNameCleaner.cleanFileName(xForm.getName_Id()))
-                                .read("Enter File Path");
+        StringInputReader reader = textIO.newStringInputReader()
+                                         .withValueChecker((val, itemName) -> {
+                                             if (!Paths.get(appendExtension(val)).toFile().exists()) {
+                                                 return Collections.singletonList("File Does Not Exist");
+                                             }
+                                             return null;
+                                         });
+        if ( Files.exists(Paths.get(appendExtension(defaultValue)))) {
+            reader.withDefaultValue(defaultValue);
+        }
+
+        String filePath = reader.read("Enter File Path");
 
         this.generexPath = Paths.get(appendExtension(filePath));
     }
 
     private void createGenerexFile() {
+
+        String defaultValue = FileUtil.alternativePath(FileUtil.cleanFileName(xForm.getName_Id()), ".generex.properties");
+
+
         String filePath = textIO.newStringInputReader()
                                 .withValueChecker((val, itemName) -> {
                                     if (Paths.get(appendExtension(val)).toFile().exists()) {
@@ -238,7 +257,7 @@ public class WizardPlayer {
                                     }
                                     return null;
                                 })
-                                .withDefaultValue(FileNameCleaner.cleanFileName(xForm.getName_Id()))
+                                .withDefaultValue(defaultValue)
                                 .read("Enter File Path/Name");
 
         try {
@@ -267,11 +286,7 @@ public class WizardPlayer {
     }
 
     private String appendExtension(String filePath) {
-        if (filePath.endsWith(".generex.properties")) {
-            return filePath;
-        } else {
-            return filePath + ".generex.properties";
-        }
+        return FileUtil.appendExtension(filePath, ".generex.properties");
     }
 
     private void populateGenerex() throws IOException {
@@ -281,7 +296,13 @@ public class WizardPlayer {
 
         List<String> bindVariables = children.stream()
                                              .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
-                                             .map(e -> "#" + e.getLabelInnerText() + "\n" + FormUtils.resolveVariable(e))
+                                             .map(e -> {
+                                                 IDataReference   reference  = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+                                                 Optional<String> constraint = FormUtils.getBindAttribute(formDef, reference, "constraint");
+                                                 return "#" + e.getLabelInnerText() + "\n" +
+                                                         constraint.map(s -> "#" + s.replaceAll("\\s+", " ") + "\n").orElse("") +
+                                                         FormUtils.resolveVariable(e);
+                                             })
                                              .collect(Collectors.toList());
 
         String properties = String.join("=\n", bindVariables) + "=";
