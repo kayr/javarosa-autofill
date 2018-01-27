@@ -12,7 +12,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -21,9 +23,10 @@ import static org.joox.JOOX.$;
 
 public class JavarosaSubmitter {
 
-    private String serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
-    private String username  = "admin";
-    private String password  = "admin";
+    public static final String NAME_XML_SUBMISSION_FILE = "xml_submission_file";
+    private             String serverUrl                = "http://localhost:8080/oxd/mpsubmit/odk";
+    private             String username                 = "admin";
+    private             String password                 = "admin";
 
     private OkHttpClient httpClient;
 
@@ -56,14 +59,20 @@ public class JavarosaSubmitter {
 
 
     public void submit(String payload) throws IOException {
+        Map<String, Object> m = new HashMap<>();
+        m.put(NAME_XML_SUBMISSION_FILE, payload);
+        submit(m);
+    }
+
+    public void submit(Map<String, Object> data) throws IOException {
         init();
         // req.setHeader(DATE_HEADER, DateFormat.format("E, dd MMM yyyy hh:mm:ss zz", g)
-        Request build = buildRequest()
-                .url(submitUrl())
-                .post(new MultipartBody.Builder()
-                              .addFormDataPart("xml_submission_file", "xml_submission_file", RequestBody.create(MediaType.parse("application/xml"), payload))
-                              .build())
-                .build();
+
+        MultipartBody.Builder dataBuilder = createBodyBuilder(data);
+
+        Request build = buildRequest().url(submitUrl())
+                                      .post(dataBuilder.build())
+                                      .build();
 
 
         Call call = httpClient.newCall(build);
@@ -74,6 +83,23 @@ public class JavarosaSubmitter {
             throw new RuntimeException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
         }
 
+    }
+
+    private MultipartBody.Builder createBodyBuilder(Map<String, Object> data) {
+
+        MultipartBody.Builder dataBuilder = new MultipartBody.Builder();
+
+        data.forEach((k, v) -> {
+            if (v instanceof String) {
+                dataBuilder.addFormDataPart(k, k, RequestBody.create(MediaType.parse("application/xml"), (String) v));
+            } else if (v instanceof byte[]) {
+                dataBuilder.addFormDataPart(k, k, RequestBody.create(MediaType.parse("application/binary"), (byte[]) v));
+            } else {
+                throw new AutoFillException("Could not upload data of type: " + v.getClass());
+            }
+        });
+
+        return dataBuilder;
     }
 
     private Request.Builder buildRequest() {
@@ -88,7 +114,7 @@ public class JavarosaSubmitter {
         Response response = httpClient.newCall(build).execute();
 
         if (!response.isSuccessful()) {
-            throw new AutoFillException("HTTP Call Failed: "+response.toString());
+            throw new AutoFillException("HTTP Call Failed: " + response.toString());
         }
 
         String xmlResponse = response.body().string();
@@ -142,6 +168,10 @@ public class JavarosaSubmitter {
                     ", downloadUrl='" + downloadUrl + '\'' +
                     ", hash='" + hash + '\'' +
                     '}';
+        }
+
+        String getName_Id() {
+            return name + "_" + formID;
         }
     }
 

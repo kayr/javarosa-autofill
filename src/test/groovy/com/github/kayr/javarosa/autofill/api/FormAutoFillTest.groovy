@@ -114,9 +114,9 @@ class FormAutoFillTest implements LogConfig {
 
         def node = new XmlParser().parseText(xml)
 
-        assert node.picture.text().startsWith('data:image/jpg')
-        assert node.audio.text().startsWith('data:audio/mp3')
-        assert node.video.text().startsWith('data:video/mp4')
+        assert node.picture.text().endsWith('.jpg')
+        assert node.audio.text().endsWith('.mp3')
+        assert node.video.text().endsWith('.mp4')
 
 
     }

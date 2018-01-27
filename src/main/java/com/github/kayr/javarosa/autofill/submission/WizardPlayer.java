@@ -162,9 +162,21 @@ public class WizardPlayer {
                                .read("All done. Am About to start submitting to the server is this ok?");
         }
 
-        if (doContinue) {
+        boolean keepRetrying = true;
+        while (doContinue && keepRetrying) {
+
             try {
+
+                keepRetrying = false;
+
                 startSubmission();
+
+            } catch (RuntimeException e) {
+
+                term.println("Error With Data Generation:" + getStackTrace(e));
+
+                keepRetrying = textIO.newBooleanInputReader()
+                                     .read("May Be Try Editing The Generex File And Try Again?");
             } catch (IOException e) {
                 IOUtils.sneakyThrow(e);
             }
@@ -206,15 +218,16 @@ public class WizardPlayer {
     private void selectGenerexFile() {
         String filePath = textIO.newStringInputReader()
                                 .withValueChecker((val, itemName) -> {
-                                    if (!Paths.get(val).toFile().exists()) {
+                                    if (!Paths.get(appendExtension(val)).toFile().exists()) {
                                         return Collections.singletonList("File Does Not Exist");
                                     }
 
-                                    return Collections.emptyList();
+                                    return null;
                                 })
+                                .withDefaultValue(FileNameCleaner.cleanFileName(xForm.getName_Id()))
                                 .read("Enter File Path");
 
-        this.generexPath = Paths.get(filePath);
+        this.generexPath = Paths.get(appendExtension(filePath));
     }
 
     private void createGenerexFile() {
@@ -223,8 +236,9 @@ public class WizardPlayer {
                                     if (Paths.get(appendExtension(val)).toFile().exists()) {
                                         return Collections.singletonList("File Already Exists");
                                     }
-                                    return Collections.emptyList();
+                                    return null;
                                 })
+                                .withDefaultValue(FileNameCleaner.cleanFileName(xForm.getName_Id()))
                                 .read("Enter File Path/Name");
 
         try {
@@ -253,7 +267,11 @@ public class WizardPlayer {
     }
 
     private String appendExtension(String filePath) {
-        return filePath + ".generex.properties";
+        if (filePath.endsWith(".generex.properties")) {
+            return filePath;
+        } else {
+            return filePath + ".generex.properties";
+        }
     }
 
     private void populateGenerex() throws IOException {

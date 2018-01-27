@@ -9,6 +9,8 @@ import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
+import org.javarosa.core.services.transport.payload.IDataPayload;
+import org.javarosa.core.services.transport.payload.MultiMessagePayload;
 import org.javarosa.form.api.FormEntryController;
 import org.javarosa.form.api.FormEntryModel;
 import org.javarosa.form.api.FormEntryPrompt;
@@ -274,10 +276,10 @@ public class FormAutoFill {
 
 
     @SuppressWarnings("WeakerAccess")
-    public ByteArrayPayload getSubmissionPayload() throws IOException {
+    public IDataPayload getSubmissionPayload() throws IOException {
         FormInstance            instance   = getInstance();
         XFormSerializingVisitor serializer = new XFormSerializingVisitor();
-        return (ByteArrayPayload) serializer.createSerializedPayload(instance, getSubmissionDataReference());
+        return serializer.createSerializedPayload(instance, getSubmissionDataReference());
     }
 
     /**
@@ -299,7 +301,26 @@ public class FormAutoFill {
     }
 
     public String getSubmissionXml() {
-        try (InputStream payloadStream = getSubmissionPayload().getPayloadStream()) {
+        try {
+            return payloadToXml(getSubmissionPayload());
+        } catch (IOException e) {
+            throw new AutoFillException(e);
+        }
+
+    }
+
+    public static String payloadToXml(IDataPayload submissionPayload) {
+        try {
+
+            IDataPayload finalPayLoad = submissionPayload;
+            if (submissionPayload instanceof MultiMessagePayload) {
+                MultiMessagePayload    multiPayload = (MultiMessagePayload) submissionPayload;
+                Optional<IDataPayload> payload      = multiPayload.getPayloads().stream().filter(ByteArrayPayload.class::isInstance).findAny();
+
+                finalPayLoad = payload.orElseThrow(() -> new AutoFillException("No XML Payload Found"));
+
+            }
+            InputStream payloadStream = finalPayLoad.getPayloadStream();
             return IOUtils.getText(payloadStream);
         } catch (IOException e) {
             throw new AutoFillException(e);

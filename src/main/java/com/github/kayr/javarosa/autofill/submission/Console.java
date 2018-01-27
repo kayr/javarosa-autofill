@@ -78,7 +78,8 @@ public class Console {
     }
 
     public static void saveData(Integer iteration, String data, Path path) {
-        Path submitDataPath = path.resolveSibling("__submit_data");
+        String fileName       = path.getFileName().toString() + "__submit_data";
+        Path   submitDataPath = path.resolveSibling(fileName);
 
         if (!submitDataPath.toFile().exists()) {
             if (!submitDataPath.toFile().mkdirs()) {

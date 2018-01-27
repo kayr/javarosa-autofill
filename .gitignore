@@ -20,9 +20,9 @@ out/
 
 /bin/
 /grammer.dic
-/sample/__submit_data/
 *.generex.properties
 .classpath
 .project
 /src/jrbugs.txt
 /.settings
+**__submit_data

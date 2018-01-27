@@ -2,8 +2,15 @@ package com.github.kayr.javarosa.autofill.submission;
 
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import com.github.kayr.javarosa.autofill.api.FormAutoFill;
+import com.github.kayr.javarosa.autofill.api.IOUtils;
+import org.javarosa.core.services.transport.payload.ByteArrayPayload;
+import org.javarosa.core.services.transport.payload.DataPointerPayload;
+import org.javarosa.core.services.transport.payload.IDataPayload;
+import org.javarosa.core.services.transport.payload.MultiMessagePayload;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
@@ -53,20 +60,68 @@ public class DataGenerator {
             formAutoFill.addGenerex(generexMap);
         }
 
-        String submissionXml = formAutoFill.autoFill().getSubmissionXml();
-
-        if (dataListener != null) {
-            dataListener.accept(iteration, submissionXml);
+        IDataPayload payload = null;
+        try {
+            payload = formAutoFill.autoFill().getSubmissionPayload();
+        } catch (IOException e) {
+            IOUtils.sneakyThrow(e);
         }
 
-        if (!dryRun) {
-            try {
-                submitter.submit(submissionXml);
-            } catch (IOException e) {
-                throw new AutoFillException(e);
+
+        try {
+
+            Map<String, Object> payloadMap = new HashMap<>();
+
+
+            if (payload instanceof ByteArrayPayload) {
+                String payload1 = FormAutoFill.payloadToXml(payload);
+                payloadMap.put(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE, payload1);
+
+
+            } else if (payload instanceof MultiMessagePayload) {
+
+                MultiMessagePayload multiMessagePayload = (MultiMessagePayload) payload;
+                payloadMap = buildPayloadMap(multiMessagePayload);
+
             }
+
+            if (dataListener != null) {
+                dataListener.accept(iteration, payloadMap.get(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE).toString());
+            }
+
+            if (!dryRun) {
+                submitter.submit(payloadMap);
+            }
+
+        } catch (IOException e) {
+            throw new AutoFillException(e);
         }
 
+    }
+
+    private Map<String, Object> buildPayloadMap(MultiMessagePayload multiMessagePayload) {
+
+        Map<String, Object> payloadData = new HashMap<>();
+
+        multiMessagePayload.getPayloads().forEach(pl -> {
+            if (pl instanceof ByteArrayPayload) {
+
+                payloadData.put(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE, FormAutoFill.payloadToXml(pl));
+
+            } else if (pl instanceof DataPointerPayload) {
+                try {
+                    DataPointerPayload dataReference = (DataPointerPayload) pl;
+                    InputStream        payloadStream = dataReference.getPayloadStream();
+                    byte[]             bytes         = IOUtils.getBytes(payloadStream);
+
+                    payloadData.put(dataReference.getPayloadId(), bytes);
+
+                } catch (IOException e) {
+                    IOUtils.sneakyThrow(e);
+                }
+            }
+        });
+        return payloadData;
     }
 
 
