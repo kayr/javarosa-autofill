@@ -2,8 +2,14 @@ package com.github.kayr.javarosa.autofill.submission;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Copied from SO
@@ -56,4 +62,17 @@ public class FileUtil {
         }
     }
 
+    public static Map<String, String> loadPropertiesAsMap(Path path) throws IOException {
+        Properties          generexProperties = loadProperties(path);
+        Map<String, String> properties        = new HashMap<>();
+        generexProperties.keySet().forEach(s -> properties.put(s.toString(), generexProperties.getProperty(s.toString())));
+        return properties;
+    }
+
+    public static Properties loadProperties(Path path) throws IOException {
+        Properties properties;
+        properties = new Properties();
+        properties.load(Files.newInputStream(path));
+        return properties;
+    }
 }

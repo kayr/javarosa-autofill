@@ -10,7 +10,9 @@ import org.beryx.textio.TextTerminal;
 import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.IDataReference;
 import org.javarosa.core.model.IFormElement;
+import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.model.instance.TreeReference;
+import org.javarosa.xpath.XPathConditional;
 
 import java.awt.*;
 import java.io.IOException;
@@ -194,6 +196,7 @@ public class WizardPlayer {
                                                          .setPassword(password)
                                                          .setFormDefXMl(getXform())
                                                          .setNumberOfItems(numberOfRecords)
+                                                         .setGenerexMap(FileUtil.loadPropertiesAsMap(generexPath))
                                                          .setDryRun(dryRun)
                                                          .setDataListener((i, s) -> {
                                                              term.println("Processed " + i);
@@ -218,13 +221,6 @@ public class WizardPlayer {
         submitter.reInit();
     }
 
-    static class Val<T> {
-        T v;
-
-        Val(T t) {
-            this.v = t;
-        }
-    }
 
     private void selectGenerexFile() {
         String defaultValue = FileUtil.cleanFileName(xForm.getName_Id());
@@ -236,7 +232,7 @@ public class WizardPlayer {
                                              }
                                              return null;
                                          });
-        if ( Files.exists(Paths.get(appendExtension(defaultValue)))) {
+        if (Files.exists(Paths.get(appendExtension(defaultValue)))) {
             reader.withDefaultValue(defaultValue);
         }
 
@@ -296,20 +292,29 @@ public class WizardPlayer {
 
         List<String> bindVariables = children.stream()
                                              .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
-                                             .map(e -> {
-                                                 IDataReference   reference  = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
-                                                 Optional<String> constraint = FormUtils.getBindAttribute(formDef, reference, "constraint");
-                                                 return "#" + e.getLabelInnerText() + "\n" +
-                                                         constraint.map(s -> "#" + s.replaceAll("\\s+", " ") + "\n").orElse("") +
-                                                         FormUtils.resolveVariable(e);
-                                             })
+                                             .map(e -> createPropertiesFileLine(formDef, e))
                                              .collect(Collectors.toList());
 
-        String properties = String.join("=\n", bindVariables) + "=";
+        String properties = String.join("=\n\n", bindVariables) + "=";
 
         Files.write(generexPath, properties.getBytes(StandardCharsets.UTF_8));
 
 
+    }
+
+    private String createPropertiesFileLine(FormDef formDef, IFormElement e) {
+        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+
+        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
+
+        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
+                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
+                                                          .orElse(""))
+                                        .orElse("");
+
+        return "#" + e.getLabelInnerText().replaceAll("\\s+", " ") + "\n" +
+                xPathConstraint +
+                FormUtils.resolveVariable(e) ;
     }
 
 

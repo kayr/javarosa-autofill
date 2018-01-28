@@ -42,7 +42,7 @@ public class Console {
     private static void processPropertiesFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
 
-        Properties properties = getProperties(path);
+        Properties properties = FileUtil.loadProperties(path);
 
         assertPropertiesExist(properties, ALL_PROPERTIES);
 
@@ -61,20 +61,13 @@ public class Console {
 
             Path generexPath = Paths.get(generexFile);
 
-            Properties generexProperties = getProperties(generexPath);
+            Properties generexProperties = FileUtil.loadProperties(generexPath);
             generexProperties.keySet().forEach(s -> propes.put(s.toString(), generexProperties.getProperty(s.toString())));
             dataGenerator.setGenerexMap(propes);
         }
 
 
         dataGenerator.start();
-    }
-
-    private static Properties getProperties(Path path) throws IOException {
-        Properties properties;
-        properties = new Properties();
-        properties.load(Files.newInputStream(path));
-        return properties;
     }
 
     public static void saveData(Integer iteration, String data, Path path) {
