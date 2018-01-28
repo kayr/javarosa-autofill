@@ -21,9 +21,13 @@ import java.util.stream.IntStream;
 public class FormUtils {
 
     public static String resolveVariable(IFormElement iFormElement) {
-        Object        bind      = iFormElement.getBind().getReference();
-        TreeReference reference = (TreeReference) bind;
+        TreeReference reference = getTreeReference(iFormElement);
         return reference.getNameLast();
+    }
+
+    public static TreeReference getTreeReference(IFormElement iFormElement) {
+        Object bind = iFormElement.getBind().getReference();
+        return (TreeReference) bind;
     }
 
     public static FormDef parseFromText(String text) {
@@ -86,5 +90,16 @@ public class FormUtils {
         });
 
         return elements;
+    }
+
+    public static IFormElement getParent(IFormElement form, IFormElement element) {
+        for (IFormElement c : form.getChildren()) {
+            if (c == element){
+                return form;
+            } else if (c.getChildren() != null && c.getChildren().size() > 1) {
+                return getParent(c, element);
+            }
+        }
+        return element;
     }
 }

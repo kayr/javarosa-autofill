@@ -8,6 +8,7 @@ import org.openxdata.markup.Form
 import org.openxdata.markup.IFormElement
 
 import static TestUtils.resourceText
+import static com.github.kayr.javarosa.autofill.api.TestUtils.formatXML
 
 class FormAutoFillTest implements LogConfig {
 
@@ -30,6 +31,10 @@ class FormAutoFillTest implements LogConfig {
     private static Iterable<IFormElement> assertAllNodeAnswers(Form form, String xml) {
         def node = new XmlParser().parseText(xml)
 
+        return assertAllNodesHaveData(node, form)
+    }
+
+    private static Iterable<IFormElement> assertAllNodesHaveData(Node node, Form form) {
         def allNodes = node.'**'
 
         return form.allElementsWithIds.each { q ->
@@ -152,8 +157,7 @@ class FormAutoFillTest implements LogConfig {
     }
 
     @Test
-    void testFixedRepeatSize() {
-
+    void testFixedRepeatSizeSimple() {
         def f = '''
                     @bindxpath generex
                     ## f
@@ -163,12 +167,106 @@ class FormAutoFillTest implements LogConfig {
                     @bind:generex count($details) < 3
                     repeat { Details
                     
+                        R1
+                        
+                        R2
+                    
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        def node = new XmlParser().parseText(xml)
+        assert node.details.r1
+        assert node.details.size() == 3
+        assert node.details.r1.every { !it.text().isEmpty() }
+        assert node.details.details_3.r11.every { !it.text().isEmpty() }
+
+    }
+
+    //test prefilling with a value outside repeat
+
+    @Test
+    void testPrefilValueInRepeatReferencingOuterQuestion() {
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    One 
+                    
+                    @bind:generex count($details) < 3
+                    repeat { Details
+                    
+                        @bind:generex $one
+                        R1
+                        
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        def node = new XmlParser().parseText(xml)
+        assert node.details.r1
+        assert node.details.size() == 3
+        assert node.details.r1.every { it.text() == node.one.text() }
+    }
+
+
+    @Test
+    void testPrefillRepeatCountOnInnerRepeatReferencingInnerQn() {
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    One 
+                    
+                    @bind:generex count(../details) < 3
+                    repeat { Details
+                    
+                        @bind:generex $one
+                        R1
+                        
+                        @bind:generex count(details_2) < 2
+                        repeat{ Details 2
+                            R3
+                        }
+                       
+                        
+                    } '''
+
+        def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(f))
+                           .autoFill()
+                           .getSubmissionXml()
+
+        println(formatXML(xml))
+        def node = new XmlParser().parseText(xml)
+        assert node.details.r1
+        assert node.details.size() == 3
+        assert node.details[0].details_2.size() == 2
+        assert node.details.r1.every { it.text() == node.one.text() }
+
+    }
+
+    @Test
+    void testFixedRepeatSize() {
+
+        def f = '''
+                    @bindxpath generex
+                    ## f
+                    
+                    One 
+                    
+                    @bind:generex count(../details) < 3
+                    repeat { Details
+                    
                         @bind:generex 'tt'
                         R1
                         
                         R2
                         
-                        @bind:generex random-boolean()
+                        @bind:generex count(details_3) < 2
                         repeat{ Details 3
                              @bind:generex 'r22'
                              R11
@@ -233,6 +331,8 @@ class FormAutoFillTest implements LogConfig {
                 
                 One 
                 
+                One2
+                
                 Two
                 
                 repeat{ Repeat
@@ -242,18 +342,72 @@ class FormAutoFillTest implements LogConfig {
                     Four
                 }
                 
+                
 """
 
         def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(m))
                            .addGenerex('one', "'ONE'")
                            .addGenerex('four', "'FOUR'")
+                           .addGenerex('two', '    ')
+                           .addGenerex('one2', 'string(current()/../one)')
                            .autoFill()
                            .getSubmissionXml()
 
         def node = new XmlSlurper().parseText(xml)
 
         assert node.one.text() == 'ONE'
+        assert node.one2.text() == 'ONE', "The generex xpath should be executed in right context"
         assert node.repeat.four[0].text() == 'FOUR'
+
+    }
+
+    @Test
+    void testGenerexWithRepeat() {
+        def f = '''
+            @bindxpath generex
+            ## F
+            
+            One 
+            
+            @bind:generex count($repeat) < 2
+            repeat{ Repeat
+                
+                @id boys
+                @number
+                Boy in school
+                
+                
+                @number
+                @validif . <= current()/../boys
+                @message Should be less than boys
+                @bind:generex random-number(0,number(../boys))
+                Boys attended
+                
+                @id girls
+                @number
+                Girls in school
+                
+                @number
+                @validif  . <= current()/../girls
+                @message Should be less than girls
+                @bind:generex random-number(0,number(../girls))
+                Girls attended
+            }
+            '''
+        def form = Converter.markup2Form(f)
+        def xmlText = TestUtils.formAutoFillFromMkp(form)
+                               .autoFill()
+                               .getSubmissionXml()
+
+        def node = new XmlParser().parseText(xmlText)
+
+        assertAllNodesHaveData(node, form)
+
+        assert node.repeat.size() == 2
+        assert (node.repeat[1].boys_attended.text() as int) < (node.repeat[1].boys.text() as int)
+
+
+        println(formatXML(xmlText))
 
     }
 

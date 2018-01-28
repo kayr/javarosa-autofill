@@ -2,6 +2,7 @@ package com.github.kayr.javarosa.autofill.api;
 
 import com.github.kayr.javarosa.autofill.api.functions.*;
 import com.github.kayr.javarosa.autofill.api.providers.*;
+import org.apache.commons.lang3.StringUtils;
 import org.javarosa.core.io.Std;
 import org.javarosa.core.model.*;
 import org.javarosa.core.model.condition.EvaluationContext;
@@ -115,6 +116,8 @@ public class FormAutoFill {
         ListFunctions.registerAll(formDef);
 
         Fakers.registerAllHandlers(formDef);
+
+        FnGenelFunctions.registerAll(formDef);
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -233,17 +236,19 @@ public class FormAutoFill {
     private Optional<String> getGenerex(IFormElement formElement) {
 
 
-        String hasGenerexMapping = genExpressionMap.get(FormUtils.resolveVariable(formElement));
+        String generexMapping = genExpressionMap.get(FormUtils.resolveVariable(formElement));
 
-        if (hasGenerexMapping != null) {
-            return Optional.of(hasGenerexMapping);
+        if (StringUtils.isNotBlank(generexMapping)) {
+            return Optional.of(generexMapping);
         }
 
         FormIndex      index     = currentIndex();
         XPathReference reference = FormUtils.getSafeXpathReference(formElement, index.getReference());
 
 
-        return FormUtils.getBindAttribute(formDef, reference, "generex");
+        Optional<String> generex = FormUtils.getBindAttribute(formDef, reference, "generex");
+
+        return generex.filter(StringUtils::isNotBlank);
     }
 
 
