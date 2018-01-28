@@ -222,7 +222,7 @@ class FormAutoFillTest implements LogConfig {
                     
                     One 
                     
-                    @bind:generex count(../details) < 3
+                    @bind:generex count(.) < 3
                     repeat { Details
                     
                         @bind:generex $one
@@ -340,9 +340,7 @@ class FormAutoFillTest implements LogConfig {
                     
                    
                     Four
-                }
-                
-                
+                }              
 """
 
         def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(m))
@@ -404,7 +402,7 @@ class FormAutoFillTest implements LogConfig {
         assertAllNodesHaveData(node, form)
 
         assert node.repeat.size() == 2
-        assert (node.repeat[1].boys_attended.text() as int) < (node.repeat[1].boys.text() as int)
+        assert (node.repeat[1].boys_attended.text() as int) <= (node.repeat[1].boys.text() as int)
 
 
         println(formatXML(xmlText))

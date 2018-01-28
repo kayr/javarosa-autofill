@@ -18,8 +18,12 @@ import org.javarosa.xpath.parser.XPathSyntaxException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class GenerexProvider {
+
+    private static Logger LOG = Logger.getLogger(GenerexProvider.class.getName());
+
 
     public GenerexProvider() {
     }
@@ -31,16 +35,9 @@ public class GenerexProvider {
 
         try {
 
-            //if this is a group do not use the group reference.. so that we keep the context at the form level
-
-            //workin
-            //TreeReference reference     = element instanceof GroupDef ? FormUtils.getTreeReference(element) : index.getReference();
-
-            //not woring
-            TreeReference reference = element instanceof GroupDef ? resolveParentReference(fec, element, index) : index.getReference();
-//            TreeReference reference     = index.getReference();
-            Object value         = evalXpathString(fec.getMainInstance(), ec, reference, generex);
-            int    finalDataType = element instanceof GroupDef ? Constants.DATATYPE_BOOLEAN : getDataType(fec, element, index);
+            TreeReference reference     = element instanceof GroupDef ? resolveParentReference(fec, element, index) : index.getReference();
+            Object        value         = evalXpathString(fec.getMainInstance(), ec, reference, generex);
+            int           finalDataType = element instanceof GroupDef ? Constants.DATATYPE_BOOLEAN : getDataType(fec, element, index);
 
 
             return Recalculate.wrapData(XPathFuncExpr.unpack(value), finalDataType);
@@ -53,6 +50,12 @@ public class GenerexProvider {
 
     }
 
+    /*
+      It seems there is a bug or I cannot figure out how to get repeats to calculate on there context
+      If you are in a repeat un cannot do a ../../ and be guaranteed to get the inner repeat.
+      So to work around this we manually contextualize of xpath and add multiplicities based on the
+      index. However if the repeat is outer we use the current repeat value as the context.
+     */
     private TreeReference resolveParentReference(FormDef fec, IFormElement element, FormIndex index) {
         IFormElement parent = FormUtils.getParent(fec, element);
         if (parent instanceof FormDef) {
@@ -60,10 +63,8 @@ public class GenerexProvider {
             return FormUtils.getTreeReference(parent);
         } else {
             TreeReference treeReference = FormUtils.getTreeReference(parent);
-//            return index.getReference().contextualize(treeReference);
-            return contextualize(treeReference,index.getReference());
+            return contextualize(treeReference, index.getReference());
         }
-//        return treeReference;
     }
 
     private TreeReference contextualize(TreeReference reference, TreeReference context) {
@@ -93,7 +94,7 @@ public class GenerexProvider {
         XPathExpression   xPathExpression = parseXpath(xpath);
         EvaluationContext ec2             = new EvaluationContext(baseContext, reference);
 
-        System.out.println(String.format("Evaluating xpath [%s] in base[%s] context[%s]", xpath, baseContext.getContextRef(), reference));
+        LOG.fine(String.format("Evaluating xpath [%s] in base[%s] context[%s]", xpath, baseContext.getContextRef(), reference));
 
         Object result = xPathExpression.eval(instance, ec2);
 
