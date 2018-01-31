@@ -9,6 +9,8 @@ import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.data.IAnswerData;
 import org.javarosa.core.model.instance.FormInstance;
 import org.javarosa.core.model.instance.InstanceInitializationFactory;
+import org.javarosa.core.services.storage.StorageManager;
+import org.javarosa.core.services.storage.util.DummyIndexedStorageUtility;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.core.services.transport.payload.IDataPayload;
 import org.javarosa.core.services.transport.payload.MultiMessagePayload;
@@ -63,6 +65,8 @@ public class FormAutoFill {
     }
 
     private void init() {
+        registerPreLoaders();
+
         formDef.initialize(true, new InstanceInitializationFactory());
         model = new FormEntryModel(formDef);
         fec = new FormEntryController(model);
@@ -118,6 +122,11 @@ public class FormAutoFill {
         Fakers.registerAllHandlers(formDef);
 
         FnGenelFunctions.registerAll(formDef);
+
+    }
+
+    private void registerPreLoaders() {
+        StorageManager.setStorageFactory((name, type) -> new DummyIndexedStorageUtility());
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -139,6 +148,8 @@ public class FormAutoFill {
         while (!isEndOfForm()) {
             nextEvent();
         }
+
+        formDef.postProcessInstance();
 
         ValidateOutcome validate = formDef.validate(true);
 
