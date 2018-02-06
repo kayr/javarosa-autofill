@@ -1,89 +1,106 @@
 ## Faker Expressions
 ```
-name
-    name                  : fake('name','name')
-    prefix                : fake('name','prefix')
-    title                 : fake('name','title')
-    username              : fake('name','username')
-    firstName             : fake('name','firstName')
-    fullName              : fake('name','fullName')
-    lastName              : fake('name','lastName')
-    nameWithMiddle        : fake('name','nameWithMiddle')
-    suffix                : fake('name','suffix')
-----------------------------------------
-file
-    fileName              : fake('file','fileName')
-    mimeType              : fake('file','mimeType')
-    extension             : fake('file','extension')
-----------------------------------------
 address
-    state                 : fake('address','state')
+    buildingNumber        : fake('address','buildingNumber')
+    city                  : fake('address','city')
+    cityName              : fake('address','cityName')
+    cityPrefix            : fake('address','cityPrefix')
+    citySuffix            : fake('address','citySuffix')
     country               : fake('address','country')
+    countryCode           : fake('address','countryCode')
     firstName             : fake('address','firstName')
+    fullAddress           : fake('address','fullAddress')
     lastName              : fake('address','lastName')
     latitude              : fake('address','latitude')
-    buildingNumber        : fake('address','buildingNumber')
-    citySuffix            : fake('address','citySuffix')
-    secondaryAddress      : fake('address','secondaryAddress')
-    streetSuffix          : fake('address','streetSuffix')
-    countryCode           : fake('address','countryCode')
-    fullAddress           : fake('address','fullAddress')
-    streetAddress         : fake('address','streetAddress')
-    zipCode               : fake('address','zipCode')
-    streetPrefix          : fake('address','streetPrefix')
-    cityName              : fake('address','cityName')
-    stateAbbr             : fake('address','stateAbbr')
     longitude             : fake('address','longitude')
-    cityPrefix            : fake('address','cityPrefix')
-    streetName            : fake('address','streetName')
-    city                  : fake('address','city')
+    secondaryAddress      : fake('address','secondaryAddress')
+    state                 : fake('address','state')
+    stateAbbr             : fake('address','stateAbbr')
+    streetAddress         : fake('address','streetAddress')
     streetAddressNumber   : fake('address','streetAddressNumber')
+    streetName            : fake('address','streetName')
+    streetPrefix          : fake('address','streetPrefix')
+    streetSuffix          : fake('address','streetSuffix')
     timeZone              : fake('address','timeZone')
+    zipCode               : fake('address','zipCode')
 ----------------------------------------
-random
-    nextDouble            : fake('random','nextDouble')
-    nextBoolean           : fake('random','nextBoolean')
-    nextLong              : fake('random','nextLong')
+ancient
+    god                   : fake('ancient','god')
+    hero                  : fake('ancient','hero')
+    primordial            : fake('ancient','primordial')
+    titan                 : fake('ancient','titan')
 ----------------------------------------
-number
-    digit                 : fake('number','digit')
-    randomDigit           : fake('number','randomDigit')
-    randomNumber          : fake('number','randomNumber')
-    randomDigitNotZero    : fake('number','randomDigitNotZero')
-----------------------------------------
-date
-----------------------------------------
-color
-    name                  : fake('color','name')
-----------------------------------------
-code
-    asin                  : fake('code','asin')
-    isbnRegistrant        : fake('code','isbnRegistrant')
-    imei                  : fake('code','imei')
-    isbnGroup             : fake('code','isbnGroup')
-    gtin8                 : fake('code','gtin8')
-    ean13                 : fake('code','ean13')
-    ean8                  : fake('code','ean8')
-    isbn10                : fake('code','isbn10')
-    isbn13                : fake('code','isbn13')
-    isbnGs1               : fake('code','isbnGs1')
-    gtin13                : fake('code','gtin13')
-----------------------------------------
-options
-----------------------------------------
-bool
-    bool                  : fake('bool','bool')
+app
+    author                : fake('app','author')
+    name                  : fake('app','name')
+    version               : fake('app','version')
 ----------------------------------------
 artist
     name                  : fake('artist','name')
 ----------------------------------------
+beer
+    hop                   : fake('beer','hop')
+    malt                  : fake('beer','malt')
+    name                  : fake('beer','name')
+    style                 : fake('beer','style')
+    yeast                 : fake('beer','yeast')
+----------------------------------------
+book
+    author                : fake('book','author')
+    genre                 : fake('book','genre')
+    publisher             : fake('book','publisher')
+    title                 : fake('book','title')
+----------------------------------------
+bool
+    bool                  : fake('bool','bool')
+----------------------------------------
+business
+    creditCardExpiry      : fake('business','creditCardExpiry')
+    creditCardNumber      : fake('business','creditCardNumber')
+    creditCardType        : fake('business','creditCardType')
+----------------------------------------
+cat
+    breed                 : fake('cat','breed')
+    name                  : fake('cat','name')
+    registry              : fake('cat','registry')
+----------------------------------------
+chuckNorris
+    fact                  : fake('chuckNorris','fact')
+----------------------------------------
+code
+    asin                  : fake('code','asin')
+    ean13                 : fake('code','ean13')
+    ean8                  : fake('code','ean8')
+    gtin13                : fake('code','gtin13')
+    gtin8                 : fake('code','gtin8')
+    imei                  : fake('code','imei')
+    isbn10                : fake('code','isbn10')
+    isbn13                : fake('code','isbn13')
+    isbnGroup             : fake('code','isbnGroup')
+    isbnGs1               : fake('code','isbnGs1')
+    isbnRegistrant        : fake('code','isbnRegistrant')
+----------------------------------------
+color
+    name                  : fake('color','name')
+----------------------------------------
 commerce
     color                 : fake('commerce','color')
     department            : fake('commerce','department')
-    productName           : fake('commerce','productName')
     material              : fake('commerce','material')
-    promotionCode         : fake('commerce','promotionCode')
     price                 : fake('commerce','price')
+    productName           : fake('commerce','productName')
+    promotionCode         : fake('commerce','promotionCode')
+----------------------------------------
+company
+    bs                    : fake('company','bs')
+    buzzword              : fake('company','buzzword')
+    catchPhrase           : fake('company','catchPhrase')
+    industry              : fake('company','industry')
+    logo                  : fake('company','logo')
+    name                  : fake('company','name')
+    profession            : fake('company','profession')
+    suffix                : fake('company','suffix')
+    url                   : fake('company','url')
 ----------------------------------------
 crypto
     md5                   : fake('crypto','md5')
@@ -91,190 +108,237 @@ crypto
     sha256                : fake('crypto','sha256')
     sha512                : fake('crypto','sha512')
 ----------------------------------------
+date
+    birthday              : fake('date','birthday')
+----------------------------------------
+demographic
+    demonym               : fake('demographic','demonym')
+    educationalAttainment : fake('demographic','educationalAttainment')
+    maritalStatus         : fake('demographic','maritalStatus')
+    race                  : fake('demographic','race')
+    sex                   : fake('demographic','sex')
+----------------------------------------
+educator
+    campus                : fake('educator','campus')
+    course                : fake('educator','course')
+    secondarySchool       : fake('educator','secondarySchool')
+    university            : fake('educator','university')
+----------------------------------------
+esports
+    event                 : fake('esports','event')
+    game                  : fake('esports','game')
+    league                : fake('esports','league')
+    player                : fake('esports','player')
+    team                  : fake('esports','team')
+----------------------------------------
+file
+    extension             : fake('file','extension')
+    fileName              : fake('file','fileName')
+    mimeType              : fake('file','mimeType')
+----------------------------------------
 finance
+    bic                   : fake('finance','bic')
     creditCard            : fake('finance','creditCard')
     iban                  : fake('finance','iban')
-    bic                   : fake('finance','bic')
 ----------------------------------------
 food
+    ingredient            : fake('food','ingredient')
     measurement           : fake('food','measurement')
     spice                 : fake('food','spice')
-    ingredient            : fake('food','ingredient')
+----------------------------------------
+friends
+    character             : fake('friends','character')
+    location              : fake('friends','location')
+    quote                 : fake('friends','quote')
 ----------------------------------------
 gameOfThrones
-    quote                 : fake('gameOfThrones','quote')
-    city                  : fake('gameOfThrones','city')
-    house                 : fake('gameOfThrones','house')
-    dragon                : fake('gameOfThrones','dragon')
     character             : fake('gameOfThrones','character')
+    city                  : fake('gameOfThrones','city')
+    dragon                : fake('gameOfThrones','dragon')
+    house                 : fake('gameOfThrones','house')
+    quote                 : fake('gameOfThrones','quote')
+----------------------------------------
+hacker
+    abbreviation          : fake('hacker','abbreviation')
+    adjective             : fake('hacker','adjective')
+    ingverb               : fake('hacker','ingverb')
+    noun                  : fake('hacker','noun')
+    verb                  : fake('hacker','verb')
+----------------------------------------
+harryPotter
+    book                  : fake('harryPotter','book')
+    character             : fake('harryPotter','character')
+    location              : fake('harryPotter','location')
+    quote                 : fake('harryPotter','quote')
+----------------------------------------
+hipster
+    word                  : fake('hipster','word')
+----------------------------------------
+idNumber
+    invalid               : fake('idNumber','invalid')
+    invalidSvSeSsn        : fake('idNumber','invalidSvSeSsn')
+    ssnValid              : fake('idNumber','ssnValid')
+    valid                 : fake('idNumber','valid')
+    validSvSeSsn          : fake('idNumber','validSvSeSsn')
+----------------------------------------
+internet
+    avatar                : fake('internet','avatar')
+    domainName            : fake('internet','domainName')
+    domainSuffix          : fake('internet','domainSuffix')
+    domainWord            : fake('internet','domainWord')
+    emailAddress          : fake('internet','emailAddress')
+    image                 : fake('internet','image')
+    ipV4Address           : fake('internet','ipV4Address')
+    ipV4Cidr              : fake('internet','ipV4Cidr')
+    ipV6Address           : fake('internet','ipV6Address')
+    ipV6Cidr              : fake('internet','ipV6Cidr')
+    macAddress            : fake('internet','macAddress')
+    password              : fake('internet','password')
+    privateIpV4Address    : fake('internet','privateIpV4Address')
+    publicIpV4Address     : fake('internet','publicIpV4Address')
+    safeEmailAddress      : fake('internet','safeEmailAddress')
+    slug                  : fake('internet','slug')
+    url                   : fake('internet','url')
+----------------------------------------
+job
+    field                 : fake('job','field')
+    keySkills             : fake('job','keySkills')
+    position              : fake('job','position')
+    seniority             : fake('job','seniority')
+    title                 : fake('job','title')
+----------------------------------------
+lordOfTheRings
+    character             : fake('lordOfTheRings','character')
+    location              : fake('lordOfTheRings','location')
+----------------------------------------
+lorem
+    character             : fake('lorem','character')
+    characters            : fake('lorem','characters')
+    paragraph             : fake('lorem','paragraph')
+    sentence              : fake('lorem','sentence')
+    word                  : fake('lorem','word')
+    words                 : fake('lorem','words')
+----------------------------------------
+matz
+    quote                 : fake('matz','quote')
+----------------------------------------
+music
+    chord                 : fake('music','chord')
+    instrument            : fake('music','instrument')
+    key                   : fake('music','key')
+----------------------------------------
+name
+    firstName             : fake('name','firstName')
+    fullName              : fake('name','fullName')
+    lastName              : fake('name','lastName')
+    name                  : fake('name','name')
+    nameWithMiddle        : fake('name','nameWithMiddle')
+    prefix                : fake('name','prefix')
+    suffix                : fake('name','suffix')
+    title                 : fake('name','title')
+    username              : fake('name','username')
+----------------------------------------
+number
+    digit                 : fake('number','digit')
+    randomDigit           : fake('number','randomDigit')
+    randomDigitNotZero    : fake('number','randomDigitNotZero')
+    randomNumber          : fake('number','randomNumber')
+----------------------------------------
+options
+----------------------------------------
+phoneNumber
+    cellPhone             : fake('phoneNumber','cellPhone')
+    phoneNumber           : fake('phoneNumber','phoneNumber')
+----------------------------------------
+pokemon
+    location              : fake('pokemon','location')
+    name                  : fake('pokemon','name')
+----------------------------------------
+random
+    nextBoolean           : fake('random','nextBoolean')
+    nextDouble            : fake('random','nextDouble')
+    nextLong              : fake('random','nextLong')
+----------------------------------------
+rickAndMorty
+    character             : fake('rickAndMorty','character')
+    location              : fake('rickAndMorty','location')
+    quote                 : fake('rickAndMorty','quote')
+----------------------------------------
+rockBand
+    name                  : fake('rockBand','name')
 ----------------------------------------
 shakespeare
-    hamletQuote           : fake('shakespeare','hamletQuote')
     asYouLikeItQuote      : fake('shakespeare','asYouLikeItQuote')
+    hamletQuote           : fake('shakespeare','hamletQuote')
     kingRichardIIIQuote   : fake('shakespeare','kingRichardIIIQuote')
     romeoAndJulietQuote   : fake('shakespeare','romeoAndJulietQuote')
 ----------------------------------------
-music
-    key                   : fake('music','key')
-    instrument            : fake('music','instrument')
-    chord                 : fake('music','chord')
+slackEmoji
+    activity              : fake('slackEmoji','activity')
+    celebration           : fake('slackEmoji','celebration')
+    custom                : fake('slackEmoji','custom')
+    emoji                 : fake('slackEmoji','emoji')
+    foodAndDrink          : fake('slackEmoji','foodAndDrink')
+    nature                : fake('slackEmoji','nature')
+    objectsAndSymbols     : fake('slackEmoji','objectsAndSymbols')
+    people                : fake('slackEmoji','people')
+    travelAndPlaces       : fake('slackEmoji','travelAndPlaces')
+----------------------------------------
+space
+    agency                : fake('space','agency')
+    agencyAbbreviation    : fake('space','agencyAbbreviation')
+    company               : fake('space','company')
+    constellation         : fake('space','constellation')
+    distanceMeasurement   : fake('space','distanceMeasurement')
+    galaxy                : fake('space','galaxy')
+    meteorite             : fake('space','meteorite')
+    moon                  : fake('space','moon')
+    nasaSpaceCraft        : fake('space','nasaSpaceCraft')
+    nebula                : fake('space','nebula')
+    planet                : fake('space','planet')
+    star                  : fake('space','star')
+    starCluster           : fake('space','starCluster')
+----------------------------------------
+stock
+    nsdqSymbol            : fake('stock','nsdqSymbol')
+    nyseSymbol            : fake('stock','nyseSymbol')
 ----------------------------------------
 superhero
-    name                  : fake('superhero','name')
-    prefix                : fake('superhero','prefix')
     descriptor            : fake('superhero','descriptor')
+    name                  : fake('superhero','name')
     power                 : fake('superhero','power')
+    prefix                : fake('superhero','prefix')
     suffix                : fake('superhero','suffix')
 ----------------------------------------
-lorem
-    words                 : fake('lorem','words')
-    characters            : fake('lorem','characters')
-    paragraph             : fake('lorem','paragraph')
-    word                  : fake('lorem','word')
-    sentence              : fake('lorem','sentence')
-    character             : fake('lorem','character')
+team
+    creature              : fake('team','creature')
+    name                  : fake('team','name')
+    sport                 : fake('team','sport')
+    state                 : fake('team','state')
+----------------------------------------
+twinPeaks
+    character             : fake('twinPeaks','character')
+    location              : fake('twinPeaks','location')
+    quote                 : fake('twinPeaks','quote')
 ----------------------------------------
 university
     name                  : fake('university','name')
     prefix                : fake('university','prefix')
     suffix                : fake('university','suffix')
 ----------------------------------------
-space
-    planet                : fake('space','planet')
-    agency                : fake('space','agency')
-    constellation         : fake('space','constellation')
-    nebula                : fake('space','nebula')
-    star                  : fake('space','star')
-    moon                  : fake('space','moon')
-    nasaSpaceCraft        : fake('space','nasaSpaceCraft')
-    meteorite             : fake('space','meteorite')
-    galaxy                : fake('space','galaxy')
-    starCluster           : fake('space','starCluster')
-    agencyAbbreviation    : fake('space','agencyAbbreviation')
-    distanceMeasurement   : fake('space','distanceMeasurement')
-    company               : fake('space','company')
+witcher
+    character             : fake('witcher','character')
+    location              : fake('witcher','location')
+    monster               : fake('witcher','monster')
+    quote                 : fake('witcher','quote')
+    school                : fake('witcher','school')
+    witcher               : fake('witcher','witcher')
 ----------------------------------------
-book
-    title                 : fake('book','title')
-    author                : fake('book','author')
-    publisher             : fake('book','publisher')
-    genre                 : fake('book','genre')
+yoda
+    quote                 : fake('yoda','quote')
 ----------------------------------------
-chuckNorris
-    fact                  : fake('chuckNorris','fact')
-----------------------------------------
-educator
-    course                : fake('educator','course')
-    secondarySchool       : fake('educator','secondarySchool')
-    campus                : fake('educator','campus')
-    university            : fake('educator','university')
-----------------------------------------
-app
-    name                  : fake('app','name')
-    version               : fake('app','version')
-    author                : fake('app','author')
-----------------------------------------
-ancient
-    god                   : fake('ancient','god')
-    hero                  : fake('ancient','hero')
-    titan                 : fake('ancient','titan')
-    primordial            : fake('ancient','primordial')
-----------------------------------------
-pokemon
-    name                  : fake('pokemon','name')
-    location              : fake('pokemon','location')
-----------------------------------------
-beer
-    name                  : fake('beer','name')
-    style                 : fake('beer','style')
-    hop                   : fake('beer','hop')
-    yeast                 : fake('beer','yeast')
-    malt                  : fake('beer','malt')
-----------------------------------------
-stock
-    nsdqSymbol            : fake('stock','nsdqSymbol')
-    nyseSymbol            : fake('stock','nyseSymbol')
-----------------------------------------
-hacker
-    noun                  : fake('hacker','noun')
-    ingverb               : fake('hacker','ingverb')
-    adjective             : fake('hacker','adjective')
-    abbreviation          : fake('hacker','abbreviation')
-    verb                  : fake('hacker','verb')
-----------------------------------------
-idNumber
-    valid                 : fake('idNumber','valid')
-    validSvSeSsn          : fake('idNumber','validSvSeSsn')
-    invalidSvSeSsn        : fake('idNumber','invalidSvSeSsn')
-    ssnValid              : fake('idNumber','ssnValid')
-    invalid               : fake('idNumber','invalid')
-----------------------------------------
-phoneNumber
-    cellPhone             : fake('phoneNumber','cellPhone')
-    phoneNumber           : fake('phoneNumber','phoneNumber')
-----------------------------------------
-company
-    name                  : fake('company','name')
-    url                   : fake('company','url')
-    profession            : fake('company','profession')
-    buzzword              : fake('company','buzzword')
-    catchPhrase           : fake('company','catchPhrase')
-    logo                  : fake('company','logo')
-    industry              : fake('company','industry')
-    bs                    : fake('company','bs')
-    suffix                : fake('company','suffix')
-----------------------------------------
-internet
-    url                   : fake('internet','url')
-    image                 : fake('internet','image')
-    domainSuffix          : fake('internet','domainSuffix')
-    domainName            : fake('internet','domainName')
-    slug                  : fake('internet','slug')
-    emailAddress          : fake('internet','emailAddress')
-    domainWord            : fake('internet','domainWord')
-    macAddress            : fake('internet','macAddress')
-    ipV6Address           : fake('internet','ipV6Address')
-    ipV4Cidr              : fake('internet','ipV4Cidr')
-    avatar                : fake('internet','avatar')
-    ipV4Address           : fake('internet','ipV4Address')
-    password              : fake('internet','password')
-    safeEmailAddress      : fake('internet','safeEmailAddress')
-    ipV6Cidr              : fake('internet','ipV6Cidr')
-    publicIpV4Address     : fake('internet','publicIpV4Address')
-    privateIpV4Address    : fake('internet','privateIpV4Address')
-----------------------------------------
-demographic
-    maritalStatus         : fake('demographic','maritalStatus')
-    demonym               : fake('demographic','demonym')
-    race                  : fake('demographic','race')
-    sex                   : fake('demographic','sex')
-    educationalAttainment : fake('demographic','educationalAttainment')
-----------------------------------------
-slackEmoji
-    people                : fake('slackEmoji','people')
-    nature                : fake('slackEmoji','nature')
-    foodAndDrink          : fake('slackEmoji','foodAndDrink')
-    activity              : fake('slackEmoji','activity')
-    celebration           : fake('slackEmoji','celebration')
-    travelAndPlaces       : fake('slackEmoji','travelAndPlaces')
-    custom                : fake('slackEmoji','custom')
-    emoji                 : fake('slackEmoji','emoji')
-    objectsAndSymbols     : fake('slackEmoji','objectsAndSymbols')
-----------------------------------------
-business
-    creditCardNumber      : fake('business','creditCardNumber')
-    creditCardExpiry      : fake('business','creditCardExpiry')
-    creditCardType        : fake('business','creditCardType')
-----------------------------------------
-team
-    name                  : fake('team','name')
-    state                 : fake('team','state')
-    creature              : fake('team','creature')
-    sport                 : fake('team','sport')
-----------------------------------------
-cat
-    name                  : fake('cat','name')
-    registry              : fake('cat','registry')
-    breed                 : fake('cat','breed')
+zelda
+    character             : fake('zelda','character')
+    game                  : fake('zelda','game')
 ----------------------------------------
 ```

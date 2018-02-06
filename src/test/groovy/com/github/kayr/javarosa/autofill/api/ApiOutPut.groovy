@@ -4,6 +4,7 @@ import com.github.kayr.javarosa.autofill.api.functions.Fakers
 import org.junit.Test
 
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
 class ApiOutPut {
 
@@ -20,10 +21,10 @@ class ApiOutPut {
 
         def indent = "    " * level
         def parentString = parents.collect { "'$it'" }.join(', ')
-        for (method in aClass.methods) {
+        for (method in aClass.methods.sort { it.name }) {
             def isInIgnoreList = method.name in b2
 
-            if (!isInIgnoreList && method.parameterCount == 0) {
+            if (!Modifier.isStatic(method.getModifiers()) && !isInIgnoreList && method.parameterCount == 0) {
 
                 String gerenx = "fake($parentString,'$method.name')"
 
@@ -31,7 +32,7 @@ class ApiOutPut {
                     println(indent + method.name)
 
                 } else {
-                    println(indent + method.name.padRight(22) + ': ' + gerenx )
+                    println(indent + method.name.padRight(22) + ': ' + gerenx)
                 }
                 if (method.returnType.name.startsWith('com.github.javafaker')) {
                     def newParents = [*parents, method.name]
@@ -46,7 +47,6 @@ class ApiOutPut {
         }
 
     }
-
 
 
     static String methodString(Method method) {

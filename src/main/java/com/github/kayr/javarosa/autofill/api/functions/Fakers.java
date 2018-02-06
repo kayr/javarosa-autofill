@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 
 public class Fakers {
 
-    public static final Faker faker = new Faker();
+    public static final Faker faker = Faker.instance();
 
     static class FnFake implements ISimpleFunctionHandler {
 
