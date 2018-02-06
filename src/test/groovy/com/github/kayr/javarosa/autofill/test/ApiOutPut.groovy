@@ -1,6 +1,7 @@
-package com.github.kayr.javarosa.autofill.api
+package com.github.kayr.javarosa.autofill.test
 
 import com.github.kayr.javarosa.autofill.api.functions.Fakers
+import org.junit.Ignore
 import org.junit.Test
 
 import java.lang.reflect.Method
@@ -9,6 +10,7 @@ import java.lang.reflect.Modifier
 class ApiOutPut {
 
     @Test
+    @Ignore
     void outPutAll() {
 
         printAllMethods(0, [], Fakers.faker.class)
