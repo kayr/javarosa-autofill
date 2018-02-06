@@ -342,3 +342,32 @@ zelda
     game                  : fake('zelda','game')
 ----------------------------------------
 ```
+
+## Other Fakers
+```
+random-date-between('2012-01-01','2013-01-01')
+random-date-between(now(),'2090-01-01')
+
+random-future-date(5,'days') 
+random-future-date(5,'days','2020-1-1') -> a random date 5 days after '2020-1-1'
+random-future-date(5,'seconds','12:00')
+random-future-date(5,'minutes')
+random-future-date(5,'hour')
+
+random-past-date(5,'days') 
+random-past-date(5,'days','2020-1-1') -> a random date 5 days before '2020-1-1'
+random-past-date(5,'seconds','12:00')
+random-past-date(5,'minutes')
+random-past-date(5,'hour')
+
+random-regex('077[0-9]{10}') -> generate a number that starts with 077 and ends with 10 random digits
+
+random-number(1000000000) -> produces an answer > 1_000_000_000
+random-number(2.0,7.0)  -> A number between 2.0 and 7.0
+random-number(2,1,2) -> a number between 1 and 2 with 2 decimal places
+random-number()
+
+```
+
+## Support functions to ease generation of test data
+ Coming soon 
