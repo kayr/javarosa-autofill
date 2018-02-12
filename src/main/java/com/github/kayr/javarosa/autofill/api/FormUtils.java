@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
@@ -22,7 +23,10 @@ public class FormUtils {
 
     public static String resolveVariable(IFormElement iFormElement) {
         TreeReference reference = getTreeReference(iFormElement);
-        return reference.getNameLast();
+        return IntStream.range(1, reference.size())
+                        .mapToObj(reference::getName)
+                        .collect(Collectors.joining("."));
+
     }
 
     public static TreeReference getTreeReference(IFormElement iFormElement) {
@@ -94,7 +98,7 @@ public class FormUtils {
 
     public static IFormElement getParent(IFormElement form, IFormElement element) {
         for (IFormElement c : form.getChildren()) {
-            if (c == element){
+            if (c == element) {
                 return form;
             } else if (c.getChildren() != null && c.getChildren().size() > 1) {
                 return getParent(c, element);

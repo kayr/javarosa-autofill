@@ -245,8 +245,7 @@ public class Fakers {
         if (choices.size() < 3) {
             choices = _duplicate(choices, 2);
         }
-        int randomIndex = faker.number().numberBetween(0, choices.size());
-        return choices.get(randomIndex);
+        return faker.options().nextElement(choices);
     }
 
     private static <T> List<T> _duplicate(List<T> items, int number) {
