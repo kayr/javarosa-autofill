@@ -1,6 +1,5 @@
 dependencies {
 
-    //SUBMISSION API
     compile project(':api')
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.5.0'
     compile 'org.jooq:joox-java-6:1.6.0'
