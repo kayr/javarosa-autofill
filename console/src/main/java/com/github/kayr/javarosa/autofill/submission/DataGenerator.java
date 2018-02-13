@@ -43,7 +43,7 @@ public class DataGenerator {
 
     private boolean dryRun = false;
 
-    private JavarosaClient submitter;
+    private JavarosaClient javarosaClient;
 
     public void start() {
         init();
@@ -90,7 +90,7 @@ public class DataGenerator {
             }
 
             if (!dryRun) {
-                submitter.submit(payloadMap);
+                javarosaClient.submit(payloadMap);
             }
 
         } catch (IOException e) {
@@ -128,9 +128,9 @@ public class DataGenerator {
     private void init() {
         if (initilized) return;
 
-        submitter = new JavarosaClient().setServerUrl(serverUrl)
-                                        .setUsername(username)
-                                        .setPassword(password);
+        javarosaClient = new JavarosaClient().setServerUrl(serverUrl)
+                                             .setUsername(username)
+                                             .setPassword(password);
 
 
         initilized = true;
