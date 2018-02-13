@@ -28,3 +28,5 @@ out/
 **__submit_data
 /api/build/
 /console/build/
+/web/build/
+/web/out/

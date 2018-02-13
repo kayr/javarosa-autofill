@@ -158,7 +158,7 @@ public class JavarosaClient {
 
 
     public static class XForm {
-        String formID, name, downloadUrl, hash;
+        public String formID, name, downloadUrl, hash;
 
         @Override
         public String toString() {

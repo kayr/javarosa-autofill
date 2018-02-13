@@ -1,0 +1,2 @@
+BooleanData.cast does an equal with string and it will never become true
+todo Add handler for preload entities

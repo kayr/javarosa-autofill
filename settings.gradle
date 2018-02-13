@@ -1,2 +1,3 @@
 rootProject.name = 'javarosa-autofill'
-include 'api', 'console'
+include 'api', 'console','web'
+
