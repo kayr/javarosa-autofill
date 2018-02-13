@@ -43,7 +43,7 @@ public class DataGenerator {
 
     private boolean dryRun = false;
 
-    private JavarosaSubmitter submitter;
+    private JavarosaClient submitter;
 
     public void start() {
         init();
@@ -75,7 +75,7 @@ public class DataGenerator {
 
             if (payload instanceof ByteArrayPayload) {
                 String payload1 = FormAutoFill.payloadToXml(payload);
-                payloadMap.put(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE, payload1);
+                payloadMap.put(JavarosaClient.NAME_XML_SUBMISSION_FILE, payload1);
 
 
             } else if (payload instanceof MultiMessagePayload) {
@@ -86,7 +86,7 @@ public class DataGenerator {
             }
 
             if (dataListener != null) {
-                dataListener.accept(iteration, payloadMap.get(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE).toString());
+                dataListener.accept(iteration, payloadMap.get(JavarosaClient.NAME_XML_SUBMISSION_FILE).toString());
             }
 
             if (!dryRun) {
@@ -106,7 +106,7 @@ public class DataGenerator {
         multiMessagePayload.getPayloads().forEach(pl -> {
             if (pl instanceof ByteArrayPayload) {
 
-                payloadData.put(JavarosaSubmitter.NAME_XML_SUBMISSION_FILE, FormAutoFill.payloadToXml(pl));
+                payloadData.put(JavarosaClient.NAME_XML_SUBMISSION_FILE, FormAutoFill.payloadToXml(pl));
 
             } else if (pl instanceof DataPointerPayload) {
                 try {
@@ -128,9 +128,9 @@ public class DataGenerator {
     private void init() {
         if (initilized) return;
 
-        submitter = new JavarosaSubmitter().setServerUrl(serverUrl)
-                                           .setUsername(username)
-                                           .setPassword(password);
+        submitter = new JavarosaClient().setServerUrl(serverUrl)
+                                        .setUsername(username)
+                                        .setPassword(password);
 
 
         initilized = true;

@@ -27,21 +27,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class WizardPlayer {
+public class ConsoleWizard {
 
     private TextIO       textIO = TextIoFactory.getTextIO();
     private TextTerminal term   = textIO.getTextTerminal();
 
-    private JavarosaSubmitter submitter = new JavarosaSubmitter();
-    private String            serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
-    private String            username  = "admin";
-    private String            password  = "admin";
+    private JavarosaClient submitter = new JavarosaClient();
+    private String         serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
+    private String         username  = "admin";
+    private String         password  = "admin";
 
-    private List<JavarosaSubmitter.XForm> xForms;
-    private JavarosaSubmitter.XForm       xForm;
-    private Path                          generexPath;
-    private Integer                       numberOfRecords;
-    private Boolean                       dryRun;
+    private List<JavarosaClient.XForm> xForms;
+    private JavarosaClient.XForm       xForm;
+    private Path                       generexPath;
+    private Integer                    numberOfRecords;
+    private Boolean                    dryRun;
 
 
     public void start() {

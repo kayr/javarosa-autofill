@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 
 import static org.joox.JOOX.$;
 
-public class JavarosaSubmitter {
+public class JavarosaClient {
 
     public static final String NAME_XML_SUBMISSION_FILE = "xml_submission_file";
     private             String serverUrl                = "http://localhost:8080/oxd/mpsubmit/odk";
@@ -34,7 +34,7 @@ public class JavarosaSubmitter {
         return serverUrl;
     }
 
-    public JavarosaSubmitter setServerUrl(String serverUrl) {
+    public JavarosaClient setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
         return this;
     }
@@ -43,7 +43,7 @@ public class JavarosaSubmitter {
         return username;
     }
 
-    public JavarosaSubmitter setUsername(String username) {
+    public JavarosaClient setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -52,7 +52,7 @@ public class JavarosaSubmitter {
         return password;
     }
 
-    public JavarosaSubmitter setPassword(String password) {
+    public JavarosaClient setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -182,12 +182,12 @@ public class JavarosaSubmitter {
 
     private boolean initialized = false;
 
-    public synchronized JavarosaSubmitter reInit() {
+    public synchronized JavarosaClient reInit() {
         initialized = false;
         return init();
     }
 
-    private synchronized JavarosaSubmitter init() {
+    private synchronized JavarosaClient init() {
 
         if (!initialized) {
             httpClient =

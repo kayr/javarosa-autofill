@@ -36,7 +36,7 @@ public class Console {
 
     private static void startWizard() {
 
-        new WizardPlayer().start();
+        new ConsoleWizard().start();
     }
 
     private static void processPropertiesFile(String filePath) throws IOException {
