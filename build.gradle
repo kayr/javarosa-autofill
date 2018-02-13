@@ -1,49 +1,20 @@
-group 'com.github'
+group 'com.github.kayr'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'groovy'
-apply plugin: 'java'
 
-sourceCompatibility = 1.8
+allprojects {
+    apply plugin: 'groovy'
+    apply plugin: 'java'
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-dependencies {
-    compile group: 'org.opendatakit', name: 'opendatakit-javarosa', version: '2.4.0'
-    compile group: 'com.github.javafaker', name: 'javafaker', version: '0.14'//ds
-    compile group: 'com.github.mifmif', name: 'generex', version: '1.0.2'
-
-    //SUBMISSION API
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.5.0'
-    compile 'org.jooq:joox-java-6:1.6.0'
-    compile 'org.beryx:text-io:3.1.3'
+    sourceCompatibility = 1.8
 
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile 'org.codehaus.groovy:groovy-all:2.3.11'
-    testCompile 'org.openxdata:oxdmarkup-parser:0.22-SNAPSHOT'
-
-}
-
-
-jar {
-    baseName = rootProject.name
-    version = version
-
-    from {
-        configurations.compile.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url "http://omnitech.co.ug/m2/releases" }
     }
-
-    manifest {
-        attributes 'Main-Class': 'com.github.kayr.javarosa.autofill.submission.Console'
-    }
-
-    // Some of the dependencies are signed jars. When combined into a big jar, the corresponding signature files
-    // don't match with big jar, so the runtime refuses to run the jar. The fix is to exclude the signature files.
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
+
+
+

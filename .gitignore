@@ -26,3 +26,5 @@ out/
 /src/jrbugs.txt
 /.settings
 **__submit_data
+/api/build/
+/console/build/
