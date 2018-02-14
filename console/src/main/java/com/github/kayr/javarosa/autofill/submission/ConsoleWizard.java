@@ -1,18 +1,11 @@
 package com.github.kayr.javarosa.autofill.submission;
 
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
-import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.api.IOUtils;
 import org.beryx.textio.StringInputReader;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
-import org.javarosa.core.model.FormDef;
-import org.javarosa.core.model.IDataReference;
-import org.javarosa.core.model.IFormElement;
-import org.javarosa.core.model.instance.TreeElement;
-import org.javarosa.core.model.instance.TreeReference;
-import org.javarosa.xpath.XPathConditional;
 
 import java.awt.*;
 import java.io.IOException;
@@ -24,7 +17,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ConsoleWizard {
@@ -42,7 +34,6 @@ public class ConsoleWizard {
     private Path                       generexPath;
     private Integer                    numberOfRecords;
     private Boolean                    dryRun;
-
 
     public void start() {
 
@@ -113,7 +104,6 @@ public class ConsoleWizard {
         }
     }
 
-
     private void __selectForm() {
         List<String> possibleValues = xForms.stream()
                                             .map(s -> String.format("%s(%s)", s.name, s.formID))
@@ -151,7 +141,6 @@ public class ConsoleWizard {
                                 .withMinVal(1)
                                 .read("Enter number of Records");
     }
-
 
     private void __getDryRun() {
         dryRun = textIO.newBooleanInputReader()
@@ -208,10 +197,9 @@ public class ConsoleWizard {
 
     }
 
-
     private String getXform() throws IOException {
         configSubmitter();
-        return submitter.pullXfom(xForm);
+        return submitter.pullXform(xForm);
     }
 
     private void configSubmitter() {
@@ -220,7 +208,6 @@ public class ConsoleWizard {
         submitter.setUsername(username);
         submitter.reInit();
     }
-
 
     private void selectGenerexFile() {
         String defaultValue = FileUtil.cleanFileName(xForm.getName_Id());
@@ -286,37 +273,10 @@ public class ConsoleWizard {
     }
 
     private void populateGenerex() throws IOException {
-        FormDef formDef = FormUtils.parseFromText(getXform());
-
-        List<IFormElement> children = FormUtils.getChildren(formDef);
-
-        List<String> bindVariables = children.stream()
-                                             .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
-                                             .map(e -> createPropertiesFileLine(formDef, e))
-                                             .collect(Collectors.toList());
-
-        String properties = String.join("=\n\n", bindVariables) + "=";
-
+        String xform      = getXform();
+        String properties = DataGenerator.createPropertiesText(xform);
         Files.write(generexPath, properties.getBytes(StandardCharsets.UTF_8));
-
-
     }
-
-    private String createPropertiesFileLine(FormDef formDef, IFormElement e) {
-        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
-
-        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
-
-        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
-                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
-                                                          .orElse(""))
-                                        .orElse("");
-
-        return "#" + e.getLabelInnerText().replaceAll("\\s+", " ") + "\n" +
-                xPathConstraint +
-                FormUtils.resolveVariable(e) ;
-    }
-
 
     private void runAll(Runnable... runnable) {
         for (Runnable r : runnable) {

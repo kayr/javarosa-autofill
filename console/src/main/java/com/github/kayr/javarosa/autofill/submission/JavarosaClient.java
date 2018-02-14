@@ -29,6 +29,7 @@ public class JavarosaClient {
     private             String password                 = "admin";
 
     private OkHttpClient httpClient;
+    private boolean initialized = false;
 
     public String getServerUrl() {
         return serverUrl;
@@ -56,7 +57,6 @@ public class JavarosaClient {
         this.password = password;
         return this;
     }
-
 
     public void submit(String payload) throws IOException {
         Map<String, Object> m = new HashMap<>();
@@ -108,6 +108,7 @@ public class JavarosaClient {
     }
 
     public List<XForm> formList() throws IOException, ParserConfigurationException, SAXException {
+        init();
         Request build = buildRequest().url(serverUrl + "/formList")
                                       .build();
 
@@ -123,13 +124,18 @@ public class JavarosaClient {
         return parseXform(xmlResponse);
     }
 
-    public String pullXfom(XForm form) throws IOException {
-        Request build = buildRequest().url(form.downloadUrl).build();
+    public String pullXform(XForm form) throws IOException {
+        String downloadUrl = form.downloadUrl;
+        return pullXform(downloadUrl);
+    }
+
+    public String pullXform(String downloadUrl) throws IOException {
+        init();
+        Request build = buildRequest().url(downloadUrl).build();
 
         Call call = httpClient.newCall(build);
 
         return call.execute().body().string();
-
     }
 
     private List<XForm> parseXform(String xForm) throws SAXException, IOException, ParserConfigurationException {
@@ -156,31 +162,9 @@ public class JavarosaClient {
         return $(doc);
     }
 
-
-    public static class XForm {
-        public String formID, name, downloadUrl, hash;
-
-        @Override
-        public String toString() {
-            return "XForm{" +
-                    "formID='" + formID + '\'' +
-                    ", name='" + name + '\'' +
-                    ", downloadUrl='" + downloadUrl + '\'' +
-                    ", hash='" + hash + '\'' +
-                    '}';
-        }
-
-        String getName_Id() {
-            return name + "_" + formID;
-        }
-    }
-
     private String submitUrl() {
         return serverUrl + "/submission";
     }
-
-
-    private boolean initialized = false;
 
     public synchronized JavarosaClient reInit() {
         initialized = false;
@@ -202,6 +186,8 @@ public class JavarosaClient {
                 serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
 
             }
+
+
             initialized = true;
         }
 
@@ -216,5 +202,33 @@ public class JavarosaClient {
         return result;
     }
 
+    public JavarosaClient shutDown() {
+        if (httpClient != null) {
+            try {
+                httpClient.connectionPool().evictAll();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return this;
+    }
+
+    public static class XForm {
+        public String formID, name, downloadUrl, hash;
+
+        @Override
+        public String toString() {
+            return "XForm{" +
+                    "formID='" + formID + '\'' +
+                    ", name='" + name + '\'' +
+                    ", downloadUrl='" + downloadUrl + '\'' +
+                    ", hash='" + hash + '\'' +
+                    '}';
+        }
+
+        String getName_Id() {
+            return name + "_" + formID;
+        }
+    }
 
 }

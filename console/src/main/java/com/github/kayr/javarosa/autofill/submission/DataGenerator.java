@@ -2,18 +2,28 @@ package com.github.kayr.javarosa.autofill.submission;
 
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import com.github.kayr.javarosa.autofill.api.FormAutoFill;
+import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.api.IOUtils;
+import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.IDataReference;
+import org.javarosa.core.model.IFormElement;
+import org.javarosa.core.model.instance.TreeElement;
+import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.core.services.transport.payload.ByteArrayPayload;
 import org.javarosa.core.services.transport.payload.DataPointerPayload;
 import org.javarosa.core.services.transport.payload.IDataPayload;
 import org.javarosa.core.services.transport.payload.MultiMessagePayload;
+import org.javarosa.xpath.XPathConditional;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DataGenerator {
@@ -136,6 +146,34 @@ public class DataGenerator {
         initilized = true;
     }
 
+
+    public static String createPropertiesText(String xform) {
+        FormDef formDef = FormUtils.parseFromText(xform);
+
+        List<IFormElement> children = FormUtils.getChildren(formDef);
+
+        List<String> bindVariables = children.stream()
+                                             .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
+                                             .map(e -> createPropertiesFileLine(formDef, e))
+                                             .collect(Collectors.toList());
+
+        return String.join("=\n\n", bindVariables) + "=";
+    }
+
+    private static String createPropertiesFileLine(FormDef formDef, IFormElement e) {
+        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+
+        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
+
+        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
+                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
+                                                          .orElse(""))
+                                        .orElse("");
+
+        return "#" + e.getLabelInnerText().replaceAll("\\s+", " ") + "\n" +
+                xPathConstraint +
+                FormUtils.resolveVariable(e);
+    }
 
     public DataGenerator setFormDefXMl(String formDefXMl) {
         this.formDefXMl = formDefXMl;
