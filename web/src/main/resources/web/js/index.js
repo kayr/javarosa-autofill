@@ -29,6 +29,7 @@
     }
 
     function renderFormList(formList) {
+        $lstForm.empty();
         formList.forEach(function (form) {
             var html =
                 $(tmpl('form-list-widget', form)).on('click', function () {
@@ -43,7 +44,7 @@
         $.ajax({
             url: '/formProperties',
             method: 'POST',
-            data: JSON.stringify( $.extend(serverCreds(),{url: form.downloadUrl}))
+            data: JSON.stringify($.extend(serverCreds(), {url: form.downloadUrl}))
         }).done(function (t) {
             bootbox.alert(t);
         }).fail(function (t) {

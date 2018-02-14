@@ -37,23 +37,49 @@ public class DataGenerator {
     private int                         numberOfItems;
     private BiConsumer<Integer, String> dataListener;
     private Map<String, String>         generexMap;
+    private boolean initilized = false;
+    private boolean dryRun     = false;
+    private JavarosaClient javarosaClient;
+
+    public static String createPropertiesText(String xform) {
+        FormDef formDef = FormUtils.parseFromText(xform);
+
+        List<IFormElement> children = FormUtils.getChildren(formDef);
+
+        List<String> bindVariables = children.stream()
+                                             .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
+                                             .map(e -> createPropertiesFileLine(formDef, e))
+                                             .collect(Collectors.toList());
+
+        return String.join("=\n\n", bindVariables) + "=";
+    }
+
+    private static String createPropertiesFileLine(FormDef formDef, IFormElement e) {
+        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+
+        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
+
+        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
+                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
+                                                          .orElse(""))
+                                        .orElse("");
+
+        return "#" + Optional.ofNullable(e.getLabelInnerText())
+                             .orElse("----")
+                             .replaceAll("\\s+", " ") + "\n" +
+                xPathConstraint +
+                FormUtils.resolveVariable(e);
+    }
 
     public DataGenerator setGenerexMap(Map<String, String> generexMap) {
         this.generexMap = generexMap;
         return this;
     }
 
-    private boolean initilized = false;
-
-
     public DataGenerator setDataListener(BiConsumer<Integer, String> dataListener) {
         this.dataListener = dataListener;
         return this;
     }
-
-    private boolean dryRun = false;
-
-    private JavarosaClient javarosaClient;
 
     public void start() {
         init();
@@ -134,7 +160,6 @@ public class DataGenerator {
         return payloadData;
     }
 
-
     private void init() {
         if (initilized) return;
 
@@ -144,35 +169,6 @@ public class DataGenerator {
 
 
         initilized = true;
-    }
-
-
-    public static String createPropertiesText(String xform) {
-        FormDef formDef = FormUtils.parseFromText(xform);
-
-        List<IFormElement> children = FormUtils.getChildren(formDef);
-
-        List<String> bindVariables = children.stream()
-                                             .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
-                                             .map(e -> createPropertiesFileLine(formDef, e))
-                                             .collect(Collectors.toList());
-
-        return String.join("=\n\n", bindVariables) + "=";
-    }
-
-    private static String createPropertiesFileLine(FormDef formDef, IFormElement e) {
-        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
-
-        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
-
-        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
-                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
-                                                          .orElse(""))
-                                        .orElse("");
-
-        return "#" + e.getLabelInnerText().replaceAll("\\s+", " ") + "\n" +
-                xPathConstraint +
-                FormUtils.resolveVariable(e);
     }
 
     public DataGenerator setFormDefXMl(String formDefXMl) {
