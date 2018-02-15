@@ -21,25 +21,30 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 @SuppressWarnings("WeakerAccess")
 public class Main {
 
-    private static Logger LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
-
-    private static ExecutorService e = Executors.newCachedThreadPool();
+    static EventsWebSocket eventSocket;
+    static Logger          LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
+    static ExecutorService e   = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
 
 //        Spark.staticFiles.location("/web");
         Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
+        webSocket("/events", EventsWebSocket.class);
+
+        after((request, response) -> response.header("Content-Encoding", "gzip"));
+
         post("/formList", Main::processFormList);
 
         post("/formProperties", Main::getPropertyFile);
 
         post("/generateData", Main::generateData);
+
 
         launch(String.format("http://localhost:%s/index.html", Spark.port()));
     }
@@ -90,6 +95,7 @@ public class Main {
             int        numberOfItem   = reqData.getInt("numberOfItems", 10);
             boolean    dryRyn         = reqData.getBoolean("dryRun", true);
             String     url            = reqData.get("downloadUrl").asString();
+            String     username       = reqData.getString("userId", "");
             String     xform          = withJRClient(reqData, jr -> jr.pullXform(url));
             Properties properties     = new Properties();
 
@@ -105,9 +111,16 @@ public class Main {
                                                          .setFormDefXMl(xform)
                                                          .setGenerexMap(FileUtil.propertiesToMap(properties))
                                                          .setNumberOfItems(numberOfItem)
-                                                         .setDataListener((integer, s) -> System.out.println("Processed: " + integer));
+                                                         .setDataListener((integer, s) -> eventSocket.log(username, "Processed: " + integer));
 
-            e.submit(() -> doSafely(generator::start));
+            e.submit(() -> {
+                try {
+                    generator.start();
+                } catch (Exception x) {
+                    LOG.error("Failed To Generate Data: ", x);
+                    eventSocket.log(username, x.getMessage());
+                }
+            });
             res.type("text/plain");
             return DataGenerator.createPropertiesText(xform);
 
@@ -126,7 +139,7 @@ public class Main {
                                    .setServerUrl(req.get("url").asString());
     }
 
-    private static Object doSafely(Response res, Callable callable) throws Exception {
+    private static Object doSafely(Response res, Callable callable) {
         try {
             return callable.call();
         } catch (Exception x) {
@@ -148,6 +161,7 @@ public class Main {
             return callable.call();
         } catch (Exception x) {
             LOG.error("Error processing request: ", x);
+
         }
         return null;
     }

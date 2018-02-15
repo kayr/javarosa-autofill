@@ -7,19 +7,20 @@
     var $txtProperties = $('#c-properties-text');
     var $txtNumEntries = $('#c-numOfEntries');
     var $btnGenerateData = $('#c-btn-generate-data');
-    var $checkDryRun = $('#c-btn-generate-data');
+    var $checkDryRun = $('#c-dry-run');
+    var $logTextArea = $('#messages');
 
     var selectedForm = null;
+    var userId = null;
 
 
     function serverCreds(data) {
-        if (!data) {
-            data = {}
-        }
+        if (!data) { data = {} }
         return $.extend(data, {
             username: $username.val(),
             password: $password.val(),
-            url: $url.val()
+            url: $url.val(),
+            userId: userId
         });
     }
 
@@ -69,46 +70,78 @@
             return
         }
 
-        $.ajax({
-            url: '/generateData',
-            method: "POST",
-            data: JSON.stringify(serverCreds({
-                dryRun: $checkDryRun.is(':checked'),
-                numberOfItems: parseInt($txtNumEntries.val()),
-                downloadUrl: selectedForm.downloadUrl,
-                generexProperties: $txtProperties.val()
-            }))
-        }).done(function () {
-            bootbox.alert("Request Submitted");
-        }).fail(function (value) {
-            bootbox.alert({title: "Failed To Generate Data:", message: value.responseText});
-        })
+        initWebSocket(function () {
+            $.ajax({
+                url: '/generateData',
+                method: "POST",
+                data: JSON.stringify(serverCreds({
+                    dryRun: $checkDryRun.is(':checked'),
+                    numberOfItems: parseInt($txtNumEntries.val()),
+                    downloadUrl: selectedForm.downloadUrl,
+                    generexProperties: $txtProperties.val()
+                }))
+            }).done(function () {
+                $logTextArea.val('');
+            }).fail(function (error) {
+                bootbox.alert({title: "Failed To Generate Data:", message: error.responseText});
+            });
+        });
 
 
     }
 
+    function getWsBase() {
+        var loc = window.location, new_uri;
+        if (loc.protocol === "https:") {new_uri = "wss:"; }
+        else {new_uri = "ws:";}
+        return new_uri + "//" + loc.host /*+ loc.pathname*/ + "/events";
+    }
+
 
     var progressDialog = null;
+    var webSocket;
+
+    function initWebSocket(callBack) {
+
+        if (webSocket && webSocket.readyState !== webSocket.CLOSED) {
+            if (callBack) callBack();
+            return;
+        }
+
+        webSocket = new WebSocket(getWsBase());
+        webSocket.onopen = function (event) { };
+
+        webSocket.onmessage = function (event) {
+
+            var message = event.data.toString();
+
+            if (message.startsWith('::user:')) {
+                console.log("received token" + message);
+                userId = message.replace('::user:', '');
+                if (callBack) callBack()
+            } else {
+                $logTextArea.val(event.data + "\n" + $logTextArea.val());
+            }
+        };
+
+        webSocket.onclose = function () {userId = null};
+    }
 
     function init() {
 
 
         $(document).ajaxStart(function () {
-            progressDialog = bootbox.dialog({
-                closeButton: false, title: "Working!!", message: "Wait....", buttons: {}
-            });
+            progressDialog = bootbox.dialog({closeButton: false, title: "Working!!", message: "Wait....", buttons: {}});
         }).ajaxStop(function () {
             progressDialog.modal('hide')
         });
 
 
-        $btnGetFormList.on('click', function () {
-            getFormList();
-        });
+        $btnGetFormList.on('click', function () { getFormList(); });
 
-        $btnGenerateData.on('click', function () {
-            generateData();
-        })
+        $btnGenerateData.on('click', function () {generateData(); });
+
+        initWebSocket();
     }
 
 
