@@ -92,7 +92,7 @@ public class Main {
             JsonObject reqData = Json.parse(req.body()).asObject();
 
             String     propertiesText = reqData.get("generexProperties").asString();
-            int        numberOfItem   = reqData.getInt("numberOfItems", 10);
+            int        numberOfItem   = Math.min(reqData.getInt("numberOfItems", 10), 20);
             boolean    dryRyn         = reqData.getBoolean("dryRun", true);
             String     url            = reqData.get("downloadUrl").asString();
             String     username       = reqData.getString("userId", "");
