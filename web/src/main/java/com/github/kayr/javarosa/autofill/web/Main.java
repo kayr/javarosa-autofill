@@ -31,9 +31,9 @@ public class Main {
     static ExecutorService e   = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
+        Spark.staticFiles.location("/web");
 
-//        Spark.staticFiles.location("/web");
-        Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
+        //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
         webSocket("/events", EventsWebSocket.class);
 
@@ -111,7 +111,7 @@ public class Main {
                                                          .setFormDefXMl(xform)
                                                          .setGenerexMap(FileUtil.propertiesToMap(properties))
                                                          .setNumberOfItems(numberOfItem)
-                                                         .setDataListener((integer, s) -> eventSocket.log(username, "Processed: " + integer));
+                                                         .setDataListener((integer, s) -> eventSocket.log(username, "Processing: " + integer));
 
             e.submit(() -> {
                 try {

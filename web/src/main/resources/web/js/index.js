@@ -9,6 +9,7 @@
     var $btnGenerateData = $('#c-btn-generate-data');
     var $checkDryRun = $('#c-dry-run');
     var $logTextArea = $('#messages');
+    var $lblCurrentForm = $('#c-lbl-currentForm');
 
     var selectedForm = null;
     var userId = null;
@@ -43,12 +44,22 @@
 
         formList.forEach(function (form) {
             var html = $(tmpl('form-list-widget', form)).on('click', function () {
-                selectedForm = null;
+                setCurrentForm(null);
                 getProperties(form);
             });
 
             $lstForm.append(html)
         })
+    }
+
+    function setCurrentForm(form) {
+        selectedForm = form;
+        if (form)
+            $lblCurrentForm.text(form.name);
+        else
+            $lblCurrentForm.text('');
+
+
     }
 
     function getProperties(form) {
@@ -58,7 +69,7 @@
             data: JSON.stringify(serverCreds({downloadUrl: form.downloadUrl}))
         }).done(function (res) {
             $txtProperties.val(res);
-            selectedForm = form;
+            setCurrentForm(form);
         }).fail(function (err) {
             bootbox.alert("Failed: " + err.responseText);
         });
