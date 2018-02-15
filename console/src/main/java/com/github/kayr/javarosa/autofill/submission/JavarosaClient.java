@@ -24,9 +24,16 @@ import static org.joox.JOOX.$;
 public class JavarosaClient {
 
     public static final String NAME_XML_SUBMISSION_FILE = "xml_submission_file";
-    private             String serverUrl                = "http://localhost:8080/oxd/mpsubmit/odk";
-    private             String username                 = "admin";
-    private             String password                 = "admin";
+
+    private static OkHttpClient _client = new OkHttpClient.Builder().writeTimeout(30, TimeUnit.SECONDS)
+                                                                    .readTimeout(30, TimeUnit.SECONDS)
+                                                                    .connectTimeout(10, TimeUnit.SECONDS)
+                                                                    .build();
+
+
+    private String serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
+    private String username  = "admin";
+    private String password  = "admin";
 
     private OkHttpClient httpClient;
     private boolean initialized = false;
@@ -174,13 +181,10 @@ public class JavarosaClient {
     private synchronized JavarosaClient init() {
 
         if (!initialized) {
-            httpClient =
-                    new OkHttpClient.Builder()
-                            .addInterceptor(new BasicAuthInterceptor(username, password))
-                            .writeTimeout(30, TimeUnit.SECONDS)
-                            .readTimeout(30, TimeUnit.SECONDS)
-                            .connectTimeout(10, TimeUnit.SECONDS)
-                            .build();
+
+            httpClient = _client.newBuilder()
+                                .addInterceptor(new BasicAuthInterceptor(username, password))
+                                .build();
 
             if (serverUrl.endsWith("/")) {
                 serverUrl = serverUrl.substring(0, serverUrl.length() - 1);
@@ -202,16 +206,6 @@ public class JavarosaClient {
         return result;
     }
 
-    public JavarosaClient shutDown() {
-        if (httpClient != null) {
-            try {
-                httpClient.connectionPool().evictAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return this;
-    }
 
     public static class XForm {
         public String formID, name, downloadUrl, hash;

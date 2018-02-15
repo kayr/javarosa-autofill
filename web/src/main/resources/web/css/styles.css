@@ -3,8 +3,6 @@
     color: #333;
 }
 
-
-
 code,
 kbd,
 pre,
@@ -39,13 +37,12 @@ pre,
 .popover,
 .popover-title,
 .carousel-indicators li {
-    border-radius:0 !important;
+    border-radius: 0 !important;
 }
 
-.whitelinks{
+.whitelinks {
     color: #f5f5f5;
 }
-
 
 .panel-default > .panel-white-heading {
     color: #333;
@@ -78,9 +75,23 @@ pre,
     height: 1px;
     width: 100%;
     background: grey;
-    background: linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
-    background: -moz-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
-    background: -webkit-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
-    background: -ms-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
-    background: -o-linear-gradient(left, transparent 0%,#444 50%,transparent 100%);
+    background: linear-gradient(left, transparent 0%, #444 50%, transparent 100%);
+    background: -moz-linear-gradient(left, transparent 0%, #444 50%, transparent 100%);
+    background: -webkit-linear-gradient(left, transparent 0%, #444 50%, transparent 100%);
+    background: -ms-linear-gradient(left, transparent 0%, #444 50%, transparent 100%);
+    background: -o-linear-gradient(left, transparent 0%, #444 50%, transparent 100%);
+}
+
+.mouse-hand {
+    cursor: pointer;
+}
+
+.textarea-row {
+    margin-top: 1em;
+}
+
+.property-text-area {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }

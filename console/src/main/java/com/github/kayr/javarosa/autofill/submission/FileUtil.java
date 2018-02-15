@@ -3,6 +3,7 @@ package com.github.kayr.javarosa.autofill.submission;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,6 +65,10 @@ public class FileUtil {
 
     public static Map<String, String> loadPropertiesAsMap(Path path) throws IOException {
         Properties          generexProperties = loadProperties(path);
+        return propertiesToMap(generexProperties);
+    }
+
+    public static Map<String, String> propertiesToMap(Properties generexProperties) {
         Map<String, String> properties        = new HashMap<>();
         generexProperties.keySet().forEach(s -> properties.put(s.toString(), generexProperties.getProperty(s.toString())));
         return properties;
@@ -72,7 +77,9 @@ public class FileUtil {
     public static Properties loadProperties(Path path) throws IOException {
         Properties properties;
         properties = new Properties();
-        properties.load(Files.newInputStream(path));
+        try (InputStream inStream = Files.newInputStream(path)) {
+            properties.load(inStream);
+        }
         return properties;
     }
 }

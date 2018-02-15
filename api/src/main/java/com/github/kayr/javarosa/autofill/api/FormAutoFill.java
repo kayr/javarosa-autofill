@@ -32,12 +32,12 @@ import java.util.logging.Logger;
 
 public class FormAutoFill {
 
+    private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
+
     static {
         Std.setErr(new NullPrintStream());
         Std.setOut(new NullPrintStream());
     }
-
-    private static Logger LOG = Logger.getLogger(FormAutoFill.class.getName());
 
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
     private Map<String, String>                      genExpressionMap  = new HashMap<>();
@@ -62,6 +62,24 @@ public class FormAutoFill {
 
     public static FormAutoFill fromResource(String resource) {
         return new FormAutoFill(XFormUtils.getFormFromResource(resource));
+    }
+
+    public static String payloadToXml(IDataPayload submissionPayload) {
+        try {
+
+            IDataPayload finalPayLoad = submissionPayload;
+            if (submissionPayload instanceof MultiMessagePayload) {
+                MultiMessagePayload    multiPayload = (MultiMessagePayload) submissionPayload;
+                Optional<IDataPayload> payload      = multiPayload.getPayloads().stream().filter(ByteArrayPayload.class::isInstance).findAny();
+
+                finalPayLoad = payload.orElseThrow(() -> new AutoFillException("No XML Payload Found"));
+
+            }
+            InputStream payloadStream = finalPayLoad.getPayloadStream();
+            return IOUtils.getText(payloadStream);
+        } catch (IOException e) {
+            throw new AutoFillException(e);
+        }
     }
 
     private void init() {
@@ -143,7 +161,6 @@ public class FormAutoFill {
         answerProviderMap.put(ControlDataTypeKey.with(controlType, dataType), provider);
     }
 
-
     public FormAutoFill autoFill() {
         while (!isEndOfForm()) {
             nextEvent();
@@ -162,7 +179,6 @@ public class FormAutoFill {
 
         return this;
     }
-
 
     private void nextEvent() {
         int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
@@ -214,7 +230,6 @@ public class FormAutoFill {
         }
     }
 
-
     @SuppressWarnings({"WeakerAccess", "BooleanMethodIsAlwaysInverted"})
     public boolean isEndOfForm() {
         return fec.getModel().getEvent() == FormEntryController.EVENT_END_OF_FORM;
@@ -239,7 +254,7 @@ public class FormAutoFill {
         }
 
         if (status != FormEntryController.ANSWER_OK)
-            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getBind().getReference() + "]");
+            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
 
 
     }
@@ -261,7 +276,6 @@ public class FormAutoFill {
 
         return generex.filter(StringUtils::isNotBlank);
     }
-
 
     @SuppressWarnings("WeakerAccess")
     protected IAnswerProvider resolveProvider(FormEntryPrompt prompt) {
@@ -289,7 +303,6 @@ public class FormAutoFill {
     private FormIndex currentIndex() {
         return model.getFormIndex();
     }
-
 
     @SuppressWarnings("WeakerAccess")
     public IDataPayload getSubmissionPayload() throws IOException {
@@ -323,24 +336,6 @@ public class FormAutoFill {
             throw new AutoFillException(e);
         }
 
-    }
-
-    public static String payloadToXml(IDataPayload submissionPayload) {
-        try {
-
-            IDataPayload finalPayLoad = submissionPayload;
-            if (submissionPayload instanceof MultiMessagePayload) {
-                MultiMessagePayload    multiPayload = (MultiMessagePayload) submissionPayload;
-                Optional<IDataPayload> payload      = multiPayload.getPayloads().stream().filter(ByteArrayPayload.class::isInstance).findAny();
-
-                finalPayLoad = payload.orElseThrow(() -> new AutoFillException("No XML Payload Found"));
-
-            }
-            InputStream payloadStream = finalPayLoad.getPayloadStream();
-            return IOUtils.getText(payloadStream);
-        } catch (IOException e) {
-            throw new AutoFillException(e);
-        }
     }
 
     public FormDef getFormDef() {

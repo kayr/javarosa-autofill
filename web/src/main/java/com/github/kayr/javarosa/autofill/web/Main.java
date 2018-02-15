@@ -4,20 +4,31 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.github.kayr.javarosa.autofill.submission.DataGenerator;
+import com.github.kayr.javarosa.autofill.submission.FileUtil;
 import com.github.kayr.javarosa.autofill.submission.JavarosaClient;
+import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
 import java.awt.*;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static spark.Spark.post;
 
 @SuppressWarnings("WeakerAccess")
 public class Main {
+
+    private static Logger LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
+
+    private static ExecutorService e = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
 
@@ -27,6 +38,8 @@ public class Main {
         post("/formList", Main::processFormList);
 
         post("/formProperties", Main::getPropertyFile);
+
+        post("/generateData", Main::generateData);
 
         launch(String.format("http://localhost:%s/index.html", Spark.port()));
     }
@@ -61,8 +74,40 @@ public class Main {
     private static Object getPropertyFile(Request req, Response res) throws Exception {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
-            String     url     = reqData.get("url").asString();
+            String     url     = reqData.get("downloadUrl").asString();
             String     xform   = withJRClient(reqData, jr -> jr.pullXform(url));
+            res.type("text/plain");
+            return DataGenerator.createPropertiesText(xform);
+
+        });
+    }
+
+    private static Object generateData(Request req, Response res) throws Exception {
+        return doSafely(res, () -> {
+            JsonObject reqData = Json.parse(req.body()).asObject();
+
+            String     propertiesText = reqData.get("generexProperties").asString();
+            int        numberOfItem   = reqData.getInt("numberOfItems", 10);
+            boolean    dryRyn         = reqData.getBoolean("dryRun", true);
+            String     url            = reqData.get("downloadUrl").asString();
+            String     xform          = withJRClient(reqData, jr -> jr.pullXform(url));
+            Properties properties     = new Properties();
+
+            try (StringReader stringReader = new StringReader(propertiesText)) {
+                properties.load(stringReader);
+            }
+
+
+            DataGenerator generator = new DataGenerator().setPassword(reqData.get("username").asString())
+                                                         .setPassword(reqData.get("password").asString())
+                                                         .setServerUrl(reqData.get("url").asString())
+                                                         .setDryRun(dryRyn)
+                                                         .setFormDefXMl(xform)
+                                                         .setGenerexMap(FileUtil.propertiesToMap(properties))
+                                                         .setNumberOfItems(numberOfItem)
+                                                         .setDataListener((integer, s) -> System.out.println("Processed: " + integer));
+
+            e.submit(() -> doSafely(generator::start));
             res.type("text/plain");
             return DataGenerator.createPropertiesText(xform);
 
@@ -72,11 +117,7 @@ public class Main {
 
     private static <T, R> R withJRClient(JsonObject req, JRFunction<JavarosaClient, R> function) throws Exception {
         JavarosaClient javarosaClient = getJavarosaClient(req);
-        try {
-            return function.apply(javarosaClient);
-        } finally {
-            javarosaClient.shutDown();
-        }
+        return function.apply(javarosaClient);
     }
 
     private static JavarosaClient getJavarosaClient(JsonObject req) {
@@ -89,13 +130,26 @@ public class Main {
         try {
             return callable.call();
         } catch (Exception x) {
+            LOG.error("Error processing request: ", x);
             String message = x.getMessage();
             if (message != null && message.contains("code=401")) {
                 res.status(401);
                 return "Access Denied";
+            } else {
+                res.status(500);
+                return Optional.ofNullable(message).orElse(x.toString());
             }
-            throw x;
+
         }
+    }
+
+    private static Object doSafely(Callable callable) {
+        try {
+            return callable.call();
+        } catch (Exception x) {
+            LOG.error("Error processing request: ", x);
+        }
+        return null;
     }
 
     static void launch(String url) {

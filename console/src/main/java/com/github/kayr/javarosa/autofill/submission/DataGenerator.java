@@ -81,10 +81,12 @@ public class DataGenerator {
         return this;
     }
 
-    public void start() {
+    public DataGenerator start() {
         init();
 
         IntStream.rangeClosed(1, numberOfItems).forEach(this::generateAndMayBeSubmit);
+
+        return this;
     }
 
     private void generateAndMayBeSubmit(int iteration) {
@@ -200,4 +202,6 @@ public class DataGenerator {
         this.dryRun = dryRun;
         return this;
     }
+
+
 }
