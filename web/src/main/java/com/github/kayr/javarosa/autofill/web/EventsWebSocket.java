@@ -50,7 +50,7 @@ public class EventsWebSocket {
     }
 
     @OnWebSocketMessage
-    public void message(Session session, String message)  {
+    public void message(Session session, String message) {
     }
 
     public void log(String username, String message) {

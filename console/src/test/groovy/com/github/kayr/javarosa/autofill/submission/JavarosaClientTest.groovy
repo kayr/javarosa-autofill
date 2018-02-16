@@ -3,11 +3,11 @@ package com.github.kayr.javarosa.autofill.submission
 import org.junit.Ignore
 import org.junit.Test
 
- class JavarosaClientTest {
+class JavarosaClientTest {
 
     @Test
     @Ignore
-     void submit() {
+    void submit() {
 
         def payload = new JavarosaClient().setUsername('admin')
                                           .setPassword('admin')

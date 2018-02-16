@@ -64,12 +64,12 @@ public class FileUtil {
     }
 
     public static Map<String, String> loadPropertiesAsMap(Path path) throws IOException {
-        Properties          generexProperties = loadProperties(path);
+        Properties generexProperties = loadProperties(path);
         return propertiesToMap(generexProperties);
     }
 
     public static Map<String, String> propertiesToMap(Properties generexProperties) {
-        Map<String, String> properties        = new HashMap<>();
+        Map<String, String> properties = new HashMap<>();
         generexProperties.keySet().forEach(s -> properties.put(s.toString(), generexProperties.getProperty(s.toString())));
         return properties;
     }

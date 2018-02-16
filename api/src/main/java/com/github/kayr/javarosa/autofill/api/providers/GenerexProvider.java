@@ -22,12 +22,55 @@ import java.util.logging.Logger;
 
 public class GenerexProvider {
 
-    private static Logger LOG = Logger.getLogger(GenerexProvider.class.getName());
+    private static Logger                       LOG             = Logger.getLogger(GenerexProvider.class.getName());
+    private static Map<String, XPathExpression> xpathParseCache = new ConcurrentHashMap<>();
 
 
     public GenerexProvider() {
     }
 
+    private static int getDataType(FormDef fec, IFormElement prompt, FormIndex index) {
+
+        TreeElement treeElement = fec.getMainInstance()
+                                     .resolveReference(FormUtils.getSafeXpathReference(prompt, index.getReference()));
+
+
+        Objects.requireNonNull(treeElement, "Could Not find Element For: " + index.getReference().toString());
+
+
+        return treeElement.getDataType();
+    }
+
+    @SuppressWarnings("RedundantThrows")
+    private static Object evalXpathString(FormInstance instance, EvaluationContext baseContext, TreeReference reference, String xpath) throws XPathSyntaxException {
+
+        XPathExpression   xPathExpression = parseXpath(xpath);
+        EvaluationContext ec2             = new EvaluationContext(baseContext, reference);
+
+        LOG.fine(String.format("Evaluating xpath [%s] in base[%s] context[%s]", xpath, baseContext.getContextRef(), reference));
+
+        Object result = xPathExpression.eval(instance, ec2);
+
+        ec2.isConstraint = true;
+
+        if (result instanceof Number) {
+            result = ((Number) result).doubleValue();//XPathFuncExpr.toString() Only loves doubles... so we convert all numbers to doubles
+        }
+
+        return result;
+    }
+
+    private static XPathExpression parseXpath(String xpath) {
+
+        return xpathParseCache.computeIfAbsent(xpath, (xp) -> {
+            try {
+                return XPathParseTool.parseXPath(xp);
+            } catch (XPathSyntaxException e) {
+                return IOUtils.sneakyThrow(e);
+            }
+        });
+
+    }
 
     public IAnswerData acquire(FormDef fec, IFormElement element, FormIndex index, String generex) {
 
@@ -76,51 +119,6 @@ public class GenerexProvider {
             clone.setMultiplicity(i, context.getMultiplicity(i));
         }
         return clone;
-
-    }
-
-    private static int getDataType(FormDef fec, IFormElement prompt, FormIndex index) {
-
-        TreeElement treeElement = fec.getMainInstance()
-                                     .resolveReference(FormUtils.getSafeXpathReference(prompt, index.getReference()));
-
-
-        Objects.requireNonNull(treeElement, "Could Not find Element For: " + index.getReference().toString());
-
-
-        return treeElement.getDataType();
-    }
-
-    @SuppressWarnings("RedundantThrows")
-    private static Object evalXpathString(FormInstance instance, EvaluationContext baseContext, TreeReference reference, String xpath) throws XPathSyntaxException {
-
-        XPathExpression   xPathExpression = parseXpath(xpath);
-        EvaluationContext ec2             = new EvaluationContext(baseContext, reference);
-
-        LOG.fine(String.format("Evaluating xpath [%s] in base[%s] context[%s]", xpath, baseContext.getContextRef(), reference));
-
-        Object result = xPathExpression.eval(instance, ec2);
-
-        ec2.isConstraint = true;
-
-        if (result instanceof Number) {
-            result = ((Number) result).doubleValue();//XPathFuncExpr.toString() Only loves doubles... so we convert all numbers to doubles
-        }
-
-        return result;
-    }
-
-    private static Map<String, XPathExpression> xpathParseCache = new ConcurrentHashMap<>();
-
-    private static XPathExpression parseXpath(String xpath) {
-
-        return xpathParseCache.computeIfAbsent(xpath, (xp) -> {
-            try {
-                return XPathParseTool.parseXPath(xp);
-            } catch (XPathSyntaxException e) {
-                return IOUtils.sneakyThrow(e);
-            }
-        });
 
     }
 

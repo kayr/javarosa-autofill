@@ -14,12 +14,6 @@ import java.util.stream.Collectors;
 public class MultiSelectProvider implements IAnswerProvider {
 
 
-    @Override
-    public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
-        List<SelectChoice> selectChoices = prompt.getSelectChoices();
-        return selectMultiData(selectChoices);
-    }
-
     private static SelectMultiData selectMultiData(List<SelectChoice> choices) {
         List<Selection> selections =
                 Fakers.getRandomMany(choices)
@@ -28,5 +22,11 @@ public class MultiSelectProvider implements IAnswerProvider {
                       .map(Selection::new)
                       .collect(Collectors.toList());
         return new SelectMultiData(selections);
+    }
+
+    @Override
+    public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
+        List<SelectChoice> selectChoices = prompt.getSelectChoices();
+        return selectMultiData(selectChoices);
     }
 }

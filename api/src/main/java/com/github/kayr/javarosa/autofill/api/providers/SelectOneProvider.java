@@ -13,14 +13,14 @@ import java.util.List;
 public class SelectOneProvider implements IAnswerProvider {
 
 
+    private static SelectOneData selectOneData(List<SelectChoice> choices) {
+        SelectChoice selectChoice = Fakers.getRandom(choices);
+        return new SelectOneData(new Selection(selectChoice));
+    }
+
     @Override
     public IAnswerData acquire(FormEntryController fec, FormEntryPrompt prompt) {
         List<SelectChoice> selectChoices = prompt.getSelectChoices();
         return selectOneData(selectChoices);
-    }
-
-    private static SelectOneData selectOneData(List<SelectChoice> choices) {
-        SelectChoice selectChoice = Fakers.getRandom(choices);
-        return new SelectOneData(new Selection(selectChoice));
     }
 }

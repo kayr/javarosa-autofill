@@ -50,7 +50,7 @@ public class Main {
         launch(String.format("http://localhost:%s/index.html", Spark.port()));
     }
 
-    private static Object processFormList(Request req, Response res)  {
+    private static Object processFormList(Request req, Response res) {
         return doSafely(res, () -> {
             String jsonFormList = getFormList(req.body());
             res.status(200);
@@ -77,7 +77,7 @@ public class Main {
 
     }
 
-    private static Object getPropertyFile(Request req, Response res)  {
+    private static Object getPropertyFile(Request req, Response res) {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
             String     url     = reqData.get("downloadUrl").asString();
@@ -88,7 +88,7 @@ public class Main {
         });
     }
 
-    private static Object generateData(Request req, Response res)  {
+    private static Object generateData(Request req, Response res) {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
 

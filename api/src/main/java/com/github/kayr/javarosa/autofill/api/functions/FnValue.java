@@ -6,7 +6,7 @@ import org.javarosa.xpath.expr.XPathFuncExpr;
 
 public class FnValue implements ISimpleFunctionHandler {
     @Override
-    public Object evalImpl(Object[] args, EvaluationContext ec)  {
+    public Object evalImpl(Object[] args, EvaluationContext ec) {
 
         if (args.length == 1) return ec.getVariable(XPathFuncExpr.toString(args[0]));
 

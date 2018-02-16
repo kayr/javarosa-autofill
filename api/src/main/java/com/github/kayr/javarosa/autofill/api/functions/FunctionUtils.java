@@ -6,7 +6,7 @@ import java.util.List;
 
 public class FunctionUtils {
 
-    @SuppressWarnings({"WeakerAccess","unchecked"})
+    @SuppressWarnings({"WeakerAccess", "unchecked"})
     static <T> T _arg(Object[] args, Class<T> klass, int i) {
         Object arg = args[i];
 

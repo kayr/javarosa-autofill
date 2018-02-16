@@ -20,19 +20,111 @@ public class Fakers {
 
     public static final Faker faker = Faker.instance();
 
+    public static void registerAllHandlers(FormDef formDef) {
+
+        EvaluationContext ec = formDef.getEvaluationContext();
+
+        Arrays.asList(new FnFake(),
+                      new FnNumber(),
+                      new FnDateBetween(),
+                      new FnDateFuture(),
+                      new FnBoolean(),
+                      new FnDatePast()).forEach(ec::addFunctionHandler);
+    }
+
+    private static java.util.Date parseDate(Object object) {
+        String s = XPathFuncExpr.toString(object).trim();
+
+        if (object instanceof java.util.Date) {
+            return (java.util.Date) object;
+        }
+
+        if (isDate(s)) {
+            return DateUtils.parseDate(s);
+        }
+
+        if (isDateTime(s)) {
+            return DateUtils.parseDateTime(s);
+        }
+
+        if (isTime(s)) {
+            return DateUtils.parseTime(s);
+        }
+
+        throw new AutoFillException("Invalid Date Format: " + s);
+
+    }
+
+    private static boolean isDateTime(String s) {
+        return s.contains(":") && s.contains("-");
+    }
+
+    private static boolean isTime(String s) {
+        return s.contains(":") && !s.contains("-");
+    }
+
+    private static boolean isDate(String s) {
+        return s.contains("-") && !s.contains(":");
+    }
+
+    private static TimeUnit toTimeUnit(String unitString) {
+        String lowerCaseStr = unitString.toLowerCase();
+        switch (lowerCaseStr) {
+            case "second":
+            case "seconds":
+                return TimeUnit.SECONDS;
+            case "minute":
+            case "minutes":
+                return TimeUnit.MINUTES;
+            case "hour":
+            case "hours":
+                return TimeUnit.HOURS;
+            case "day":
+            case "days":
+                return TimeUnit.DAYS;
+            default:
+                throw new AutoFillException("Time Unit [" + unitString + "] not supported");
+
+        }
+    }
+
+    public static boolean randomBoolean() {
+        return faker.bool().bool();
+    }
+
+    public static <T> T getRandom(List<T> choices) {
+        if (choices.size() < 3) {
+            choices = _duplicate(choices, 2);
+        }
+        return faker.options().nextElement(choices);
+    }
+
+    private static <T> List<T> _duplicate(List<T> items, int number) {
+
+        ArrayList<T> list = new ArrayList<>(items.size() * number);
+
+        IntStream.rangeClosed(1, number).forEach(i -> list.addAll(items));
+
+        return list;
+
+    }
+
+    public static <T> List<T> getRandomMany(List<T> choices) {
+        List<T> temporaryChoices = _getRandomChoices(choices);
+        while (temporaryChoices.isEmpty()) {
+            temporaryChoices = _getRandomChoices(choices);
+        }
+        return temporaryChoices;
+
+    }
+
+    private static <T> List<T> _getRandomChoices(List<T> choices) {
+        return choices.stream()
+                      .filter(c -> randomBoolean())
+                      .collect(Collectors.toList());
+    }
+
     static class FnFake implements ISimpleFunctionHandler {
-
-        @Override
-        public String getName() {
-            return "fake";
-        }
-
-        @Override
-        public Object evalImpl(Object[] args, EvaluationContext ec) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-                return resolveChainCall(args);
-
-        }
 
         private static Object resolveChainCall(Object[] methodNames) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             Deque<Object> stack = new LinkedList<>();
@@ -48,8 +140,19 @@ public class Fakers {
 
 
         }
-    }
 
+        @Override
+        public String getName() {
+            return "fake";
+        }
+
+        @Override
+        public Object evalImpl(Object[] args, EvaluationContext ec) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+            return resolveChainCall(args);
+
+        }
+    }
 
     public static class FnNumber implements ISimpleFunctionHandler {
         @Override
@@ -81,7 +184,6 @@ public class Fakers {
 
 
     }
-
 
     //random-date-between(from,to)
     public static class FnDateBetween implements ISimpleFunctionHandler {
@@ -165,112 +267,6 @@ public class Fakers {
         public String getName() {
             return "random-boolean";
         }
-    }
-
-
-    public static void registerAllHandlers(FormDef formDef) {
-
-        EvaluationContext ec = formDef.getEvaluationContext();
-
-        Arrays.asList(new FnFake(),
-                      new FnNumber(),
-                      new FnDateBetween(),
-                      new FnDateFuture(),
-                      new FnBoolean(),
-                      new FnDatePast()).forEach(ec::addFunctionHandler);
-    }
-
-    private static java.util.Date parseDate(Object object) {
-        String s = XPathFuncExpr.toString(object).trim();
-
-        if (object instanceof java.util.Date) {
-            return (java.util.Date) object;
-        }
-
-        if (isDate(s)) {
-            return DateUtils.parseDate(s);
-        }
-
-        if (isDateTime(s)) {
-            return DateUtils.parseDateTime(s);
-        }
-
-        if (isTime(s)) {
-            return DateUtils.parseTime(s);
-        }
-
-        throw new AutoFillException("Invalid Date Format: " + s);
-
-    }
-
-    private static boolean isDateTime(String s) {
-        return s.contains(":") && s.contains("-");
-    }
-
-    private static boolean isTime(String s) {
-        return s.contains(":") && !s.contains("-");
-    }
-
-    private static boolean isDate(String s) {
-        return s.contains("-") && !s.contains(":");
-    }
-
-    private static TimeUnit toTimeUnit(String unitString) {
-        String lowerCaseStr = unitString.toLowerCase();
-        switch (lowerCaseStr) {
-            case "second":
-            case "seconds":
-                return TimeUnit.SECONDS;
-            case "minute":
-            case "minutes":
-                return TimeUnit.MINUTES;
-            case "hour":
-            case "hours":
-                return TimeUnit.HOURS;
-            case "day":
-            case "days":
-                return TimeUnit.DAYS;
-            default:
-                throw new AutoFillException("Time Unit [" + unitString + "] not supported");
-
-        }
-    }
-
-
-    public static boolean randomBoolean() {
-        return faker.bool().bool();
-    }
-
-    public static <T> T getRandom(List<T> choices) {
-        if (choices.size() < 3) {
-            choices = _duplicate(choices, 2);
-        }
-        return faker.options().nextElement(choices);
-    }
-
-    private static <T> List<T> _duplicate(List<T> items, int number) {
-
-        ArrayList<T> list = new ArrayList<>(items.size() * number);
-
-        IntStream.rangeClosed(1, number).forEach(i -> list.addAll(items));
-
-        return list;
-
-    }
-
-    public static <T> List<T> getRandomMany(List<T> choices) {
-        List<T> temporaryChoices = _getRandomChoices(choices);
-        while (temporaryChoices.isEmpty()) {
-            temporaryChoices = _getRandomChoices(choices);
-        }
-        return temporaryChoices;
-
-    }
-
-    private static <T> List<T> _getRandomChoices(List<T> choices) {
-        return choices.stream()
-                      .filter(c -> randomBoolean())
-                      .collect(Collectors.toList());
     }
 
 

@@ -37,7 +37,7 @@ class ApiOutPut {
                     //for github
                     //println(indent + method.name.padRight(22) + ': ' + gerenx)
                     //for web
-                    println(indent  + gerenx)
+                    println(indent + gerenx)
                 }
                 if (method.returnType.name.startsWith('com.github.javafaker')) {
                     def newParents = [*parents, method.name]
