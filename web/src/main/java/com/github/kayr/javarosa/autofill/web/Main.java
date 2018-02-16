@@ -95,9 +95,9 @@ public class Main {
             String     propertiesText = reqData.get("generexProperties").asString();
             int        numberOfItem   = Math.min(reqData.getInt("numberOfItems", 10), 20);
             boolean    dryRyn         = reqData.getBoolean("dryRun", true);
-            String     dowloadUrl     = reqData.get("downloadUrl").asString();
+            String     downloadUrl    = reqData.get("downloadUrl").asString();
             String     username       = reqData.getString("userId", "");
-            String     xform          = withJRClient(reqData, jr -> jr.pullXform(dowloadUrl));
+            String     xform          = withJRClient(reqData, jr -> jr.pullXform(downloadUrl));
             Properties properties     = new Properties();
 
             try (StringReader stringReader = new StringReader(propertiesText)) {
