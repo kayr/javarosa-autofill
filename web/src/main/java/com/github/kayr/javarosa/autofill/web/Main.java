@@ -31,6 +31,7 @@ public class Main {
     static ExecutorService e   = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
+
         Spark.staticFiles.location("/web");
 
         //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
@@ -49,7 +50,7 @@ public class Main {
         launch(String.format("http://localhost:%s/index.html", Spark.port()));
     }
 
-    private static Object processFormList(Request req, Response res) throws Exception {
+    private static Object processFormList(Request req, Response res)  {
         return doSafely(res, () -> {
             String jsonFormList = getFormList(req.body());
             res.status(200);
@@ -76,7 +77,7 @@ public class Main {
 
     }
 
-    private static Object getPropertyFile(Request req, Response res) throws Exception {
+    private static Object getPropertyFile(Request req, Response res)  {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
             String     url     = reqData.get("downloadUrl").asString();
@@ -87,16 +88,16 @@ public class Main {
         });
     }
 
-    private static Object generateData(Request req, Response res) throws Exception {
+    private static Object generateData(Request req, Response res)  {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
 
             String     propertiesText = reqData.get("generexProperties").asString();
             int        numberOfItem   = Math.min(reqData.getInt("numberOfItems", 10), 20);
             boolean    dryRyn         = reqData.getBoolean("dryRun", true);
-            String     url            = reqData.get("downloadUrl").asString();
+            String     dowloadUrl     = reqData.get("downloadUrl").asString();
             String     username       = reqData.getString("userId", "");
-            String     xform          = withJRClient(reqData, jr -> jr.pullXform(url));
+            String     xform          = withJRClient(reqData, jr -> jr.pullXform(dowloadUrl));
             Properties properties     = new Properties();
 
             try (StringReader stringReader = new StringReader(propertiesText)) {
@@ -104,7 +105,7 @@ public class Main {
             }
 
 
-            DataGenerator generator = new DataGenerator().setPassword(reqData.get("username").asString())
+            DataGenerator generator = new DataGenerator().setUsername(reqData.get("username").asString())
                                                          .setPassword(reqData.get("password").asString())
                                                          .setServerUrl(reqData.get("url").asString())
                                                          .setDryRun(dryRyn)

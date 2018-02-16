@@ -46,6 +46,8 @@ public class GenerexProvider {
 
             throw new AutoFillException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + element.getBind().getReference(), e);
 
+        } catch (Exception x) {
+            throw new AutoFillException(String.format("Error Evaluating Generex For[ %s ]: Because %s", FormUtils.resolveVariable(element), x.getMessage()), x);
         }
 
     }
@@ -89,6 +91,7 @@ public class GenerexProvider {
         return treeElement.getDataType();
     }
 
+    @SuppressWarnings("RedundantThrows")
     private static Object evalXpathString(FormInstance instance, EvaluationContext baseContext, TreeReference reference, String xpath) throws XPathSyntaxException {
 
         XPathExpression   xPathExpression = parseXpath(xpath);
