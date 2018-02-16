@@ -25,7 +25,7 @@ public class FormUtils {
         TreeReference reference = getTreeReference(iFormElement);
         return IntStream.range(1, reference.size())
                         .mapToObj(reference::getName)
-                        .collect(Collectors.joining("."));
+                        .collect(Collectors.joining("/"));
 
     }
 

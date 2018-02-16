@@ -345,7 +345,7 @@ class FormAutoFillTest implements LogConfig {
 
         def xml = TestUtils.formAutoFillFromMkp(Converter.markup2Form(m))
                            .addGenerex('one', "'ONE'")
-                           .addGenerex('repeat.four', "'FOUR'")
+                           .addGenerex('repeat/four', "'FOUR'")
                            .addGenerex('two', '    ')
                            .addGenerex('one2', 'string(current()/../one)')
                            .autoFill()
