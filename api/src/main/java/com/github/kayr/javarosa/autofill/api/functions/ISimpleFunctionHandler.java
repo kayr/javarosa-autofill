@@ -3,12 +3,19 @@ package com.github.kayr.javarosa.autofill.api.functions;
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import org.javarosa.core.model.condition.EvaluationContext;
 import org.javarosa.core.model.condition.IFunctionHandler;
+import org.javarosa.xpath.expr.XPathFuncExpr;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
 public interface ISimpleFunctionHandler extends IFunctionHandler {
+    @SuppressWarnings("UnnecessaryInterfaceModifier")
+    public static GenericHandler createFn(String name) {
+        return new GenericHandler().setName(name);
+    }
+
     @Override
     default List<Class[]> getPrototypes() {
         return Collections.emptyList();
@@ -27,18 +34,14 @@ public interface ISimpleFunctionHandler extends IFunctionHandler {
     @Override
     default Object eval(Object[] args, EvaluationContext ec) {
         try {
-            return evalImpl(args, ec);
+            Object[] unWrappedArgs = Arrays.stream(args).map(XPathFuncExpr::unpack).toArray();
+            return evalImpl(unWrappedArgs, ec);
         } catch (Throwable x) {
             throw new AutoFillException("Error evaluating function[" + getName() + "()]: " + x.getClass().getSimpleName() + ":" + x.getMessage(), x);
         }
     }
 
     Object evalImpl(Object[] args, EvaluationContext ec) throws Exception;
-
-    @SuppressWarnings("UnnecessaryInterfaceModifier")
-    public static GenericHandler createFn(String name) {
-        return new GenericHandler().setName(name);
-    }
 
     class GenericHandler implements ISimpleFunctionHandler {
 
