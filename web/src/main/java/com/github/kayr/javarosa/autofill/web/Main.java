@@ -117,7 +117,8 @@ public class Main {
             e.submit(() -> {
                 try {
                     generator.start();
-                } catch (Exception x) {
+                }
+                catch (Exception x) {
                     LOG.error("Failed To Generate Data: ", x);
                     eventSocket.log(username, x.getMessage());
                 }
@@ -143,13 +144,15 @@ public class Main {
     private static Object doSafely(Response res, Callable callable) {
         try {
             return callable.call();
-        } catch (Exception x) {
+        }
+        catch (Exception x) {
             LOG.error("Error processing request: ", x);
             String message = x.getMessage();
             if (message != null && message.contains("code=401")) {
                 res.status(401);
                 return "Access Denied";
-            } else {
+            }
+            else {
                 res.status(500);
                 return Optional.ofNullable(message).orElse(x.toString());
             }
@@ -160,7 +163,8 @@ public class Main {
     private static Object doSafely(Callable callable) {
         try {
             return callable.call();
-        } catch (Exception x) {
+        }
+        catch (Exception x) {
             LOG.error("Error processing request: ", x);
 
         }
@@ -172,7 +176,8 @@ public class Main {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI(url));
-            } catch (Exception ignored) {
+            }
+            catch (Exception ignored) {
             }
         }
     }
