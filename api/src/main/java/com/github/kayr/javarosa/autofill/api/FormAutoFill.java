@@ -211,51 +211,61 @@ public class FormAutoFill {
 
     }
 
-    private void handleRepeat() {
-        IFormElement formElement = model.getCaptionPrompt().getFormElement();
-
-        Optional<String> generex = getGenerex(formElement);
-
-        boolean createNewRepeat = generex
-                .map(gx -> {
-                    IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
-                    return Boolean.TRUE.equals(data.getValue());
-                })
-                .orElseGet(Fakers::randomBoolean);
-
-
-        if (createNewRepeat) {
-            LOG.fine("Adding new repeat");
-            fec.newRepeat();
-        }
-    }
-
     @SuppressWarnings({"WeakerAccess", "BooleanMethodIsAlwaysInverted"})
     public boolean isEndOfForm() {
         return fec.getModel().getEvent() == FormEntryController.EVENT_END_OF_FORM;
     }
 
+    private void handleRepeat() {
+        IFormElement formElement = model.getCaptionPrompt().getFormElement();
+
+        try {
+            Optional<String> generex = getGenerex(formElement);
+
+            boolean createNewRepeat = generex
+                    .map(gx -> {
+                        IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
+                        return Boolean.TRUE.equals(data.getValue());
+                    })
+                    .orElseGet(Fakers::randomBoolean);
+
+
+            if (createNewRepeat) {
+                LOG.fine("Adding new repeat");
+                fec.newRepeat();
+            }
+        }
+        catch (Exception x) {
+            throw new AutoFillException("Error Auto-Filling Repeat[" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x);
+        }
+    }
+
     private void handleQuestion() {
 
         FormEntryPrompt questionPrompt = model.getQuestionPrompt();
+        QuestionDef     questionDef    = questionPrompt.getQuestion();
 
 
-        Optional<String> generex = getGenerex(questionPrompt.getQuestion());
+        try {
+            Optional<String> generex = getGenerex(questionDef);
 
-        IAnswerData answer = generex
-                .map(gx -> generexProvider.acquire(formDef, questionPrompt.getQuestion(), currentIndex(), gx))
-                .orElseGet(() -> resolveProvider(questionPrompt).acquire(fec, questionPrompt));
+            IAnswerData answer = generex
+                    .map(gx -> generexProvider.acquire(formDef, questionDef, currentIndex(), gx))
+                    .orElseGet(() -> resolveProvider(questionPrompt).acquire(fec, questionPrompt));
 
 
-        int status = fec.answerQuestion(currentIndex(), answer, true);
+            int status = fec.answerQuestion(currentIndex(), answer, true);
 
-        if (LOG.isLoggable(Level.FINEST)) {
-            LOG.finest("Answer for Question[" + questionPrompt.getQuestion().getBind().getReference() + "] = " + answer.getValue());
+            if (LOG.isLoggable(Level.FINEST)) {
+                LOG.finest("Answer for Question[" + questionDef.getBind().getReference() + "] = " + FormUtils.safeGetAnswerText(answer));
+            }
+
+            if (status != FormEntryController.ANSWER_OK)
+                throw new IllegalArgumentException("Invalid Answer[" + FormUtils.safeGetAnswerText(answer) + "] For Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
         }
-
-        if (status != FormEntryController.ANSWER_OK)
-            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
-
+        catch (Exception x) {
+            throw new AutoFillException("Error Auto-Filling Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " + x.getMessage(), x);
+        }
 
     }
 

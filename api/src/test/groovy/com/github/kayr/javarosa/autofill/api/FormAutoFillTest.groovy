@@ -1,6 +1,6 @@
 package com.github.kayr.javarosa.autofill.api
 
-import groovy.test.GroovyAssert
+import org.junit.Assert
 import org.junit.Test
 import org.openxdata.markup.Converter
 import org.openxdata.markup.FLAGS
@@ -52,10 +52,13 @@ class FormAutoFillTest implements LogConfig {
                       Tel Number'''
 
         def form = Converter.markup2Form(mkp)
-        GroovyAssert.shouldFail(IllegalArgumentException) {
+        try {
             TestUtils.formAutoFillFromMkp(form)
                      .autoFill()
                      .getSubmissionXml()
+            Assert.fail("Should not pass with jjs")
+        } catch (Exception x) {
+            assert x.message.contains("Invalid Answer")
         }
 
     }

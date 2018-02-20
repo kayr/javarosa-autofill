@@ -15,6 +15,8 @@ public class MultiSelectProvider implements IAnswerProvider {
 
 
     private static SelectMultiData selectMultiData(List<SelectChoice> choices) {
+        if (choices.isEmpty()) return null;
+
         List<Selection> selections =
                 Fakers.getRandomMany(choices)
                       .stream()

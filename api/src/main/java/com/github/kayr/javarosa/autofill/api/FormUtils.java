@@ -4,6 +4,8 @@ import org.javarosa.core.model.FormDef;
 import org.javarosa.core.model.GroupDef;
 import org.javarosa.core.model.IDataReference;
 import org.javarosa.core.model.IFormElement;
+import org.javarosa.core.model.data.IAnswerData;
+import org.javarosa.core.model.data.SelectOneData;
 import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.model.xform.XPathReference;
@@ -106,4 +108,16 @@ public class FormUtils {
         }
         return element;
     }
+
+    public static String safeGetAnswerText(IAnswerData answer) {
+        return Optional.ofNullable(answer).map(IAnswerData::getDisplayText).orElse("null");
+    }
+
+//    public static String toString(IAnswerData data) {
+//        if(data instanceof SelectOneData){
+//
+//        }else{
+//            return ""+data;
+//        }
+//    }
 }

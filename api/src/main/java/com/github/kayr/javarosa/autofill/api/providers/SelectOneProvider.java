@@ -14,6 +14,9 @@ public class SelectOneProvider implements IAnswerProvider {
 
 
     private static SelectOneData selectOneData(List<SelectChoice> choices) {
+        if (choices.size() == 0) {
+            return null;
+        }
         SelectChoice selectChoice = Fakers.getRandom(choices);
         return new SelectOneData(new Selection(selectChoice));
     }
