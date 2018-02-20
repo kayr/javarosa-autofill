@@ -22,7 +22,20 @@
             <span class="badge">{%=o.formID%}</span>
             {%=o.name%}
         </li>
+    </script>
 
+    <script type="text/x-tmpl" id="question-widget">
+        <div class="form-group question-label">
+            <label for="{%=o.questionId%}" >{%#o.questionLabel%}</label>
+            <p class="help-block">
+                {%=o.questionId%}
+
+            </p>
+            {% if(o.constraint){ %}
+            <p class="help-block">Constraint: {%=o.constraint%}</p>
+            {% }%}
+            <input type="text" id="{%=o.questionId%}" class="form-control">
+        </div>
     </script>
 
 
@@ -107,7 +120,7 @@
                 </div>
             </div>
 
-            <div class="row textarea-row">
+            <div class="row">
                 <div>
                     <h4>Generex Expressions(<span id="c-lbl-currentForm"></span>)</h4>
                     <p>
@@ -116,7 +129,15 @@
                     </p>
                 </div>
 
-                <textarea rows="30" cols="100" class="form-control property-text-area"
+                <div id="c-generexExpressions" class="list-group">
+
+                </div>
+            </div>
+
+            <div class="row textarea-row">
+
+
+                <textarea rows="30" cols="100" class="form-control property-text-area" style="display: none"
                           id="c-properties-text"></textarea>
 
             </div>

@@ -3,9 +3,17 @@ package com.github.kayr.javarosa.autofill.web;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.submission.DataGenerator;
 import com.github.kayr.javarosa.autofill.submission.FileUtil;
 import com.github.kayr.javarosa.autofill.submission.JavarosaClient;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.IFormElement;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import spark.Request;
 import spark.Response;
@@ -27,8 +35,10 @@ import static spark.Spark.*;
 public class Main {
 
     static EventsWebSocket eventSocket;
-    static Logger          LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
-    static ExecutorService e   = Executors.newCachedThreadPool();
+    static Logger          LOG      = org.slf4j.LoggerFactory.getLogger(Main.class);
+    static ExecutorService e        = Executors.newCachedThreadPool();
+    static Parser          parser   = Parser.builder().build();
+    static HtmlRenderer    renderer = HtmlRenderer.builder().build();
 
     public static void main(String[] args) {
 
@@ -82,10 +92,51 @@ public class Main {
             JsonObject reqData = Json.parse(req.body()).asObject();
             String     url     = reqData.get("downloadUrl").asString();
             String     xform   = withJRClient(reqData, jr -> jr.pullXform(url));
-            res.type("text/plain");
-            return DataGenerator.createPropertiesText(xform);
+            res.type("application/json");
+
+            FormDef            formDef  = FormUtils.parseFromText(xform);
+            List<IFormElement> children = FormUtils.getChildren(formDef);
+
+            JsonObject object        = Json.object();
+            JsonArray  questionArray = Json.array();
+
+
+            children.stream()
+                    .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
+                    .map(c -> {
+                        JsonObject qn = Json.object();
+                        qn.add("questionLabel", parseMarkDown(c));
+                        qn.add("questionId", FormUtils.resolveVariable(c));
+                        Optional<String> xpathConstraint = DataGenerator.getXpathConstraint(formDef, c);
+                        if (xpathConstraint.isPresent())
+                            qn.add("constraint", xpathConstraint.orElse(null));
+
+                        return qn;
+                    })
+                    .forEach(questionArray::add);
+
+
+            object.add("questions", questionArray);
+
+            return object.toString();
 
         });
+    }
+
+    private static String parseMarkDown(IFormElement c) {
+        String labelText = DataGenerator.getLabelText(c);
+        try {
+            Node node = parser.parse(labelText);
+            return Jsoup.clean(renderer.render(node), Whitelist.basic());
+        }
+        catch (Exception ignore) {
+            try {
+                return Jsoup.clean(labelText, Whitelist.basic());
+            }
+            catch (Exception ignore2) {
+                return labelText;
+            }
+        }
     }
 
     private static Object generateData(Request req, Response res) {

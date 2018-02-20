@@ -55,20 +55,36 @@ public class DataGenerator {
     }
 
     private static String createPropertiesFileLine(FormDef formDef, IFormElement e) {
-        IDataReference reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+        Optional<String> xpathConstraint = getXpathConstraint(formDef, e);
 
-        Optional<TreeElement> element = FormUtils.getTreeElement(formDef, reference);
+        String constraintStr = xpathConstraint.map(s -> "# Constraint: " + xpathConstraint + "\n").orElse("");
 
-        String xPathConstraint = element.map(s -> Optional.ofNullable(s.getConstraint())
-                                                          .map(c -> "# Constraint: " + ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " ") + "\n")
-                                                          .orElse(""))
-                                        .orElse("");
-
-        return "#" + Optional.ofNullable(e.getLabelInnerText())
-                             .orElse("----")
-                             .replaceAll("\\s+", " ") + "\n" +
-                xPathConstraint +
+        return "# " +
+                getLabelText(e) +
+                "\n" +
+                constraintStr +
                 FormUtils.resolveVariable(e);
+    }
+
+    public static Optional<String> getXpathConstraint(FormDef formDef, IFormElement e) {
+        IDataReference        reference = FormUtils.getSafeXpathReference(formDef, (TreeReference) e.getBind().getReference());
+        Optional<TreeElement> element   = FormUtils.getTreeElement(formDef, reference);
+        if (element.isPresent()) {
+            return getXpathConstraint(element.get());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> getXpathConstraint(TreeElement element) {
+        return Optional.ofNullable(element.getConstraint())
+                       .map(c -> ((XPathConditional) c.constraint).xpath.replaceAll("\\s+", " "));
+    }
+
+    public static String getLabelText(IFormElement e) {
+        return Optional.ofNullable(e.getLabelInnerText())
+                       .orElse("")
+                       .replaceAll("\\s+", " ");
     }
 
     public DataGenerator setGenerexMap(Map<String, String> generexMap) {

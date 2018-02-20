@@ -95,3 +95,20 @@ pre,
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+.question-label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.question-label label,
+.question-label input,
+.question-label p {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+#c-generexExpressions {
+    overflow: scroll;
+    height: 600px;
+}

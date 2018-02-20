@@ -10,6 +10,7 @@
     var $checkDryRun = $('#c-dry-run');
     var $logTextArea = $('#messages');
     var $lblCurrentForm = $('#c-lbl-currentForm');
+    var $expressionDiv = $('#c-generexExpressions');
 
     var selectedForm = null;
     var userId = null;
@@ -62,14 +63,24 @@
 
     }
 
+    function renderProperties(res, form) {
+        $txtProperties.val(res);
+
+        $expressionDiv.empty();
+
+        res.questions.forEach(function (value) {
+            $expressionDiv.append(tmpl('question-widget', value))
+        });
+        setCurrentForm(form);
+    }
+
     function getProperties(form) {
         $.ajax({
             url: '/formProperties',
             method: 'POST',
             data: JSON.stringify(serverCreds({downloadUrl: form.downloadUrl}))
         }).done(function (res) {
-            $txtProperties.val(res);
-            setCurrentForm(form);
+            renderProperties(res, form);
         }).fail(function (err) {
             bootbox.alert("Failed: " + err.responseText);
         });
@@ -109,7 +120,6 @@
     }
 
 
-    var progressDialog = null;
     var webSocket;
 
     function initWebSocket(callBack) {
@@ -137,6 +147,8 @@
 
         webSocket.onclose = function () {userId = null};
     }
+
+    var progressDialog = null;
 
     function init() {
 
