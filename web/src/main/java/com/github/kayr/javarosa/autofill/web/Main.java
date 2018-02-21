@@ -5,7 +5,6 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.submission.DataGenerator;
-import com.github.kayr.javarosa.autofill.submission.FileUtil;
 import com.github.kayr.javarosa.autofill.submission.JavarosaClient;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
@@ -20,14 +19,17 @@ import spark.Response;
 import spark.Spark;
 
 import java.awt.*;
-import java.io.StringReader;
+import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 import static spark.Spark.*;
 
@@ -40,11 +42,16 @@ public class Main {
     static Parser          parser   = Parser.builder().build();
     static HtmlRenderer    renderer = HtmlRenderer.builder().build();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Spark.staticFiles.location("/web");
+        LogManager manager = LogManager.getLogManager();
+        manager.readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.github");
+        logger.setLevel(Level.ALL);
 
-        //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
+        //Spark.staticFiles.location("/web");
+
+        Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
         webSocket("/events", EventsWebSocket.class);
 
@@ -92,35 +99,34 @@ public class Main {
             JsonObject reqData = Json.parse(req.body()).asObject();
             String     url     = reqData.get("downloadUrl").asString();
             String     xform   = withJRClient(reqData, jr -> jr.pullXform(url));
+            FormDef    formDef = FormUtils.parseFromText(xform);
+            JsonObject object  = formToJson(formDef);
+
             res.type("application/json");
-
-            FormDef            formDef  = FormUtils.parseFromText(xform);
-            List<IFormElement> children = FormUtils.getChildren(formDef);
-
-            JsonObject object        = Json.object();
-            JsonArray  questionArray = Json.array();
-
-
-            children.stream()
-                    .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
-                    .map(c -> {
-                        JsonObject qn = Json.object();
-                        qn.add("questionLabel", parseMarkDown(c));
-                        qn.add("questionId", FormUtils.resolveVariable(c));
-                        Optional<String> xpathConstraint = DataGenerator.getXpathConstraint(formDef, c);
-                        if (xpathConstraint.isPresent())
-                            qn.add("constraint", xpathConstraint.orElse(null));
-
-                        return qn;
-                    })
-                    .forEach(questionArray::add);
-
-
-            object.add("questions", questionArray);
-
             return object.toString();
 
         });
+    }
+
+    private static JsonObject formToJson(FormDef formDef) {
+        List<IFormElement> children      = FormUtils.getChildren(formDef);
+        JsonObject         object        = Json.object();
+        JsonArray          questionArray = Json.array();
+        children.stream()
+                .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
+                .map(c -> {
+                    JsonObject qn = Json.object();
+                    qn.add("questionLabel", parseMarkDown(c));
+                    qn.add("questionId", FormUtils.resolveVariable(c));
+                    Optional<String> xpathConstraint = DataGenerator.getXpathConstraint(formDef, c);
+                    if (xpathConstraint.isPresent())
+                        qn.add("constraint", xpathConstraint.orElse(null));
+
+                    return qn;
+                })
+                .forEach(questionArray::add);
+        object.add("questions", questionArray);
+        return object;
     }
 
     private static String parseMarkDown(IFormElement c) {
@@ -143,17 +149,24 @@ public class Main {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
 
-            String     propertiesText = reqData.get("generexProperties").asString();
             int        numberOfItem   = Math.min(reqData.getInt("numberOfItems", 10), 20);
             boolean    dryRyn         = reqData.getBoolean("dryRun", true);
             String     downloadUrl    = reqData.get("downloadUrl").asString();
             String     username       = reqData.getString("userId", "");
             String     xform          = withJRClient(reqData, jr -> jr.pullXform(downloadUrl));
-            Properties properties     = new Properties();
 
-            try (StringReader stringReader = new StringReader(propertiesText)) {
-                properties.load(stringReader);
-            }
+            JsonArray generex = reqData.get("generex").asArray();
+
+            Map<String, String> map = new HashMap<>();
+            generex.forEach(generexObj -> {
+                JsonObject jsonObject = generexObj.asObject();
+                String     questionId = jsonObject.get("questionId").asString();
+                String     generexStr = jsonObject.getString("generex", "");
+
+                map.put(questionId, generexStr);
+
+
+            });
 
 
             DataGenerator generator = new DataGenerator().setUsername(reqData.get("username").asString())
@@ -161,7 +174,7 @@ public class Main {
                                                          .setServerUrl(reqData.get("url").asString())
                                                          .setDryRun(dryRyn)
                                                          .setFormDefXMl(xform)
-                                                         .setGenerexMap(FileUtil.propertiesToMap(properties))
+                                                         .setGenerexMap(map)
                                                          .setNumberOfItems(numberOfItem)
                                                          .setDataListener((integer, s) -> eventSocket.log(username, "Processing: " + integer));
 

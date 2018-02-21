@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -161,24 +162,7 @@ public class FormAutoFill {
         answerProviderMap.put(ControlDataTypeKey.with(controlType, dataType), provider);
     }
 
-    public FormAutoFill autoFill() {
-        while (!isEndOfForm()) {
-            nextEvent();
-        }
-
-        formDef.postProcessInstance();
-
-        ValidateOutcome validate = formDef.validate(true);
-
-        if (validate != null) {
-            FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
-            IAnswerData     answer         = questionPrompt.getAnswerValue();
-            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
-
-        }
-
-        return this;
-    }
+    HashMap<IFormElement, Integer> repeatCounts = new HashMap<>();
 
     private void nextEvent() {
         int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
@@ -211,11 +195,42 @@ public class FormAutoFill {
 
     }
 
+    private long maxSeconds = TimeUnit.SECONDS.toMillis(10);
+    private long startTime;
+
+    public FormAutoFill autoFill() {
+        startTime = System.currentTimeMillis();
+        while (!isEndOfForm()) {
+            isTimeOut();
+            nextEvent();
+        }
+
+        formDef.postProcessInstance();
+
+        ValidateOutcome validate = formDef.validate(true);
+
+        if (validate != null) {
+            FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
+            IAnswerData     answer         = questionPrompt.getAnswerValue();
+            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
+
+        }
+
+        return this;
+    }
+
     @SuppressWarnings({"WeakerAccess", "BooleanMethodIsAlwaysInverted"})
     public boolean isEndOfForm() {
         return fec.getModel().getEvent() == FormEntryController.EVENT_END_OF_FORM;
     }
 
+    public void isTimeOut() {
+        long currentTimeMillis = System.currentTimeMillis();
+
+        if ((currentTimeMillis - startTime) >= maxSeconds) {
+            throw new AutoFillException("Generation for form [" + formDef.getName() + "] timed out. This is usually due to long loops in repeats. Try adding binding constraints on repeats");
+        }
+    }
     private void handleRepeat() {
         IFormElement formElement = model.getCaptionPrompt().getFormElement();
 
@@ -231,6 +246,10 @@ public class FormAutoFill {
 
 
             if (createNewRepeat) {
+                Integer count = repeatCounts.compute(formElement, (element, integer) -> integer == null ? 1 : integer + 1);
+                if (count >= 100) {
+                    throw new AutoFillException("Repeat Iterations Have Exceeded 100. Try To Add A Boundary Expression");
+                }
                 LOG.fine("Adding new repeat");
                 fec.newRepeat();
             }

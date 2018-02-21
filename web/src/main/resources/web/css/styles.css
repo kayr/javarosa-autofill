@@ -110,5 +110,17 @@ pre,
 
 #c-generexExpressions {
     overflow: scroll;
+    height: 700px;
+}
+
+#c-logs {
+    overflow: scroll;
     height: 600px;
+
+    background: #000;
+    border: 3px groove #ccc;
+    color: #ccc;
+    display: block;
+    padding: 5px;
+    /*width: 300px;*/
 }

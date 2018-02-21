@@ -4,13 +4,14 @@
     var $url = $('#server-url');
     var $btnGetFormList = $('#get-form-list');
     var $lstForm = $('#c-form-list');
-    var $txtProperties = $('#c-properties-text');
     var $txtNumEntries = $('#c-numOfEntries');
     var $btnGenerateData = $('#c-btn-generate-data');
     var $checkDryRun = $('#c-dry-run');
     var $logTextArea = $('#messages');
     var $lblCurrentForm = $('#c-lbl-currentForm');
     var $expressionDiv = $('#c-generexExpressions');
+    var $logs = $('#c-logs');
+    var $logsDialog = $('#c-log-model');
 
     var selectedForm = null;
     var userId = null;
@@ -64,7 +65,6 @@
     }
 
     function renderProperties(res, form) {
-        $txtProperties.val(res);
 
         $expressionDiv.empty();
 
@@ -93,6 +93,16 @@
         }
 
         initWebSocket(function () {
+
+            var props = [];
+            $('.c-question-generex').each(function (index, domElement) {
+                var $this = $(domElement);
+                var generex = $this.val();
+                var items = {questionId: $this.data('question-id'), generex: generex};
+                props.push(items);
+            });
+
+
             $.ajax({
                 url: '/generateData',
                 method: "POST",
@@ -100,10 +110,11 @@
                     dryRun: $checkDryRun.is(':checked'),
                     numberOfItems: parseInt($txtNumEntries.val()),
                     downloadUrl: selectedForm.downloadUrl,
-                    generexProperties: $txtProperties.val()
+                    generex: props
                 }))
             }).done(function () {
-                $logTextArea.val('');
+                $logs.empty();
+                $logsDialog.modal('show')
             }).fail(function (error) {
                 bootbox.alert({title: "Failed To Generate Data:", message: error.responseText});
             });
@@ -141,13 +152,23 @@
                 userId = message.replace('::user:', '');
                 if (callBack) callBack()
             } else {
-                $logTextArea.val(event.data + "\n" + $logTextArea.val());
+                $logs.append(tmpl('log-widget', {text: event.data}));
+                tailScroll();
+                // $logTextArea.val(event.data + "\n" + $logTextArea.val());
             }
         };
 
-        webSocket.onclose = function () {userId = null};
+        webSocket.onclose = function () {
+            $logs.append(tmpl('log-widget', {text: 'Connection has broken'}));
+
+            userId = null;
+        };
     }
 
+    function tailScroll() {
+        var height = $logs.get(0).scrollHeight;
+        $logs.animate({scrollTop: height}, 500);
+    }
     var progressDialog = null;
 
     function init() {
