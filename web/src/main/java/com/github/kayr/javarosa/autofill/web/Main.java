@@ -47,9 +47,9 @@ public class Main {
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.github");
         logger.setLevel(Level.ALL);
 
-        //Spark.staticFiles.location("/web");
+        Spark.staticFiles.location("/web");
 
-        Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
+        //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
         webSocket("/events", EventsWebSocket.class);
 
