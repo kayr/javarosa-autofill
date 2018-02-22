@@ -37,7 +37,7 @@ public interface ISimpleFunctionHandler extends IFunctionHandler {
             Object[] unWrappedArgs = Arrays.stream(args).map(XPathFuncExpr::unpack).toArray();
             return evalImpl(unWrappedArgs, ec);
         } catch (Throwable x) {
-            throw new AutoFillException("Error evaluating function[" + getName() + "()]: " + x.getClass().getSimpleName() + ":" + x.getMessage(), x);
+            throw new AutoFillException("Error evaluating function [" + getName() + "()]: " + x.getClass().getSimpleName() + ":" + x.getMessage(), x);
         }
     }
 

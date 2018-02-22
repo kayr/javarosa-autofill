@@ -212,7 +212,7 @@ public class FormAutoFill {
         if (validate != null) {
             FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
             IAnswerData     answer         = questionPrompt.getAnswerValue();
-            throw new IllegalArgumentException("Invalid Answer[" + answer.getValue() + "] For Question[" + questionPrompt.getQuestion().getLabelInnerText() + "]");
+            throw new IllegalArgumentException("Invalid Answer [" + answer.getValue() + "] For Question [" + questionPrompt.getQuestion().getLabelInnerText() + "]");
 
         }
 
@@ -255,7 +255,7 @@ public class FormAutoFill {
             }
         }
         catch (Exception x) {
-            throw new AutoFillException("Error Auto-Filling Repeat[" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x);
+            throw new AutoFillException("Error Auto-Filling Repeat [" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x);
         }
     }
 
@@ -280,10 +280,10 @@ public class FormAutoFill {
             }
 
             if (status != FormEntryController.ANSWER_OK)
-                throw new IllegalArgumentException("Invalid Answer[" + FormUtils.safeGetAnswerText(answer) + "] For Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
+                throw new IllegalArgumentException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] For Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
         }
         catch (Exception x) {
-            throw new AutoFillException("Error Auto-Filling Question[" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " + x.getMessage(), x);
+            throw new AutoFillException("Error Auto-Filling Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " + x.getMessage(), x);
         }
 
     }

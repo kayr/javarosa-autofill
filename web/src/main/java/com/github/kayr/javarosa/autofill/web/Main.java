@@ -6,10 +6,8 @@ import com.eclipsesource.json.JsonObject;
 import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.submission.DataGenerator;
 import com.github.kayr.javarosa.autofill.submission.JavarosaClient;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 import org.javarosa.core.model.FormDef;
+import org.javarosa.core.model.GroupDef;
 import org.javarosa.core.model.IFormElement;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
@@ -37,10 +35,10 @@ import static spark.Spark.*;
 public class Main {
 
     static EventsWebSocket eventSocket;
-    static Logger          LOG      = org.slf4j.LoggerFactory.getLogger(Main.class);
-    static ExecutorService e        = Executors.newCachedThreadPool();
-    static Parser          parser   = Parser.builder().build();
-    static HtmlRenderer    renderer = HtmlRenderer.builder().build();
+    static Logger          LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
+    static ExecutorService e   = Executors.newCachedThreadPool();
+//    static Parser          parser   = Parser.builder().build();
+//    static HtmlRenderer    renderer = HtmlRenderer.builder().build();
 
     public static void main(String[] args) throws IOException {
 
@@ -49,9 +47,9 @@ public class Main {
         java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.github");
         logger.setLevel(Level.ALL);
 
-        Spark.staticFiles.location("/web");
+        //Spark.staticFiles.location("/web");
 
-        //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
+        Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
         webSocket("/events", EventsWebSocket.class);
 
@@ -59,7 +57,7 @@ public class Main {
 
         post("/formList", Main::processFormList);
 
-        post("/formProperties", Main::getPropertyFile);
+        post("/formProperties", Main::getQuestionsJson);
 
         post("/generateData", Main::generateData);
 
@@ -94,7 +92,7 @@ public class Main {
 
     }
 
-    private static Object getPropertyFile(Request req, Response res) {
+    private static Object getQuestionsJson(Request req, Response res) {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
             String     url     = reqData.get("downloadUrl").asString();
@@ -114,6 +112,7 @@ public class Main {
         JsonArray          questionArray = Json.array();
         children.stream()
                 .filter(c -> c.getBind() != null && c.getBind().getReference().toString().lastIndexOf('/') != 0)
+                .filter(c -> isRepeatGroup(c) || !isGroup(c))
                 .map(c -> {
                     JsonObject qn = Json.object();
                     qn.add("questionLabel", parseMarkDown(c));
@@ -129,11 +128,29 @@ public class Main {
         return object;
     }
 
+    private static boolean isRepeatGroup(IFormElement e) {
+        return isGroup(e) && ((GroupDef) e).getRepeat();
+    }
+
+    private static boolean isGroup(IFormElement e) {
+        return e instanceof GroupDef;
+    }
+
+    private static boolean isGroupOnly(IFormElement e) {
+        return isGroup(e) && !isRepeatGroup(e);
+    }
+
     private static String parseMarkDown(IFormElement c) {
-        String labelText = DataGenerator.getLabelText(c);
+        String labelText = DataGenerator.getLabelText(c).trim();
+
+        if (isRepeatGroup(c)) {
+            labelText = "[Repeat] " + labelText;
+        }
+
         try {
-            Node node = parser.parse(labelText);
-            return Jsoup.clean(renderer.render(node), Whitelist.basic());
+            //Node node = parser.parse(labelText);
+            //String html = renderer.render(node);
+            return Jsoup.clean(labelText, Whitelist.basic());
         }
         catch (Exception ignore) {
             try {
@@ -149,11 +166,11 @@ public class Main {
         return doSafely(res, () -> {
             JsonObject reqData = Json.parse(req.body()).asObject();
 
-            int        numberOfItem   = Math.min(reqData.getInt("numberOfItems", 10), 20);
-            boolean    dryRyn         = reqData.getBoolean("dryRun", true);
-            String     downloadUrl    = reqData.get("downloadUrl").asString();
-            String     username       = reqData.getString("userId", "");
-            String     xform          = withJRClient(reqData, jr -> jr.pullXform(downloadUrl));
+            int     numberOfItem = Math.min(reqData.getInt("numberOfItems", 10), 20);
+            boolean dryRyn       = reqData.getBoolean("dryRun", true);
+            String  downloadUrl  = reqData.get("downloadUrl").asString();
+            String  username     = reqData.getString("userId", "");
+            String  xform        = withJRClient(reqData, jr -> jr.pullXform(downloadUrl));
 
             JsonArray generex = reqData.get("generex").asArray();
 
@@ -215,8 +232,7 @@ public class Main {
             if (message != null && message.contains("code=401")) {
                 res.status(401);
                 return "Access Denied";
-            }
-            else {
+            } else {
                 res.status(500);
                 return Optional.ofNullable(message).orElse(x.toString());
             }

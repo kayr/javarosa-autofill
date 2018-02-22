@@ -109,8 +109,8 @@ pre,
 }
 
 #c-generexExpressions {
-    overflow: scroll;
-    height: 700px;
+    /*overflow: scroll;*/
+    /*height: 700px;*/
 }
 
 #c-logs {

@@ -47,7 +47,7 @@ public class GenerexProvider {
         XPathExpression   xPathExpression = parseXpath(xpath);
         EvaluationContext ec2             = new EvaluationContext(baseContext, reference);
 
-        LOG.fine(String.format("Evaluating xpath [%s] in base[%s] context[%s]", xpath, baseContext.getContextRef(), reference));
+        LOG.fine(String.format("Evaluating xpath [%s] in base [%s] context [%s]", xpath, baseContext.getContextRef(), reference));
 
         Object result = xPathExpression.eval(instance, ec2);
 
@@ -90,7 +90,7 @@ public class GenerexProvider {
             throw new AutoFillException("Error Evaluating Generex: " + e.getMessage() + " : For Question: " + element.getBind().getReference(), e);
 
         } catch (Exception x) {
-            throw new AutoFillException(String.format("Error Evaluating Generex For[ %s ]: Because %s", FormUtils.resolveVariable(element), x.getMessage()), x);
+            throw new AutoFillException(String.format("Error Evaluating Generex For [ %s ]: Because %s", FormUtils.resolveVariable(element), x.getMessage()), x);
         }
 
     }
