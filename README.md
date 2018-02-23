@@ -6,6 +6,8 @@ RANDOM FUTURE DATE random-past-date(start-date,end-date)
 random-date-between('2012-01-01','2013-01-01')
 random-date-between(now(),'2090-01-01')
 
+
+
 RANDOM FUTURE DATE random-past-date(amount,units,start-date): units can be seconds,minutes,hours or days 
 ----------------------
 random-future-date(5,'days') 
@@ -13,6 +15,8 @@ random-future-date(5,'days','2020-1-1') -> a random date 5 days after '2020-1-1'
 random-future-date(5,'seconds','12:00')
 random-future-date(5,'minutes')
 random-future-date(5,'hour')
+
+
 
 RANDOM PAST DATE random-past-date(amount,units,start-date): units can be seconds,minutes,hours or days 
 ----------------------
@@ -22,10 +26,14 @@ random-past-date(5,'seconds','12:00')
 random-past-date(5,'minutes')
 random-past-date(5,'hour')
 
+
+
 RANDOM STRING WITH REGEX PATTERN
 ----------------------
 random-regex('077[0-9]{10}') -> generate a number that starts with 077 and ends with 10 random digits
 random-regex('[a-z]{1,10}\@[a-z]{4,10}\.[a-z]{3}') -> generate and email like string... though normally it better to use fake('internet','emailAddress') as seen below
+
+
 
 RANDOM DECIMAL random-decimal(min,max)
 ----------------------
@@ -33,15 +41,14 @@ random-number() -> generate a random number from 1 to 9
 random-number(10) -> produces an answer less than 10
 random-number(2,7)  -> A number between 2(inclusive) and 7(exclusive)
 
+
+
 RANDOM DECIMAL random-decimal(min,max,scale)
 --------------------
 random-decimal() -> random decimal number from 1 and 9 with 2 decimal places
 random-decimal(20) ->  random decimal between from 0 and 20(exclusive) with 2 decimal places
 random-decimal(10,20) -> random decimal between from 10 and 20(exclusive) with 2 decimal places
 random-decimal(1,2,3) -> random decimal between from 1 and 2(exclusive) with 3 decimal places
-
-
-
 ```
 
 ## Support functions to ease generation of test data
@@ -52,6 +59,8 @@ eval-all(2,3,8,9.8) -> evaluates all expressions and returns the last
 val('number',5) -> saves value 5 with name number
 val('number')  -> retrieves the value
 select-cell('"one","two,","three"',2) -> same as select-at but treats the string as a csv line
+
+
 
 LIST FUNCTIONS
 --------------------
