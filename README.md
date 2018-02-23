@@ -1,5 +1,8 @@
 
+
 ## Utility Faker Functions
+All javarosa xpath functions are supported plus a few more to make customisation of data generation easier 
+
 ```
 RANDOM FUTURE DATE random-past-date(start-date,end-date)
 ----------------------
