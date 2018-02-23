@@ -363,8 +363,8 @@ random-past-date(5,'hour')
 random-regex('077[0-9]{10}') -> generate a number that starts with 077 and ends with 10 random digits
 
 random-number(1000000000) -> produces an answer > 1_000_000_000
-random-number(2.0,7.0)  -> A number between 2.0 and 7.0
-random-number(2,1,2) -> a number between 1 and 2 with 2 decimal places
+random-number(2.0,7.0)  -> A number between 2 and 7
+random-number(2,10,20) -> a decimal number between 10.0 and 20.0 with 2 decimal places
 random-number()
 
 ```

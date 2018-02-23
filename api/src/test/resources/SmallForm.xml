@@ -1,22 +1,33 @@
-<h:html xmlns:h="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/2002/xforms">
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa">
     <h:head>
-        <h:title>d</h:title>
+        <h:title>f</h:title>
         <model>
             <instance>
-                <d_v1 id="0" name="d">
-                    <questions/>
+                <f id="0" name="f">
+                    <questions />
+                    <number>10</number>
+                    <decimal>5.4</decimal>
                     <meta>
-                        <instanceID/>
+                        <instanceID />
                     </meta>
-                </d_v1>
+                </f>
             </instance>
-            <bind id="questions" nodeset="/d_v1/questions" type="string"/>
-            <bind calculate="concat('uuid:', uuid())" nodeset="/d_v1/meta/instanceID" readonly="true()" type="string"/>
+            <bind id="questions" nodeset="/f/questions" type="string" />
+            <bind id="number" nodeset="/f/number" type="int" />
+            <bind id="decimal" nodeset="/f/decimal" type="decimal" />
+            <bind id="meta" nodeset="/f/meta" />
+            <bind id="instanceID" nodeset="/f/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())" />
         </model>
     </h:head>
     <h:body>
-        <input ref="/d_v1/questions">
+        <input ref="/f/questions">
             <label>1. Questions</label>
+        </input>
+        <input ref="/f/number">
+            <label>2. Number</label>
+        </input>
+        <input ref="/f/decimal">
+            <label>3. Decimal</label>
         </input>
     </h:body>
 </h:html>

@@ -25,6 +25,10 @@ public class FunctionUtils {
         return ((Number) args[i]).longValue();
     }
 
+    static double _double(Object[] args, int i) {
+        return ((Number) args[i]).doubleValue();
+    }
+
     static int _int(Object[] args, int i) {
         return ((Number) args[i]).intValue();
     }

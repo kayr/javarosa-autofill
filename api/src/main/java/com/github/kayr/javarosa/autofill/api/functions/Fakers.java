@@ -11,6 +11,7 @@ import org.javarosa.xpath.expr.XPathFuncExpr;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -29,7 +30,8 @@ public class Fakers {
                       new FnDateBetween(),
                       new FnDateFuture(),
                       new FnBoolean(),
-                      new FnDatePast()).forEach(ec::addFunctionHandler);
+                      new FnDatePast(),
+                      new FnDecimal()).forEach(ec::addFunctionHandler);
     }
 
     private static java.util.Date parseDate(Object object) {
@@ -124,6 +126,29 @@ public class Fakers {
                       .collect(Collectors.toList());
     }
 
+    public static double round(double num, int scale) {
+        return new BigDecimal(num).setScale(scale, BigDecimal.ROUND_HALF_UP)
+                                  .doubleValue();
+    }
+
+    public static double round(BigDecimal num, int scale) {
+        return num.setScale(scale, BigDecimal.ROUND_HALF_UP)
+                  .doubleValue();
+    }
+
+    public static BigDecimal randomDecimal(double min, double max) {
+        if (min == max) {
+            return new BigDecimal(min);
+        }
+        final double trueMin = Math.min(min, max);
+        final double trueMax = Math.max(min, max);
+
+        final double range = Math.abs(trueMax - trueMin);
+        final double adj   = range * faker.random().nextDouble();
+
+        return new BigDecimal(trueMin + adj);
+    }
+
     static class FnFake implements ISimpleFunctionHandler {
 
         private static Object resolveChainCall(Object[] methodNames) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -173,17 +198,60 @@ public class Fakers {
                 case 0:
                     return faker.number().randomNumber();
                 case 1:
-                    return faker.number().numberBetween(FunctionUtils._long(args, 0), Integer.MAX_VALUE);
+                    return faker.number().numberBetween(0, FunctionUtils._long(args, 0));
                 case 2:
                     return faker.number().numberBetween(FunctionUtils._long(args, 0), FunctionUtils._long(args, 1));
-                case 3:
                 default:
-                    return faker.number().randomDouble(FunctionUtils._int(args, 0), FunctionUtils._long(args, 1), FunctionUtils._long(args, 2));
+                    throw new XPathArityException(getName(), "<= 2", args.length);
             }
+        }
+
+    }
+
+    public static class FnDecimal implements ISimpleFunctionHandler {
+        @Override
+        public String getName() {
+            return "random-decimal";
+        }
+
+
+        @Override
+        public Object evalImpl(Object[] args, EvaluationContext ec) {
+            boolean allNumbers = args.length == 0 || Arrays.stream(args).allMatch(a -> a instanceof java.lang.Number);
+
+            if (!allNumbers) {
+                throw new XPathTypeMismatchException(getName() + "() Only Supports Int Parameters");
+            }
+
+            double max   = Double.MAX_VALUE;
+            double min   = 0;
+            int    round = 2;
+
+            switch (args.length) {
+                case 0:
+                    break;
+                case 1:
+                    max = FunctionUtils._double(args, 0);
+                    break;
+                case 2:
+                    min = FunctionUtils._double(args, 0);
+                    max = FunctionUtils._double(args, 1);
+                    break;
+                case 3:
+                    min = FunctionUtils._double(args, 0);
+                    max = FunctionUtils._double(args, 1);
+                    round = FunctionUtils._int(args, 2);
+                    break;
+                default:
+                    throw new XPathArityException(getName(), "<= 3", args.length);
+            }
+
+            return round(randomDecimal(min, max), round);
         }
 
 
     }
+
 
     //random-date-between(from,to)
     public static class FnDateBetween implements ISimpleFunctionHandler {

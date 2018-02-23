@@ -40,16 +40,14 @@ public class Main {
 //    static Parser          parser   = Parser.builder().build();
 //    static HtmlRenderer    renderer = HtmlRenderer.builder().build();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        LogManager manager = LogManager.getLogManager();
-        manager.readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
-        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.github");
-        logger.setLevel(Level.ALL);
 
         Spark.staticFiles.location("/web");
 
         //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
+
+        port(9000);
 
         webSocket("/events", EventsWebSocket.class);
 
@@ -258,7 +256,10 @@ public class Main {
                 Desktop.getDesktop().browse(new URI(url));
             }
             catch (Exception ignored) {
+                LOG.warn("Failed to launch browser: "+url);
             }
+        }else {
+            LOG.info("Visit: "+url);
         }
     }
 
