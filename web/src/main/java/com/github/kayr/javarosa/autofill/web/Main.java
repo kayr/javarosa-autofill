@@ -195,6 +195,8 @@ public class Main {
 
             e.submit(() -> {
                 try {
+                    Thread.sleep(2000);
+                    eventSocket.log(username,"Starting Data Generation");
                     generator.start();
                 }
                 catch (Exception x) {
@@ -203,7 +205,7 @@ public class Main {
                 }
             });
             res.type("text/plain");
-            return DataGenerator.createPropertiesText(xform);
+            return "OK - Submitted";
 
         });
     }
