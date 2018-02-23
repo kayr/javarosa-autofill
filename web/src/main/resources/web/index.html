@@ -137,7 +137,7 @@
 
             <div class="row">
                 <div>
-                    <h4>Generex Expressions(<span id="c-lbl-currentForm"></span>)</h4>
+                    <h4>Faker Functions for(<span id="c-lbl-currentForm"></span>)</h4>
                     <p>
                         Please add your calculate/generator functions below. Generally you can ignore questions that do
                         not have constraints.
@@ -180,404 +180,422 @@
         <!-- DOCUMENTATION-->
 
         <div class="col-lg-4">
-
-            <h2>
-                <a href="#other-fakers" aria-hidden="true" class="anchor" id="user-content-other-fakers">
-                    <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
-                         width="16">
-                        <path fill-rule="evenodd"
-                              d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
-                    </svg>
-                </a>
-                Miscellaneous functions
-            </h2>
-            <pre><code>random-date-between('2012-01-01','2013-01-01')
+            <h2><a href="#utility-faker-functions" aria-hidden="true" class="anchor" id="user-content-utility-faker-functions"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Utility Faker Functions</h2>
+            <p>All javarosa xpath functions are supported plus a few more to make customisation of data generation easier</p>
+            <pre><code>RANDOM FUTURE DATE random-past-date(start-date,end-date)
+----------------------
+random-date-between('2012-01-01','2013-01-01')
 random-date-between(now(),'2090-01-01')
 
+
+
+RANDOM FUTURE DATE random-past-date(amount,units,start-date): units can be seconds,minutes,hours or days
+----------------------
 random-future-date(5,'days')
 random-future-date(5,'days','2020-1-1') -&gt; a random date 5 days after '2020-1-1'
 random-future-date(5,'seconds','12:00')
 random-future-date(5,'minutes')
 random-future-date(5,'hour')
 
+
+
+RANDOM PAST DATE random-past-date(amount,units,start-date): units can be seconds,minutes,hours or days
+----------------------
 random-past-date(5,'days')
 random-past-date(5,'days','2020-1-1') -&gt; a random date 5 days before '2020-1-1'
 random-past-date(5,'seconds','12:00')
 random-past-date(5,'minutes')
 random-past-date(5,'hour')
 
+
+
+RANDOM STRING WITH REGEX PATTERN
+----------------------
 random-regex('077[0-9]{10}') -&gt; generate a number that starts with 077 and ends with 10 random digits
+random-regex('[a-z]{1,10}\@[a-z]{4,10}\.[a-z]{3}') -&gt; generate and email like string... though normally it better to use fake('internet','emailAddress') as seen below
 
-random-number(1000000000) -&gt; produces an answer &gt; 1_000_000_000
-random-number(2.0,7.0)  -&gt; A number between 2.0 and 7.0
-random-number(2,1,2) -&gt; a number between 1 and 2 with 2 decimal places
-random-number()
 
+
+RANDOM DECIMAL random-decimal(min,max)
+----------------------
+random-number() -&gt; generate a random number from 1 to 9
+random-number(10) -&gt; produces an answer less than 10
+random-number(2,7)  -&gt; A number between 2(inclusive) and 7(exclusive)
+
+
+
+RANDOM DECIMAL random-decimal(min,max,scale)
+--------------------
+random-decimal() -&gt; random decimal number from 1 and 9 with 2 decimal places
+random-decimal(20) -&gt;  random decimal between from 0 and 20(exclusive) with 2 decimal places
+random-decimal(10,20) -&gt; random decimal between from 10 and 20(exclusive) with 2 decimal places
+random-decimal(1,2,3) -&gt; random decimal between from 1 and 2(exclusive) with 3 decimal places
 </code></pre>
+            <h2><a href="#support-functions-to-ease-generation-of-test-data" aria-hidden="true" class="anchor" id="user-content-support-functions-to-ease-generation-of-test-data"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Support functions to ease generation of test data</h2>
+            <pre><code>MISCELLANEOUS FUNCTIONS
+--------------
+eval-all(2,3,8,9.8) -&gt; evaluates all expressions and returns the last
+val('number',5) -&gt; saves value 5 with name number
+val('number')  -&gt; retrieves the value
+select-cell('"one","two,","three"',2) -&gt; same as select-at but treats the string as a csv line
 
-            <h2>
-                <a href="#faker-expressions" aria-hidden="true" class="anchor" id="user-content-faker-expressions">
-                    <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
-                         width="16">
-                        <path fill-rule="evenodd"
-                              d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
-                    </svg>
-                </a>
-                Faker Expressions
-            </h2>
+
+
+LIST FUNCTIONS
+--------------------
+list(1,2,3) -&gt; create a list
+list-from-file('src/test/resources/data/options.txt') -&gt; create list from file
+list-random-remove(list) -&gt; remove a random value from list
+list-random-get(list) -&gt; return a random value from list
+list-size(list) -&gt; return list size
+list-get-at(list,1) -&gt; get value at index 1
+list-add(list,7,8,..) -&gt; add 7 and 8
+list-remove(list,2) -&gt; remove 2 from list
+list-remove-at(list,2) -&gt; remove from index 2
+</code></pre>
+            <h2><a href="#item-faker-functions" aria-hidden="true" class="anchor" id="user-content-item-faker-functions"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Item Faker Functions</h2>
             <pre><code>address
-    fake('address','buildingNumber')
-    fake('address','city')
-    fake('address','cityName')
-    fake('address','cityPrefix')
-    fake('address','citySuffix')
-    fake('address','country')
-    fake('address','countryCode')
-    fake('address','firstName')
-    fake('address','fullAddress')
-    fake('address','lastName')
-    fake('address','latitude')
-    fake('address','longitude')
-    fake('address','secondaryAddress')
-    fake('address','state')
-    fake('address','stateAbbr')
-    fake('address','streetAddress')
-    fake('address','streetAddressNumber')
-    fake('address','streetName')
-    fake('address','streetPrefix')
-    fake('address','streetSuffix')
-    fake('address','timeZone')
-    fake('address','zipCode')
+    buildingNumber        : fake('address','buildingNumber')
+    city                  : fake('address','city')
+    cityName              : fake('address','cityName')
+    cityPrefix            : fake('address','cityPrefix')
+    citySuffix            : fake('address','citySuffix')
+    country               : fake('address','country')
+    countryCode           : fake('address','countryCode')
+    firstName             : fake('address','firstName')
+    fullAddress           : fake('address','fullAddress')
+    lastName              : fake('address','lastName')
+    latitude              : fake('address','latitude')
+    longitude             : fake('address','longitude')
+    secondaryAddress      : fake('address','secondaryAddress')
+    state                 : fake('address','state')
+    stateAbbr             : fake('address','stateAbbr')
+    streetAddress         : fake('address','streetAddress')
+    streetAddressNumber   : fake('address','streetAddressNumber')
+    streetName            : fake('address','streetName')
+    streetPrefix          : fake('address','streetPrefix')
+    streetSuffix          : fake('address','streetSuffix')
+    timeZone              : fake('address','timeZone')
+    zipCode               : fake('address','zipCode')
 ----------------------------------------
 ancient
-    fake('ancient','god')
-    fake('ancient','hero')
-    fake('ancient','primordial')
-    fake('ancient','titan')
+    god                   : fake('ancient','god')
+    hero                  : fake('ancient','hero')
+    primordial            : fake('ancient','primordial')
+    titan                 : fake('ancient','titan')
 ----------------------------------------
 app
-    fake('app','author')
-    fake('app','name')
-    fake('app','version')
+    author                : fake('app','author')
+    name                  : fake('app','name')
+    version               : fake('app','version')
 ----------------------------------------
 artist
-    fake('artist','name')
+    name                  : fake('artist','name')
 ----------------------------------------
 beer
-    fake('beer','hop')
-    fake('beer','malt')
-    fake('beer','name')
-    fake('beer','style')
-    fake('beer','yeast')
+    hop                   : fake('beer','hop')
+    malt                  : fake('beer','malt')
+    name                  : fake('beer','name')
+    style                 : fake('beer','style')
+    yeast                 : fake('beer','yeast')
 ----------------------------------------
 book
-    fake('book','author')
-    fake('book','genre')
-    fake('book','publisher')
-    fake('book','title')
+    author                : fake('book','author')
+    genre                 : fake('book','genre')
+    publisher             : fake('book','publisher')
+    title                 : fake('book','title')
 ----------------------------------------
 bool
-    fake('bool','bool')
+    bool                  : fake('bool','bool')
 ----------------------------------------
 business
-    fake('business','creditCardExpiry')
-    fake('business','creditCardNumber')
-    fake('business','creditCardType')
+    creditCardExpiry      : fake('business','creditCardExpiry')
+    creditCardNumber      : fake('business','creditCardNumber')
+    creditCardType        : fake('business','creditCardType')
 ----------------------------------------
 cat
-    fake('cat','breed')
-    fake('cat','name')
-    fake('cat','registry')
+    breed                 : fake('cat','breed')
+    name                  : fake('cat','name')
+    registry              : fake('cat','registry')
 ----------------------------------------
 chuckNorris
-    fake('chuckNorris','fact')
+    fact                  : fake('chuckNorris','fact')
 ----------------------------------------
 code
-    fake('code','asin')
-    fake('code','ean13')
-    fake('code','ean8')
-    fake('code','gtin13')
-    fake('code','gtin8')
-    fake('code','imei')
-    fake('code','isbn10')
-    fake('code','isbn13')
-    fake('code','isbnGroup')
-    fake('code','isbnGs1')
-    fake('code','isbnRegistrant')
+    asin                  : fake('code','asin')
+    ean13                 : fake('code','ean13')
+    ean8                  : fake('code','ean8')
+    gtin13                : fake('code','gtin13')
+    gtin8                 : fake('code','gtin8')
+    imei                  : fake('code','imei')
+    isbn10                : fake('code','isbn10')
+    isbn13                : fake('code','isbn13')
+    isbnGroup             : fake('code','isbnGroup')
+    isbnGs1               : fake('code','isbnGs1')
+    isbnRegistrant        : fake('code','isbnRegistrant')
 ----------------------------------------
 color
-    fake('color','name')
+    name                  : fake('color','name')
 ----------------------------------------
 commerce
-    fake('commerce','color')
-    fake('commerce','department')
-    fake('commerce','material')
-    fake('commerce','price')
-    fake('commerce','productName')
-    fake('commerce','promotionCode')
+    color                 : fake('commerce','color')
+    department            : fake('commerce','department')
+    material              : fake('commerce','material')
+    price                 : fake('commerce','price')
+    productName           : fake('commerce','productName')
+    promotionCode         : fake('commerce','promotionCode')
 ----------------------------------------
 company
-    fake('company','bs')
-    fake('company','buzzword')
-    fake('company','catchPhrase')
-    fake('company','industry')
-    fake('company','logo')
-    fake('company','name')
-    fake('company','profession')
-    fake('company','suffix')
-    fake('company','url')
+    bs                    : fake('company','bs')
+    buzzword              : fake('company','buzzword')
+    catchPhrase           : fake('company','catchPhrase')
+    industry              : fake('company','industry')
+    logo                  : fake('company','logo')
+    name                  : fake('company','name')
+    profession            : fake('company','profession')
+    suffix                : fake('company','suffix')
+    url                   : fake('company','url')
 ----------------------------------------
 crypto
-    fake('crypto','md5')
-    fake('crypto','sha1')
-    fake('crypto','sha256')
-    fake('crypto','sha512')
+    md5                   : fake('crypto','md5')
+    sha1                  : fake('crypto','sha1')
+    sha256                : fake('crypto','sha256')
+    sha512                : fake('crypto','sha512')
 ----------------------------------------
 date
-    fake('date','birthday')
+    birthday              : fake('date','birthday')
 ----------------------------------------
 demographic
-    fake('demographic','demonym')
-    fake('demographic','educationalAttainment')
-    fake('demographic','maritalStatus')
-    fake('demographic','race')
-    fake('demographic','sex')
+    demonym               : fake('demographic','demonym')
+    educationalAttainment : fake('demographic','educationalAttainment')
+    maritalStatus         : fake('demographic','maritalStatus')
+    race                  : fake('demographic','race')
+    sex                   : fake('demographic','sex')
 ----------------------------------------
 educator
-    fake('educator','campus')
-    fake('educator','course')
-    fake('educator','secondarySchool')
-    fake('educator','university')
+    campus                : fake('educator','campus')
+    course                : fake('educator','course')
+    secondarySchool       : fake('educator','secondarySchool')
+    university            : fake('educator','university')
 ----------------------------------------
 esports
-    fake('esports','event')
-    fake('esports','game')
-    fake('esports','league')
-    fake('esports','player')
-    fake('esports','team')
+    event                 : fake('esports','event')
+    game                  : fake('esports','game')
+    league                : fake('esports','league')
+    player                : fake('esports','player')
+    team                  : fake('esports','team')
 ----------------------------------------
 file
-    fake('file','extension')
-    fake('file','fileName')
-    fake('file','mimeType')
+    extension             : fake('file','extension')
+    fileName              : fake('file','fileName')
+    mimeType              : fake('file','mimeType')
 ----------------------------------------
 finance
-    fake('finance','bic')
-    fake('finance','creditCard')
-    fake('finance','iban')
+    bic                   : fake('finance','bic')
+    creditCard            : fake('finance','creditCard')
+    iban                  : fake('finance','iban')
 ----------------------------------------
 food
-    fake('food','ingredient')
-    fake('food','measurement')
-    fake('food','spice')
+    ingredient            : fake('food','ingredient')
+    measurement           : fake('food','measurement')
+    spice                 : fake('food','spice')
 ----------------------------------------
 friends
-    fake('friends','character')
-    fake('friends','location')
-    fake('friends','quote')
+    character             : fake('friends','character')
+    location              : fake('friends','location')
+    quote                 : fake('friends','quote')
 ----------------------------------------
 gameOfThrones
-    fake('gameOfThrones','character')
-    fake('gameOfThrones','city')
-    fake('gameOfThrones','dragon')
-    fake('gameOfThrones','house')
-    fake('gameOfThrones','quote')
+    character             : fake('gameOfThrones','character')
+    city                  : fake('gameOfThrones','city')
+    dragon                : fake('gameOfThrones','dragon')
+    house                 : fake('gameOfThrones','house')
+    quote                 : fake('gameOfThrones','quote')
 ----------------------------------------
 hacker
-    fake('hacker','abbreviation')
-    fake('hacker','adjective')
-    fake('hacker','ingverb')
-    fake('hacker','noun')
-    fake('hacker','verb')
+    abbreviation          : fake('hacker','abbreviation')
+    adjective             : fake('hacker','adjective')
+    ingverb               : fake('hacker','ingverb')
+    noun                  : fake('hacker','noun')
+    verb                  : fake('hacker','verb')
 ----------------------------------------
 harryPotter
-    fake('harryPotter','book')
-    fake('harryPotter','character')
-    fake('harryPotter','location')
-    fake('harryPotter','quote')
+    book                  : fake('harryPotter','book')
+    character             : fake('harryPotter','character')
+    location              : fake('harryPotter','location')
+    quote                 : fake('harryPotter','quote')
 ----------------------------------------
 hipster
-    fake('hipster','word')
+    word                  : fake('hipster','word')
 ----------------------------------------
 idNumber
-    fake('idNumber','invalid')
-    fake('idNumber','invalidSvSeSsn')
-    fake('idNumber','ssnValid')
-    fake('idNumber','valid')
-    fake('idNumber','validSvSeSsn')
+    invalid               : fake('idNumber','invalid')
+    invalidSvSeSsn        : fake('idNumber','invalidSvSeSsn')
+    ssnValid              : fake('idNumber','ssnValid')
+    valid                 : fake('idNumber','valid')
+    validSvSeSsn          : fake('idNumber','validSvSeSsn')
 ----------------------------------------
 internet
-    fake('internet','avatar')
-    fake('internet','domainName')
-    fake('internet','domainSuffix')
-    fake('internet','domainWord')
-    fake('internet','emailAddress')
-    fake('internet','image')
-    fake('internet','ipV4Address')
-    fake('internet','ipV4Cidr')
-    fake('internet','ipV6Address')
-    fake('internet','ipV6Cidr')
-    fake('internet','macAddress')
-    fake('internet','password')
-    fake('internet','privateIpV4Address')
-    fake('internet','publicIpV4Address')
-    fake('internet','safeEmailAddress')
-    fake('internet','slug')
-    fake('internet','url')
+    avatar                : fake('internet','avatar')
+    domainName            : fake('internet','domainName')
+    domainSuffix          : fake('internet','domainSuffix')
+    domainWord            : fake('internet','domainWord')
+    emailAddress          : fake('internet','emailAddress')
+    image                 : fake('internet','image')
+    ipV4Address           : fake('internet','ipV4Address')
+    ipV4Cidr              : fake('internet','ipV4Cidr')
+    ipV6Address           : fake('internet','ipV6Address')
+    ipV6Cidr              : fake('internet','ipV6Cidr')
+    macAddress            : fake('internet','macAddress')
+    password              : fake('internet','password')
+    privateIpV4Address    : fake('internet','privateIpV4Address')
+    publicIpV4Address     : fake('internet','publicIpV4Address')
+    safeEmailAddress      : fake('internet','safeEmailAddress')
+    slug                  : fake('internet','slug')
+    url                   : fake('internet','url')
 ----------------------------------------
 job
-    fake('job','field')
-    fake('job','keySkills')
-    fake('job','position')
-    fake('job','seniority')
-    fake('job','title')
+    field                 : fake('job','field')
+    keySkills             : fake('job','keySkills')
+    position              : fake('job','position')
+    seniority             : fake('job','seniority')
+    title                 : fake('job','title')
 ----------------------------------------
 lordOfTheRings
-    fake('lordOfTheRings','character')
-    fake('lordOfTheRings','location')
+    character             : fake('lordOfTheRings','character')
+    location              : fake('lordOfTheRings','location')
 ----------------------------------------
 lorem
-    fake('lorem','character')
-    fake('lorem','characters')
-    fake('lorem','paragraph')
-    fake('lorem','sentence')
-    fake('lorem','word')
-    fake('lorem','words')
+    character             : fake('lorem','character')
+    characters            : fake('lorem','characters')
+    paragraph             : fake('lorem','paragraph')
+    sentence              : fake('lorem','sentence')
+    word                  : fake('lorem','word')
+    words                 : fake('lorem','words')
 ----------------------------------------
 matz
-    fake('matz','quote')
+    quote                 : fake('matz','quote')
 ----------------------------------------
 music
-    fake('music','chord')
-    fake('music','instrument')
-    fake('music','key')
+    chord                 : fake('music','chord')
+    instrument            : fake('music','instrument')
+    key                   : fake('music','key')
 ----------------------------------------
 name
-    fake('name','firstName')
-    fake('name','fullName')
-    fake('name','lastName')
-    fake('name','name')
-    fake('name','nameWithMiddle')
-    fake('name','prefix')
-    fake('name','suffix')
-    fake('name','title')
-    fake('name','username')
+    firstName             : fake('name','firstName')
+    fullName              : fake('name','fullName')
+    lastName              : fake('name','lastName')
+    name                  : fake('name','name')
+    nameWithMiddle        : fake('name','nameWithMiddle')
+    prefix                : fake('name','prefix')
+    suffix                : fake('name','suffix')
+    title                 : fake('name','title')
+    username              : fake('name','username')
 ----------------------------------------
 number
-    fake('number','digit')
-    fake('number','randomDigit')
-    fake('number','randomDigitNotZero')
-    fake('number','randomNumber')
+    digit                 : fake('number','digit')
+    randomDigit           : fake('number','randomDigit')
+    randomDigitNotZero    : fake('number','randomDigitNotZero')
+    randomNumber          : fake('number','randomNumber')
 ----------------------------------------
 options
 ----------------------------------------
 phoneNumber
-    fake('phoneNumber','cellPhone')
-    fake('phoneNumber','phoneNumber')
+    cellPhone             : fake('phoneNumber','cellPhone')
+    phoneNumber           : fake('phoneNumber','phoneNumber')
 ----------------------------------------
 pokemon
-    fake('pokemon','location')
-    fake('pokemon','name')
+    location              : fake('pokemon','location')
+    name                  : fake('pokemon','name')
 ----------------------------------------
 random
-    fake('random','nextBoolean')
-    fake('random','nextDouble')
-    fake('random','nextLong')
+    nextBoolean           : fake('random','nextBoolean')
+    nextDouble            : fake('random','nextDouble')
+    nextLong              : fake('random','nextLong')
 ----------------------------------------
 rickAndMorty
-    fake('rickAndMorty','character')
-    fake('rickAndMorty','location')
-    fake('rickAndMorty','quote')
+    character             : fake('rickAndMorty','character')
+    location              : fake('rickAndMorty','location')
+    quote                 : fake('rickAndMorty','quote')
 ----------------------------------------
 rockBand
-    fake('rockBand','name')
+    name                  : fake('rockBand','name')
 ----------------------------------------
 shakespeare
-    fake('shakespeare','asYouLikeItQuote')
-    fake('shakespeare','hamletQuote')
-    fake('shakespeare','kingRichardIIIQuote')
-    fake('shakespeare','romeoAndJulietQuote')
+    asYouLikeItQuote      : fake('shakespeare','asYouLikeItQuote')
+    hamletQuote           : fake('shakespeare','hamletQuote')
+    kingRichardIIIQuote   : fake('shakespeare','kingRichardIIIQuote')
+    romeoAndJulietQuote   : fake('shakespeare','romeoAndJulietQuote')
 ----------------------------------------
 slackEmoji
-    fake('slackEmoji','activity')
-    fake('slackEmoji','celebration')
-    fake('slackEmoji','custom')
-    fake('slackEmoji','emoji')
-    fake('slackEmoji','foodAndDrink')
-    fake('slackEmoji','nature')
-    fake('slackEmoji','objectsAndSymbols')
-    fake('slackEmoji','people')
-    fake('slackEmoji','travelAndPlaces')
+    activity              : fake('slackEmoji','activity')
+    celebration           : fake('slackEmoji','celebration')
+    custom                : fake('slackEmoji','custom')
+    emoji                 : fake('slackEmoji','emoji')
+    foodAndDrink          : fake('slackEmoji','foodAndDrink')
+    nature                : fake('slackEmoji','nature')
+    objectsAndSymbols     : fake('slackEmoji','objectsAndSymbols')
+    people                : fake('slackEmoji','people')
+    travelAndPlaces       : fake('slackEmoji','travelAndPlaces')
 ----------------------------------------
 space
-    fake('space','agency')
-    fake('space','agencyAbbreviation')
-    fake('space','company')
-    fake('space','constellation')
-    fake('space','distanceMeasurement')
-    fake('space','galaxy')
-    fake('space','meteorite')
-    fake('space','moon')
-    fake('space','nasaSpaceCraft')
-    fake('space','nebula')
-    fake('space','planet')
-    fake('space','star')
-    fake('space','starCluster')
+    agency                : fake('space','agency')
+    agencyAbbreviation    : fake('space','agencyAbbreviation')
+    company               : fake('space','company')
+    constellation         : fake('space','constellation')
+    distanceMeasurement   : fake('space','distanceMeasurement')
+    galaxy                : fake('space','galaxy')
+    meteorite             : fake('space','meteorite')
+    moon                  : fake('space','moon')
+    nasaSpaceCraft        : fake('space','nasaSpaceCraft')
+    nebula                : fake('space','nebula')
+    planet                : fake('space','planet')
+    star                  : fake('space','star')
+    starCluster           : fake('space','starCluster')
 ----------------------------------------
 stock
-    fake('stock','nsdqSymbol')
-    fake('stock','nyseSymbol')
+    nsdqSymbol            : fake('stock','nsdqSymbol')
+    nyseSymbol            : fake('stock','nyseSymbol')
 ----------------------------------------
 superhero
-    fake('superhero','descriptor')
-    fake('superhero','name')
-    fake('superhero','power')
-    fake('superhero','prefix')
-    fake('superhero','suffix')
+    descriptor            : fake('superhero','descriptor')
+    name                  : fake('superhero','name')
+    power                 : fake('superhero','power')
+    prefix                : fake('superhero','prefix')
+    suffix                : fake('superhero','suffix')
 ----------------------------------------
 team
-    fake('team','creature')
-    fake('team','name')
-    fake('team','sport')
-    fake('team','state')
+    creature              : fake('team','creature')
+    name                  : fake('team','name')
+    sport                 : fake('team','sport')
+    state                 : fake('team','state')
 ----------------------------------------
 twinPeaks
-    fake('twinPeaks','character')
-    fake('twinPeaks','location')
-    fake('twinPeaks','quote')
+    character             : fake('twinPeaks','character')
+    location              : fake('twinPeaks','location')
+    quote                 : fake('twinPeaks','quote')
 ----------------------------------------
 university
-    fake('university','name')
-    fake('university','prefix')
-    fake('university','suffix')
+    name                  : fake('university','name')
+    prefix                : fake('university','prefix')
+    suffix                : fake('university','suffix')
 ----------------------------------------
 witcher
-    fake('witcher','character')
-    fake('witcher','location')
-    fake('witcher','monster')
-    fake('witcher','quote')
-    fake('witcher','school')
-    fake('witcher','witcher')
+    character             : fake('witcher','character')
+    location              : fake('witcher','location')
+    monster               : fake('witcher','monster')
+    quote                 : fake('witcher','quote')
+    school                : fake('witcher','school')
+    witcher               : fake('witcher','witcher')
 ----------------------------------------
 yoda
-    fake('yoda','quote')
+    quote                 : fake('yoda','quote')
 ----------------------------------------
 zelda
-    fake('zelda','character')
-    fake('zelda','game')
+    character             : fake('zelda','character')
+    game                  : fake('zelda','game')
 ----------------------------------------
 </code></pre>
-
-            <h2><a href="#support-functions-to-ease-generation-of-test-data" aria-hidden="true" class="anchor"
-                   id="user-content-support-functions-to-ease-generation-of-test-data">
-                <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
-                     width="16">
-                    <path fill-rule="evenodd"
-                          d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
-                </svg>
-            </a>Support functions to ease generation of test data
-            </h2>
-            <p>Coming soon</p>
 
         </div>
     </div>
