@@ -126,14 +126,26 @@ public class Fakers {
                       .collect(Collectors.toList());
     }
 
-    public static double round(double num, int scale) {
-        return new BigDecimal(num).setScale(scale, BigDecimal.ROUND_HALF_UP)
-                                  .doubleValue();
-    }
 
+    @SuppressWarnings("WeakerAccess")
     public static double round(BigDecimal num, int scale) {
         return num.setScale(scale, BigDecimal.ROUND_HALF_UP)
                   .doubleValue();
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static BigDecimal randomDecimal(long min, long max) {
+        if (min == max) {
+            return new BigDecimal(min);
+        }
+
+        long trueMin = Math.min(min, max);
+        long trueMax = Math.max(min, max);
+        if (trueMax <= 0) {
+            trueMax = trueMax - 1;//fix..if both min and max are negative.. then max can become inclusive
+        }
+        return randomDecimal((double) trueMin, (double) trueMax);
+
     }
 
     public static BigDecimal randomDecimal(double min, double max) {
@@ -148,6 +160,12 @@ public class Fakers {
 
         return new BigDecimal(trueMin + adj);
     }
+
+    public static long randomLong(long min, long max) {
+        BigDecimal bigDecimal = randomDecimal(min, max);
+        return bigDecimal.setScale(0, BigDecimal.ROUND_DOWN).longValue();
+    }
+
 
     static class FnFake implements ISimpleFunctionHandler {
 
@@ -189,21 +207,26 @@ public class Fakers {
         @Override
         public Object evalImpl(Object[] args, EvaluationContext ec) {
             boolean allNumbers = args.length == 0 || Arrays.stream(args).allMatch(a -> a instanceof java.lang.Number);
-
             if (!allNumbers) {
                 throw new XPathTypeMismatchException(getName() + "() Only Supports Int Parameters");
             }
+            long max = 10;
+            long min = 1;
 
             switch (args.length) {
                 case 0:
-                    return faker.number().randomNumber();
+                    break;
                 case 1:
-                    return faker.number().numberBetween(0, FunctionUtils._long(args, 0));
+                    max = FunctionUtils._long(args, 0);
+                    break;
                 case 2:
-                    return faker.number().numberBetween(FunctionUtils._long(args, 0), FunctionUtils._long(args, 1));
+                    min = FunctionUtils._long(args, 0);
+                    max = FunctionUtils._long(args, 1);
+                    break;
                 default:
                     throw new XPathArityException(getName(), "<= 2", args.length);
             }
+            return randomLong(min, max);
         }
 
     }

@@ -87,6 +87,43 @@ class FunctionsTest implements SmallFormEvaluator {
     }
 
     @Test
+    void testRandomNumberBounds() {
+        1000.times {
+            def start = -5
+            def stop = -1
+            def answer = Fakers.randomLong(start, stop)
+            assert answer >= start && answer < stop
+        }
+
+        100.times {
+            def start = -2
+            def stop = 0
+            def answer = Fakers.randomLong(start, stop)
+            assert answer >= start && answer < stop
+        }
+        100.times {
+            def start = -1
+            def stop = -1
+            def answer = Fakers.randomLong(start, stop)
+            assert answer == start
+        }
+
+        1000.times {
+            def start = -5
+            def stop = 1
+            def answer = Fakers.randomLong(start, stop)
+            assert answer >= start && answer < stop
+        }
+
+        1000.times {
+            def start = 5
+            def stop = 10
+            def answer = Fakers.randomLong(start, stop)
+            assert answer >= start && answer < stop
+        }
+    }
+
+    @Test
     void testRandomDecimal() {
 
         def answer = evalXpath("random-decimal(10)")
@@ -123,7 +160,7 @@ class FunctionsTest implements SmallFormEvaluator {
     }
 
     @Test
-    void testRandoms() {
+    void testRandomFloatBounds() {
         100000.times {
             def start = -1d
             def stop = 6.1d
@@ -131,6 +168,7 @@ class FunctionsTest implements SmallFormEvaluator {
             assert answer >= start && answer < stop
         }
     }
+
 
     @Test
     void testRandomFromFile() {
