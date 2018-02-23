@@ -22,6 +22,8 @@ class FunctionsTest implements SmallFormEvaluator {
 
         assert evalXpath("random-regex('077[0-9]{10}')").toString().startsWith('077')
 
+        assert evalXpath("random-regex('[a-z]{1,10}\\@[a-z]{4,10}\\.[a-z]{3}')").toString().contains('@')
+
         shouldFailWithCause(XPathArityException) {
             evalXpath("random-regex()").toString().startsWith('077')
         }
@@ -95,6 +97,7 @@ class FunctionsTest implements SmallFormEvaluator {
 
         answer = evalXpath("random-decimal(2,1,2)")
         assert answer >= 1.0 && answer < 2.0
+        println(answer)
 
         answer = evalXpath("random-decimal(10,20,2)")
         assert answer >= 10.0 && answer < 20.0
@@ -110,6 +113,7 @@ class FunctionsTest implements SmallFormEvaluator {
 
         answer = evalXpath("random-decimal()")
         assert answer != null
+        println(answer)
 
 
         shouldFailWithCause(XPathTypeMismatchException) {

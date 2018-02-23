@@ -223,8 +223,8 @@ public class Fakers {
                 throw new XPathTypeMismatchException(getName() + "() Only Supports Int Parameters");
             }
 
-            double max   = Double.MAX_VALUE;
-            double min   = 0;
+            double max   = 10;
+            double min   = 1;
             int    round = 2;
 
             switch (args.length) {
