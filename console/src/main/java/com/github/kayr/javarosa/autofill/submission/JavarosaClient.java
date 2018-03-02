@@ -1,5 +1,12 @@
 package com.github.kayr.javarosa.autofill.submission;
 
+import com.burgstaller.okhttp.AuthenticationCacheInterceptor;
+import com.burgstaller.okhttp.CachingAuthenticatorDecorator;
+import com.burgstaller.okhttp.DispatchingAuthenticator;
+import com.burgstaller.okhttp.basic.BasicAuthenticator;
+import com.burgstaller.okhttp.digest.CachingAuthenticator;
+import com.burgstaller.okhttp.digest.Credentials;
+import com.burgstaller.okhttp.digest.DigestAuthenticator;
 import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import okhttp3.*;
 import org.joox.Match;
@@ -15,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -182,8 +190,19 @@ public class JavarosaClient {
 
         if (!initialized) {
 
+            Map<String, CachingAuthenticator> authCache           = new ConcurrentHashMap<>();
+            Credentials                       credentials         = new Credentials(username, password);
+            BasicAuthenticator                basicAuthenticator  = new BasicAuthenticator(credentials);
+            DigestAuthenticator               digestAuthenticator = new DigestAuthenticator(credentials);
+
+            // note that all auth schemes should be registered as lowercase!
+            DispatchingAuthenticator authenticator = new DispatchingAuthenticator.Builder().with("digest", digestAuthenticator)
+                                                                                           .with("basic", basicAuthenticator)
+                                                                                           .build();
+
             httpClient = _client.newBuilder()
-                                .addInterceptor(new BasicAuthInterceptor(username, password))
+                                .authenticator(new CachingAuthenticatorDecorator(authenticator, authCache))
+                                .addInterceptor(new AuthenticationCacheInterceptor(authCache))
                                 .build();
 
             if (serverUrl.endsWith("/")) {

@@ -217,7 +217,7 @@ public class Main {
     }
 
     private static JavarosaClient getJavarosaClient(JsonObject req) {
-        return new JavarosaClient().setPassword(req.get("username").asString())
+        return new JavarosaClient().setUsername(req.get("username").asString())
                                    .setPassword(req.get("password").asString())
                                    .setServerUrl(req.get("url").asString());
     }

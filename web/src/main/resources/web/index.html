@@ -4,14 +4,16 @@
 <head>
     <title>ODK Fake Data Generator</title>
 
-    <link rel="stylesheet" href="css/bootstrap.css?v=1"/>
-    <link rel="stylesheet" href="css/styles.css?v=1"/>
+    <link rel="stylesheet" href="css/bootstrap.css?v=2"/>
+    <link rel="stylesheet" href="css/bootstrap-tour.min.css?v=2"/>
+    <link rel="stylesheet" href="css/styles.css?v=2"/>
 
     <script type="text/tpl" id="tmpl-demo">
         <h3>{%=o.title%}</h3>
         <p>Released under the
             <a href="{%=o.license.url%}">{%=o.license.name%}</a>.</p>
         <h4>Features</h4>
+
 
 
     </script>
@@ -21,6 +23,7 @@
             <span class="badge">{%=o.formID%}</span>
             {%=o.name%}
         </li>
+
     </script>
 
     <script type="text/x-tmpl" id="question-widget">
@@ -38,6 +41,7 @@
                    class="form-control c-question-generex"
                    placeholder="leave blank or enter a function e.g fake('book','author') or random-number() etc">
         </div>
+
     </script>
 
     <script type="text/x-tmpl" id="log-widget">
@@ -50,11 +54,18 @@
 </head>
 <body>
 
+<div id="c-help-button">
+    <button class="help-button">
+        <span>?</span>HELP
+    </button>
+</div>
+
 <div class="container-fluid">
 
     <div class="row">
         <div class="text-center">
             <h1>Welcome To ODK Fake Data Generator <span style="color:red">(ALPHA)</span></h1>
+
         </div>
     </div>
 
@@ -99,12 +110,14 @@
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                   aria-expanded="false" aria-controls="collapseOne">
                                     LICENSE<i class="glyphicon glyphicon-arrow-down"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <pre>
                                     <code>
@@ -145,7 +158,7 @@ limitations under the License.
 
 
             <div class="row">
-                <div class="col-lg-offset-1">
+                <div>
                     <div class="form-inline">
 
                         <div class="form-group">
@@ -156,7 +169,7 @@ limitations under the License.
 
                         <div class="checkbox">
                             <label>
-                                <input type="checkbox" checked id="c-dry-run"> Dry Run?
+                                <input type="checkbox" checked id="c-dry-run"> Do Not Submit?
                             </label>
                         </div>
 
@@ -216,8 +229,17 @@ limitations under the License.
         <!-- DOCUMENTATION-->
 
         <div class="col-lg-4">
-            <h2><a href="#utility-faker-functions" aria-hidden="true" class="anchor" id="user-content-utility-faker-functions"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Utility Faker Functions</h2>
-            <p>All javarosa xpath functions are supported plus a few more to make customisation of data generation easier</p>
+            <h2><a href="#utility-faker-functions" aria-hidden="true" class="anchor"
+                   id="user-content-utility-faker-functions">
+                <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
+                     width="16">
+                    <path fill-rule="evenodd"
+                          d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+                </svg>
+            </a>Utility Faker Functions
+            </h2>
+            <p>All javarosa xpath functions are supported plus a few more to make customisation of data generation
+                easier</p>
             <pre><code>RANDOM FUTURE DATE random-past-date(start-date,end-date)
 ----------------------
 random-date-between('2012-01-01','2013-01-01')
@@ -267,7 +289,15 @@ random-decimal(20) -&gt;  random decimal between from 0 and 20(exclusive) with 2
 random-decimal(10,20) -&gt; random decimal between from 10 and 20(exclusive) with 2 decimal places
 random-decimal(1,2,3) -&gt; random decimal between from 1 and 2(exclusive) with 3 decimal places
 </code></pre>
-            <h2><a href="#support-functions-to-ease-generation-of-test-data" aria-hidden="true" class="anchor" id="user-content-support-functions-to-ease-generation-of-test-data"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Support functions to ease generation of test data</h2>
+            <h2><a href="#support-functions-to-ease-generation-of-test-data" aria-hidden="true" class="anchor"
+                   id="user-content-support-functions-to-ease-generation-of-test-data">
+                <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
+                     width="16">
+                    <path fill-rule="evenodd"
+                          d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+                </svg>
+            </a>Support functions to ease generation of test data
+            </h2>
             <pre><code>MISCELLANEOUS FUNCTIONS
 --------------
 eval-all(2,3,8,9.8) -&gt; evaluates all expressions and returns the last
@@ -289,7 +319,15 @@ list-add(list,7,8,..) -&gt; add 7 and 8
 list-remove(list,2) -&gt; remove 2 from list
 list-remove-at(list,2) -&gt; remove from index 2
 </code></pre>
-            <h2><a href="#item-faker-functions" aria-hidden="true" class="anchor" id="user-content-item-faker-functions"><svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Item Faker Functions</h2>
+            <h2><a href="#item-faker-functions" aria-hidden="true" class="anchor"
+                   id="user-content-item-faker-functions">
+                <svg aria-hidden="true" class="octicon octicon-link" height="16" version="1.1" viewBox="0 0 16 16"
+                     width="16">
+                    <path fill-rule="evenodd"
+                          d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path>
+                </svg>
+            </a>Item Faker Functions
+            </h2>
             <pre><code>address
     buildingNumber        : fake('address','buildingNumber')
     city                  : fake('address','city')
@@ -658,10 +696,11 @@ zelda
 </div><!-- /.modal -->
 
 <script type="text/javascript" src="js/lib/jquery-2.2.0.min.js"></script>
-<script type="text/javascript" src="js/lib/bootstrap.js?v=1"></script>
-<script type="text/javascript" src="js/lib/bootbox.js?v=1"></script>
-<script type="text/javascript" src="js/index.js?v=1"></script>
-<script type="text/javascript" src="js/lib/tmpl.min.js?v=1"></script>
+<script type="text/javascript" src="js/lib/bootstrap.js?v=2"></script>
+<script type="text/javascript" src="js/lib/bootbox.js?v=2"></script>
+<script type="text/javascript" src="js/lib/bootstrap-tour.min.js?v=2"></script>
+<script type="text/javascript" src="js/lib/tmpl.min.js?v=2"></script>
+<script type="text/javascript" src="js/index.js?v=2"></script>
 
 
 </body>

@@ -124,3 +124,45 @@ pre,
     padding: 5px;
     /*width: 300px;*/
 }
+
+.help {
+    background-color : #31B0D5;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    border-color: #46b8da;
+}
+
+#c-help-button {
+    position: fixed;
+    bottom: -4px;
+    right: 10px;
+    z-index: 99999;
+
+}
+
+.help-button {
+    height: 6em;
+    width: 6em;
+    font-size: 14px;
+    border-radius: 50%;
+    border: 0 none;
+    background: #72AB59;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    transform: scale(1);
+    transition: all 200ms ease;
+}
+.help-button:hover,
+.help-button:focus,
+.help-button:active {
+    box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
+    outline: 0;
+}
+.help-button span {
+    display: block;
+    font-size: 2em;
+    transform: scale(1);
+    transition: transform 100ms ease;
+}
