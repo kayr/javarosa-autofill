@@ -173,7 +173,7 @@ class FunctionsTest implements SmallFormEvaluator {
     @Test
     void testRandomFromFile() {
 
-        assert evalXpath("random-select-from-file('src\\test\\resources\\data\\options.txt')")
+        assert evalXpath("random-select-from-file('src/test/resources/data/options.txt')")
 
         shouldFailWithCause(NoSuchFileException) { evalXpath("random-select-from-file('fake-file-path')") }
 
