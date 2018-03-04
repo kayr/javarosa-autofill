@@ -97,8 +97,8 @@ public class GenerexProvider {
 
     /*
       It seems there is a bug or I cannot figure out how to get repeats to calculate on there context
-      If you are in a repeat un cannot do a ../../ and be guaranteed to get the inner repeat.
-      So to work around this we manually contextualize of xpath and add multiplicities based on the
+      If you are in a repeat u cannot do a ../../ and be guaranteed to get the inner repeat.
+      So to work around this we manually contextualize the xpath and add multiplicities based on the
       index. However if the repeat is outer we use the current repeat value as the context.
      */
     private TreeReference resolveParentReference(FormDef fec, IFormElement element, FormIndex index) {
