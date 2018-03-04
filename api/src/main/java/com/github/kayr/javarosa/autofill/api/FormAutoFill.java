@@ -231,6 +231,7 @@ public class FormAutoFill {
             throw new AutoFillException("Generation for form [" + formDef.getName() + "] timed out. This is usually due to long loops in repeats. Try adding binding constraints on repeats");
         }
     }
+
     private void handleRepeat() {
         IFormElement formElement = model.getCaptionPrompt().getFormElement();
 
@@ -253,8 +254,7 @@ public class FormAutoFill {
                 LOG.fine("Adding new repeat");
                 fec.newRepeat();
             }
-        }
-        catch (Exception x) {
+        } catch (Exception x) {
             throw new AutoFillException("Error Auto-Filling Repeat [" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x);
         }
     }
@@ -279,10 +279,19 @@ public class FormAutoFill {
                 LOG.finest("Answer for Question[" + questionDef.getBind().getReference() + "] = " + FormUtils.safeGetAnswerText(answer));
             }
 
-            if (status != FormEntryController.ANSWER_OK)
-                throw new IllegalArgumentException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] For Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
-        }
-        catch (Exception x) {
+            if (status != FormEntryController.ANSWER_OK) {
+                String constraintMsg = "Not Known";
+                try {
+                    constraintMsg = questionPrompt.getConstraintText(answer);
+                } catch (Exception x) {
+                    LOG.warning("Failed to get Constraint text: For [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
+                }
+                throw new IllegalArgumentException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] " +
+                                                           "For Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " +
+                                                           "Reason: [" + constraintMsg + "]. " +
+                                                           "Consider altering the generator expression to generate an answer with in the allowed range.");
+            }
+        } catch (Exception x) {
             throw new AutoFillException("Error Auto-Filling Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " + x.getMessage(), x);
         }
 
