@@ -90,6 +90,8 @@
     }
 
     function generateData() {
+        clearAllErrors();
+
         if (!selectedForm) {
             bootbox.alert("Please Select A Form");
             return
@@ -178,7 +180,19 @@
         $logs.animate({scrollTop: height}, 500);
     }
 
+    function makeDangerous($w) {
+        $w.addClass('in-error alert alert-danger');
+    }
+
+    function scrollTo($w) {
+        $('html, body').animate({scrollTop: $w.offset().top}, 2000);
+    }
+
     var progressDialog = null;
+
+    function clearAllErrors() {
+        $('.in-error').removeClass('in-error alert alert-danger');
+    }
 
     function init() {
 
@@ -198,12 +212,21 @@
             generateData();
         });
 
-        $btnHelp.on('click', function (eventObject) {
+        $btnHelp.on('click', function () {
             tour.restart();
+        });
+
+        $logs.on('click', '.c-element-link', function () {
+            $logsDialog.modal('hide');
+            var attr = $(this).attr('href');
+            var $w = $expressionDiv.find(attr).closest('.question-label');
+            scrollTo($w);
+            makeDangerous($w);
         });
 
         initWebSocket();
     }
+
 
     var tour = null;
 

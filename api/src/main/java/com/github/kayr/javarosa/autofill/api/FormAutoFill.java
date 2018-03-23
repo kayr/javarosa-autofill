@@ -40,6 +40,7 @@ public class FormAutoFill {
         Std.setOut(new NullPrintStream());
     }
 
+    private HashMap<IFormElement, Integer>           repeatCounts      = new HashMap<>();
     private Map<ControlDataTypeKey, IAnswerProvider> answerProviderMap = new HashMap<>();
     private Map<String, String>                      genExpressionMap  = new HashMap<>();
     private GenerexProvider                          generexProvider   = new GenerexProvider();
@@ -47,7 +48,8 @@ public class FormAutoFill {
     private FormDef             formDef;
     private FormEntryModel      model;
     private FormEntryController fec;
-
+    private long maxSeconds = TimeUnit.SECONDS.toMillis(10);
+    private long startTime;
 
     @SuppressWarnings("WeakerAccess")
     public FormAutoFill(FormDef formDef) {
@@ -162,8 +164,6 @@ public class FormAutoFill {
         answerProviderMap.put(ControlDataTypeKey.with(controlType, dataType), provider);
     }
 
-    HashMap<IFormElement, Integer> repeatCounts = new HashMap<>();
-
     private void nextEvent() {
         int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
 
@@ -195,9 +195,6 @@ public class FormAutoFill {
 
     }
 
-    private long maxSeconds = TimeUnit.SECONDS.toMillis(10);
-    private long startTime;
-
     public FormAutoFill autoFill() {
         startTime = System.currentTimeMillis();
         while (!isEndOfForm()) {
@@ -212,7 +209,8 @@ public class FormAutoFill {
         if (validate != null) {
             FormEntryPrompt questionPrompt = fec.getModel().getQuestionPrompt(validate.failedPrompt);
             IAnswerData     answer         = questionPrompt.getAnswerValue();
-            throw new IllegalArgumentException("Invalid Answer [" + answer.getValue() + "] For Question [" + questionPrompt.getQuestion().getLabelInnerText() + "]");
+            QuestionDef     question       = questionPrompt.getQuestion();
+            throw new AutoFillException("Invalid Answer [" + answer.getValue() + "] For Question [" + question.getLabelInnerText() + "]").setElement(question);
 
         }
 
@@ -249,13 +247,13 @@ public class FormAutoFill {
             if (createNewRepeat) {
                 Integer count = repeatCounts.compute(formElement, (element, integer) -> integer == null ? 1 : integer + 1);
                 if (count >= 100) {
-                    throw new AutoFillException("Repeat Iterations Have Exceeded 100. Try To Add A Boundary Expression");
+                    throw new AutoFillException("Repeat Iterations Have Exceeded 100. Try To Add A Boundary Expression").setElement(formElement);
                 }
                 LOG.fine("Adding new repeat");
                 fec.newRepeat();
             }
         } catch (Exception x) {
-            throw new AutoFillException("Error Auto-Filling Repeat [" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x);
+            throw new AutoFillException("Error Auto-Filling Repeat [" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x).setElement(formElement);
         }
     }
 
@@ -284,15 +282,15 @@ public class FormAutoFill {
                 try {
                     constraintMsg = questionPrompt.getConstraintText(answer);
                 } catch (Exception x) {
-                    LOG.warning("Failed to get Constraint text: For [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "]");
+                    LOG.warning("Failed to get Constraint text: For [" + FormUtils.resolveVariable(questionDef) + "]");
                 }
-                throw new IllegalArgumentException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] " +
-                                                           "For Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " +
-                                                           "Reason: [" + constraintMsg + "]. " +
-                                                           "Consider altering the generator expression to generate an answer with in the allowed range.");
+                throw new AutoFillException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] " +
+                                                    "For Question [" + FormUtils.resolveVariable(questionDef) + "] " +
+                                                    "Reason: [" + constraintMsg + "]. " +
+                                                    "Consider altering the generator expression to generate an answer with in the allowed range.").setElement(questionPrompt.getFormElement());
             }
         } catch (Exception x) {
-            throw new AutoFillException("Error Auto-Filling Question [" + FormUtils.resolveVariable(questionPrompt.getFormElement()) + "] " + x.getMessage(), x);
+            throw new AutoFillException("Error Auto-Filling Question [" + FormUtils.resolveVariable(questionDef) + "] " + x.getMessage(), x).setElement(questionDef);
         }
 
     }

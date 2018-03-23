@@ -90,14 +90,12 @@ public class JavarosaClient {
                                       .build();
 
 
-        Call call = httpClient.newCall(build);
+        try (Response response = httpClient.newCall(build).execute()) {
+            if (!response.isSuccessful()) {
+                throw new RuntimeException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
+            }
 
-        Response response = call.execute();
-
-        if (!response.isSuccessful()) {
-            throw new RuntimeException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
         }
-
     }
 
     private MultipartBody.Builder createBodyBuilder(Map<String, Object> data) {
@@ -127,16 +125,17 @@ public class JavarosaClient {
         Request build = buildRequest().url(serverUrl + "/formList")
                                       .build();
 
-        Response response = httpClient.newCall(build).execute();
+        try (Response response = httpClient.newCall(build).execute()) {
 
-        if (!response.isSuccessful()) {
-            throw new AutoFillException("HTTP Call Failed: " + response.toString());
+            if (!response.isSuccessful()) {
+                throw new AutoFillException("HTTP Call Failed: " + response.toString());
+            }
+
+            String xmlResponse = response.body().string();
+
+
+            return parseXform(xmlResponse);
         }
-
-        String xmlResponse = response.body().string();
-
-
-        return parseXform(xmlResponse);
     }
 
     public String pullXform(XForm form) throws IOException {
@@ -148,9 +147,9 @@ public class JavarosaClient {
         init();
         Request build = buildRequest().url(downloadUrl).build();
 
-        Call call = httpClient.newCall(build);
-
-        return call.execute().body().string();
+        try (Response response = httpClient.newCall(build).execute()) {
+            return response.body().string();
+        }
     }
 
     private List<XForm> parseXform(String xForm) throws SAXException, IOException, ParserConfigurationException {

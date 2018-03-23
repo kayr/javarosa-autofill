@@ -3,6 +3,7 @@ package com.github.kayr.javarosa.autofill.web;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
+import com.github.kayr.javarosa.autofill.api.AutoFillException;
 import com.github.kayr.javarosa.autofill.api.FormUtils;
 import com.github.kayr.javarosa.autofill.submission.DataGenerator;
 import com.github.kayr.javarosa.autofill.submission.JavarosaClient;
@@ -17,8 +18,10 @@ import spark.Response;
 import spark.Spark;
 
 import java.awt.*;
-import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 import static spark.Spark.*;
 
@@ -60,7 +61,15 @@ public class Main {
         post("/generateData", Main::generateData);
 
 
-        launch(String.format("http://localhost:%s/index.html", Spark.port()));
+        String host = "localhost";
+        try {
+            InetAddress localHost = Inet4Address.getLocalHost();
+            host = localHost.getHostName();
+        }
+        catch (UnknownHostException e1) {
+            e1.printStackTrace();
+        }
+        launch(String.format("http://%s:%s/index.html", host, Spark.port()));
     }
 
     private static Object processFormList(Request req, Response res) {
@@ -196,8 +205,17 @@ public class Main {
             e.submit(() -> {
                 try {
                     Thread.sleep(2000);
-                    eventSocket.log(username,"Starting Data Generation");
+                    eventSocket.log(username, "Starting Data Generation");
                     generator.start();
+                }
+                catch (AutoFillException x) {
+                    LOG.error("Failed To Generate Data: ", x);
+                    String s = "";
+                    if (x.getElement() != null) {
+                        s = String.format(": <a href='#%s' class='c-element-link'>Jump To Question</a>", FormUtils.resolveVariable(x.getElement()));
+                    }
+                    eventSocket.log(username, x.getMessage() + s);
+
                 }
                 catch (Exception x) {
                     LOG.error("Failed To Generate Data: ", x);
@@ -258,10 +276,10 @@ public class Main {
                 Desktop.getDesktop().browse(new URI(url));
             }
             catch (Exception ignored) {
-                LOG.warn("Failed to launch browser: "+url);
+                LOG.warn("Failed to launch browser: " + url);
             }
-        }else {
-            LOG.info("Visit: "+url);
+        } else {
+            LOG.info("Visit: " + url);
         }
     }
 
