@@ -64,7 +64,7 @@ public class Main {
         String host = "localhost";
         try {
             InetAddress localHost = Inet4Address.getLocalHost();
-            host = localHost.getHostName();
+            host = localHost.getHostAddress();
         }
         catch (UnknownHostException e1) {
             e1.printStackTrace();
@@ -124,6 +124,7 @@ public class Main {
                     JsonObject qn = Json.object();
                     qn.add("questionLabel", parseMarkDown(c));
                     qn.add("questionId", FormUtils.resolveVariable(c));
+                    qn.add("browserQnId", getBrowserId(c));
                     Optional<String> xpathConstraint = DataGenerator.getXpathConstraint(formDef, c);
                     if (xpathConstraint.isPresent())
                         qn.add("constraint", xpathConstraint.orElse(null));
@@ -200,7 +201,20 @@ public class Main {
                                                          .setFormDefXMl(xform)
                                                          .setGenerexMap(map)
                                                          .setNumberOfItems(numberOfItem)
-                                                         .setDataListener((integer, s) -> eventSocket.log(username, "Processing: " + integer));
+                                                         .setDataListener(new DataGenerator.Listener() {
+                                                             @Override
+                                                             public void onDataStart(int i) {
+                                                                 eventSocket.log(username, "Generating: " + i + "...");
+                                                             }
+
+
+                                                             @Override
+                                                             public void onSubmitStart(int i, Map payload) {
+                                                                 eventSocket.log(username, "Submitting Data: " + i + "...");
+                                                             }
+
+                                                         });
+
 
             e.submit(() -> {
                 try {
@@ -212,7 +226,7 @@ public class Main {
                     LOG.error("Failed To Generate Data: ", x);
                     String s = "";
                     if (x.getElement() != null) {
-                        s = String.format(": <a href='#%s' class='c-element-link'>Jump To Question</a>", FormUtils.resolveVariable(x.getElement()));
+                        s = String.format(": <a href='#%s' class='c-element-link'>Jump To Question</a>", getBrowserId(x.getElement()));
                     }
                     eventSocket.log(username, x.getMessage() + s);
 
@@ -226,6 +240,10 @@ public class Main {
             return "OK - Submitted";
 
         });
+    }
+
+    private static String getBrowserId(IFormElement element) {
+        return FormUtils.resolveVariable(element, "-");
     }
 
 

@@ -52,7 +52,26 @@ public class Console {
                                                          .setFormDefXMl(readFile(properties, FORM_DEF))
                                                          .setNumberOfItems(Integer.parseInt(properties.getProperty(NUMBER_OF_ITEMS)))
                                                          .setDryRun(properties.getOrDefault(DRY_RUN, "true").equals("true"))
-                                                         .setDataListener((i, s) -> saveData(i, s, path));
+                                                         .setDataListener(new DataGenerator.Listener() {
+                                                             @Override
+                                                             public void onDataStart(int i) {
+                                                                 System.out.println("Generating: " + i);
+                                                             }
+
+                                                             @Override
+                                                             public void onDataEnd(int i, Map payload) {
+                                                                 Console.saveData(i, payload.get(JavarosaClient.NAME_XML_SUBMISSION_FILE).toString(), path);
+                                                             }
+
+                                                             @Override
+                                                             public void onSubmitStart(int i, Map payload) {
+                                                                 System.out.println("Submitting: " + i);
+
+                                                             }
+
+
+                                                         });
+
 
         String generexFile = properties.getProperty(GENEREX_FILE);
 

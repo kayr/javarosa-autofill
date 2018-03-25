@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -30,13 +29,13 @@ public class DataGenerator {
 
     private static Logger LOG = Logger.getLogger(DataGenerator.class.getName());
 
-    private String                      formDefXMl;
-    private String                      username;
-    private String                      password;
-    private String                      serverUrl;
-    private int                         numberOfItems;
-    private BiConsumer<Integer, String> dataListener;
-    private Map<String, String>         generexMap;
+    private String              formDefXMl;
+    private String              username;
+    private String              password;
+    private String              serverUrl;
+    private int                 numberOfItems;
+    private Listener            dataListener;
+    private Map<String, String> generexMap;
     private boolean initilized = false;
     private boolean dryRun     = false;
     private JavarosaClient javarosaClient;
@@ -92,7 +91,7 @@ public class DataGenerator {
         return this;
     }
 
-    public DataGenerator setDataListener(BiConsumer<Integer, String> dataListener) {
+    public DataGenerator setDataListener(Listener dataListener) {
         this.dataListener = dataListener;
         return this;
     }
@@ -108,6 +107,8 @@ public class DataGenerator {
     private void generateAndMayBeSubmit(int iteration) {
         LOG.info("Generating Form: " + iteration);
 
+        notifyDataStart(iteration);
+
         FormAutoFill formAutoFill = FormAutoFill.fromXml(formDefXMl);
 
         if (generexMap != null) {
@@ -117,7 +118,8 @@ public class DataGenerator {
         IDataPayload payload = null;
         try {
             payload = formAutoFill.autoFill().getSubmissionPayload();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             IOUtils.sneakyThrow(e);
         }
 
@@ -139,15 +141,16 @@ public class DataGenerator {
 
             }
 
-            if (dataListener != null) {
-                dataListener.accept(iteration, payloadMap.get(JavarosaClient.NAME_XML_SUBMISSION_FILE).toString());
-            }
+            notifyDataEnd(iteration, payloadMap);
 
             if (!dryRun) {
+                notifySubmitStart(iteration, payloadMap);
                 javarosaClient.submit(payloadMap);
+                notifySubmitEnd(iteration, payloadMap);
             }
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AutoFillException(e);
         }
 
@@ -170,7 +173,8 @@ public class DataGenerator {
 
                     payloadData.put(dataReference.getPayloadId(), bytes);
 
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     IOUtils.sneakyThrow(e);
                 }
             }
@@ -219,5 +223,44 @@ public class DataGenerator {
         return this;
     }
 
+    private void notifyDataStart(int i) {
+        if (dataListener != null) {
+            dataListener.onDataStart(i);
+        }
+    }
+
+    private void notifyDataEnd(int i, Map payload) {
+        if (dataListener != null) {
+            dataListener.onDataEnd(i, payload);
+        }
+    }
+
+    private void notifySubmitStart(int i, Map payload) {
+        if (dataListener != null) {
+            dataListener.onSubmitStart(i, payload);
+        }
+    }
+
+    private void notifySubmitEnd(int i, Map payload) {
+        if (dataListener != null) {
+            dataListener.onSubmitEnd(i, payload);
+        }
+    }
+
+    public interface Listener {
+
+        default void onDataStart(int i) {
+        }
+
+
+        default void onDataEnd(int i, Map payload) {
+        }
+
+        default void onSubmitStart(int i, Map payload) {
+        }
+
+        default void onSubmitEnd(int i, Map payload) {
+        }
+    }
 
 }

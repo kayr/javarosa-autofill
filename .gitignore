@@ -19,6 +19,8 @@ gradle-app.setting
 out/
 
 /bin/
+bin/
+.settings/
 /grammer.dic
 *.generex.properties
 .classpath

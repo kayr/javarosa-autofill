@@ -16,6 +16,7 @@
 
     var selectedForm = null;
     var userId = null;
+    var tourGuide = new TourGuide();
 
 
     function serverCreds(data) {
@@ -59,11 +60,13 @@
 
     function setCurrentForm(form) {
         selectedForm = form;
-        if (form)
+        if (form) {
             $lblCurrentForm.text(form.name);
-        else
+            loadExpressions();
+        }
+        else {
             $lblCurrentForm.text('');
-
+        }
 
     }
 
@@ -89,24 +92,28 @@
         });
     }
 
+    function extractGenerexProperties() {
+        var props = [];
+        $('.c-question-generex').each(function (index, domElement) {
+            var $this = $(domElement);
+            var generex = $this.val();
+            var items = {questionId: $this.data('question-id'), generex: generex, browserQnId: $this.attr('id')};
+            props.push(items);
+        });
+        return props;
+    }
+
     function generateData() {
         clearAllErrors();
 
         if (!selectedForm) {
             bootbox.alert("Please Select A Form");
-            return
+            return;
         }
 
         initWebSocket(function () {
 
-            var props = [];
-            $('.c-question-generex').each(function (index, domElement) {
-                var $this = $(domElement);
-                var generex = $this.val();
-                var items = {questionId: $this.data('question-id'), generex: generex};
-                props.push(items);
-            });
-
+            var props = extractGenerexProperties();
 
             $.ajax({
                 url: '/generateData',
@@ -185,13 +192,55 @@
     }
 
     function scrollTo($w) {
-        $('html, body').animate({scrollTop: $w.offset().top}, 2000);
+        $('html, body').animate({scrollTop: $w.offset().top}, 1000);
     }
 
     var progressDialog = null;
 
     function clearAllErrors() {
         $('.in-error').removeClass('in-error alert alert-danger');
+    }
+
+    function focusOnQuestion(selector) {
+        var $w =
+            $expressionDiv
+                .find(selector)
+                .closest('.question-label');
+
+        makeDangerous($w);
+
+        scrollTo($w);
+    }
+
+    function persistExpressions() {
+        var generexProperties = extractGenerexProperties();
+        localStorage.setItem(selectedForm.downloadUrl, JSON.stringify(generexProperties))
+    }
+
+    function loadExpressions() {
+
+        var storedExpressions = localStorage.getItem(selectedForm.downloadUrl);
+
+        if (!storedExpressions) return;
+
+        try {
+            var expressions = JSON.parse(storedExpressions);
+            expressions.forEach(function (value) {
+                try {
+                    var questionWidget = $expressionDiv.find('#' + value.browserQnId);
+                    if (questionWidget)
+                        questionWidget.val(value.generex);
+                }
+                catch (error) {
+                    console.error("error setting generex for " + value.browserQnId);
+                    console.error(error);
+                }
+            })
+        }
+        catch (error) {
+            console.error("Could not load stored expressions");
+            console.error(error);
+        }
     }
 
     function init() {
@@ -213,89 +262,27 @@
         });
 
         $btnHelp.on('click', function () {
-            tour.restart();
+            tourGuide.restart();
+        });
+
+        $expressionDiv.on('change', '.c-question-generex', function () {
+            persistExpressions();
         });
 
         $logs.on('click', '.c-element-link', function () {
             $logsDialog.modal('hide');
             var attr = $(this).attr('href');
-            var $w = $expressionDiv.find(attr).closest('.question-label');
-            scrollTo($w);
-            makeDangerous($w);
+            focusOnQuestion(attr);
         });
+
 
         initWebSocket();
+
+        tourGuide.start();
     }
 
-
-    var tour = null;
-
-    function initTour() {
-        // Instance the tour
-        tour = new Tour({
-            steps: [
-                {
-                    element: "#server-url",
-                    title: "STEP 1: Server",
-                    content: "Enter Your Server Url. Normally the same url you enter in ODK"
-                }, {
-                    element: "#username",
-                    title: "STEP 2: Username",
-                    content: "Enter Server User Name"
-                },
-                {
-                    element: "#password",
-                    title: "STEP 3: Password",
-                    content: "Enter Server Password"
-                },
-                {
-                    element: "#get-form-list",
-                    title: "STEP 4: Forms",
-                    content: "Retrieve Form List"
-                },
-                {
-                    element: "#c-form-list",
-                    title: "STEP 5: Forms",
-                    content: "Select One Form"
-                },
-                {
-                    element: "#c-numOfEntries",
-                    title: "STEP 6: Entries",
-                    content: "Enter The Number Of Fake Data Entries You Wish To Generate"
-                },
-                {
-                    element: "#c-dry-run",
-                    title: "STEP 7: Test Drive",
-                    content: "Uncheck this to actually submit the generated data to the server"
-                },
-                {
-                    element: "#c-generexExpressions",
-                    title: "STEP 8: Generator/Calculate Expressions",
-                    content: "Leave blank or enter Some calculate functions/formulas to influence the data generated. All javarosa functions are supported plus the ones on the left."
-                    + "<p>E.g</p>"
-                    + "<p><code>fake('superhero','name')</code>  to generate a random super hero name </p>"
-                    + "<p><code>random-number(10)</code> Produces a value less than 10</p>"
-                    + "<p><code>random-past-date(5,'days')</code> Produces a random date not exceeding 5 days ago</p>"
-
-                },
-                {
-                    element: "#c-btn-generate-data",
-                    title: "STEP 9: Data Generation",
-                    content: "Click to start the data generation process"
-                }
-            ]
-        });
-
-        tour.init();
-
-        return tour;
-
-// Initialize the tour
-    }
 
     init();
-    tour = initTour();
-    tour.start();
 
 
 })(jQuery);

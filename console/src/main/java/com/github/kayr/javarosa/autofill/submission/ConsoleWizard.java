@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ConsoleWizard {
@@ -43,7 +44,8 @@ public class ConsoleWizard {
             try {
                 doStart();
 
-            } catch (Exception x) {
+            }
+            catch (Exception x) {
                 term.println("Error Occurred Generating Data:" + x.getMessage());
                 String message = getStackTrace(x);
                 term.print(message);
@@ -98,7 +100,8 @@ public class ConsoleWizard {
             try {
                 xForms = submitter.formList();
                 return;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 term.println("Error Fetching Form List: " + e.getClass().getSimpleName() + ":" + e.getMessage());
             }
         }
@@ -166,13 +169,15 @@ public class ConsoleWizard {
 
                 startSubmission();
 
-            } catch (RuntimeException e) {
+            }
+            catch (RuntimeException e) {
 
                 term.println("Error With Data Generation:" + getStackTrace(e));
 
                 keepRetrying = textIO.newBooleanInputReader()
                                      .read("May Be Try Editing The Generex File And Try Again?");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 IOUtils.sneakyThrow(e);
             }
         }
@@ -187,9 +192,24 @@ public class ConsoleWizard {
                                                          .setNumberOfItems(numberOfRecords)
                                                          .setGenerexMap(FileUtil.loadPropertiesAsMap(generexPath))
                                                          .setDryRun(dryRun)
-                                                         .setDataListener((i, s) -> {
-                                                             term.println("Processed " + i);
-                                                             Console.saveData(i, s, generexPath);
+                                                         .setDataListener(new DataGenerator.Listener() {
+                                                             @Override
+                                                             public void onDataStart(int i) {
+                                                                 term.println("Generating: " + i);
+                                                             }
+
+                                                             @Override
+                                                             public void onDataEnd(int i, Map payload) {
+                                                                 Console.saveData(i, payload.get(JavarosaClient.NAME_XML_SUBMISSION_FILE).toString(), generexPath);
+                                                             }
+
+                                                             @Override
+                                                             public void onSubmitStart(int i, Map payload) {
+                                                                 term.println("Submitting: " + i);
+
+                                                             }
+
+
                                                          });
 
         dataGenerator.start();
@@ -263,7 +283,8 @@ public class ConsoleWizard {
             } else {
                 throw new AutoFillException("Failed to Create File: " + path.toAbsolutePath());
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             IOUtils.sneakyThrow(e);
         }
     }

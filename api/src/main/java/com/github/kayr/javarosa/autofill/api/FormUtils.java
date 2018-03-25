@@ -5,7 +5,6 @@ import org.javarosa.core.model.GroupDef;
 import org.javarosa.core.model.IDataReference;
 import org.javarosa.core.model.IFormElement;
 import org.javarosa.core.model.data.IAnswerData;
-import org.javarosa.core.model.data.SelectOneData;
 import org.javarosa.core.model.instance.TreeElement;
 import org.javarosa.core.model.instance.TreeReference;
 import org.javarosa.model.xform.XPathReference;
@@ -24,10 +23,14 @@ import java.util.stream.IntStream;
 public class FormUtils {
 
     public static String resolveVariable(IFormElement iFormElement) {
+        return resolveVariable(iFormElement, "/");
+    }
+
+    public static String resolveVariable(IFormElement iFormElement, String pathSeparator) {
         TreeReference reference = getTreeReference(iFormElement);
         return IntStream.range(1, reference.size())
                         .mapToObj(reference::getName)
-                        .collect(Collectors.joining("/"));
+                        .collect(Collectors.joining(pathSeparator));
 
     }
 
@@ -42,7 +45,8 @@ public class FormUtils {
 
             return XFormUtils.getFormRaw(reader);
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AutoFillException("Error Parsing XML: ", e);
         }
     }

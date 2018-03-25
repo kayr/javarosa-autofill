@@ -48,6 +48,7 @@ public class FormAutoFill {
     private FormDef             formDef;
     private FormEntryModel      model;
     private FormEntryController fec;
+    private IFormElement        currentElement;
     private long maxSeconds = TimeUnit.SECONDS.toMillis(10);
     private long startTime;
 
@@ -80,7 +81,8 @@ public class FormAutoFill {
             }
             InputStream payloadStream = finalPayLoad.getPayloadStream();
             return IOUtils.getText(payloadStream);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AutoFillException(e);
         }
     }
@@ -154,7 +156,8 @@ public class FormAutoFill {
     public <T extends IAnswerProvider> void addProvider(int controlType, int dataType, Class<T> provider) {
         try {
             addProvider(controlType, dataType, provider.newInstance());
-        } catch (Exception x) {
+        }
+        catch (Exception x) {
             throw new AutoFillException(x);
         }
     }
@@ -165,7 +168,19 @@ public class FormAutoFill {
     }
 
     private void nextEvent() {
-        int event = fec.stepToNextEvent();//model.getEvent(currentIdx);
+        int event;
+        try {
+            event = fec.stepToNextEvent();//model.getEvent(currentIdx);
+        }
+        catch (Exception x) {
+            if (currentElement != null) {
+                throw new AutoFillException("Error Stepping to next question after processing [" +
+                                                    FormUtils.resolveVariable(currentElement) + "] :" +
+                                                    "Reason [" + x.getMessage() + "]").setElement(currentElement);
+            } else {
+                throw new AutoFillException("Error Stepping to next question. Reason[" + x.getMessage() + "]");
+            }
+        }
 
         switch (event) {
             case FormEntryController.EVENT_BEGINNING_OF_FORM:
@@ -233,15 +248,19 @@ public class FormAutoFill {
     private void handleRepeat() {
         IFormElement formElement = model.getCaptionPrompt().getFormElement();
 
+        currentElement = formElement;
+
         try {
             Optional<String> generex = getGenerex(formElement);
 
-            boolean createNewRepeat = generex
-                    .map(gx -> {
-                        IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
-                        return Boolean.TRUE.equals(data.getValue());
-                    })
-                    .orElseGet(Fakers::randomBoolean);
+            boolean createNewRepeat;
+
+            if (generex.isPresent()) {
+                IAnswerData data = generexProvider.acquire(formDef, formElement, currentIndex(), generex.get());
+                createNewRepeat = Boolean.TRUE.equals(data.getValue());
+            } else {
+                createNewRepeat = Fakers.randomBoolean();
+            }
 
 
             if (createNewRepeat) {
@@ -252,7 +271,8 @@ public class FormAutoFill {
                 LOG.fine("Adding new repeat");
                 fec.newRepeat();
             }
-        } catch (Exception x) {
+        }
+        catch (Exception x) {
             throw new AutoFillException("Error Auto-Filling Repeat [" + FormUtils.resolveVariable(formElement) + "] " + x.getMessage(), x).setElement(formElement);
         }
     }
@@ -262,14 +282,20 @@ public class FormAutoFill {
         FormEntryPrompt questionPrompt = model.getQuestionPrompt();
         QuestionDef     questionDef    = questionPrompt.getQuestion();
 
+        currentElement = questionDef;
+
 
         try {
+
             Optional<String> generex = getGenerex(questionDef);
 
-            IAnswerData answer = generex
-                    .map(gx -> generexProvider.acquire(formDef, questionDef, currentIndex(), gx))
-                    .orElseGet(() -> resolveProvider(questionPrompt).acquire(fec, questionPrompt));
+            IAnswerData answer;
 
+            if (generex.isPresent()) {
+                answer = generexProvider.acquire(formDef, questionDef, currentIndex(), generex.get());
+            } else {
+                answer = resolveProvider(questionPrompt).acquire(fec, questionPrompt);
+            }
 
             int status = fec.answerQuestion(currentIndex(), answer, true);
 
@@ -281,7 +307,8 @@ public class FormAutoFill {
                 String constraintMsg = "Not Known";
                 try {
                     constraintMsg = questionPrompt.getConstraintText(answer);
-                } catch (Exception x) {
+                }
+                catch (Exception x) {
                     LOG.warning("Failed to get Constraint text: For [" + FormUtils.resolveVariable(questionDef) + "]");
                 }
                 throw new AutoFillException("Invalid Answer [" + FormUtils.safeGetAnswerText(answer) + "] " +
@@ -289,7 +316,8 @@ public class FormAutoFill {
                                                     "Reason: [" + constraintMsg + "]. " +
                                                     "Consider altering the generator expression to generate an answer with in the allowed range.").setElement(questionPrompt.getFormElement());
             }
-        } catch (Exception x) {
+        }
+        catch (Exception x) {
             throw new AutoFillException("Error Auto-Filling Question [" + FormUtils.resolveVariable(questionDef) + "] " + x.getMessage(), x).setElement(questionDef);
         }
 
@@ -368,7 +396,8 @@ public class FormAutoFill {
     public String getSubmissionXml() {
         try {
             return payloadToXml(getSubmissionPayload());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AutoFillException(e);
         }
 

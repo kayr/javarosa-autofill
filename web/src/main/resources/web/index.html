@@ -28,7 +28,7 @@
 
     <script type="text/x-tmpl" id="question-widget">
         <div class="form-group question-label">
-            <label for="{%=o.questionId%}">{%#o.questionLabel%}</label>
+            <label for="{%=o.browserQnId%}">{%#o.questionLabel%}</label>
             <p class="help-block">
                 {%=o.questionId%}
 
@@ -36,7 +36,7 @@
             {% if(o.constraint){ %}
             <p class="help-block">Constraint: {%=o.constraint%}</p>
             {% }%}
-            <input type="text" id="{%=o.questionId%}"
+            <input type="text" id="{%=o.browserQnId%}"
                    data-question-id="{%=o.questionId%}"
                    class="form-control c-question-generex"
                    placeholder="leave blank or enter a function e.g fake('book','author') or random-number() etc">
@@ -699,6 +699,7 @@ zelda
 <script type="text/javascript" src="js/lib/bootbox.js?v=2"></script>
 <script type="text/javascript" src="js/lib/bootstrap-tour.min.js?v=2"></script>
 <script type="text/javascript" src="js/lib/tmpl.min.js?v=2"></script>
+<script type="text/javascript" src="js/TourGuide.js?v=2"></script>
 <script type="text/javascript" src="js/index.js?v=2"></script>
 
 
