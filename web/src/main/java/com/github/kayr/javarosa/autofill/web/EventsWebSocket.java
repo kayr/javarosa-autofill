@@ -56,8 +56,13 @@ public class EventsWebSocket {
     public void log(String username, String message) {
         Session s = usernameSessionMap.get(username);
         try {
-            s.getRemote().sendString(message);
-        } catch (IOException e) {
+            if (s != null) {
+                s.getRemote().sendString(message);
+            } else {
+                LOG.warn("Cannot send message[%s] to : [%s] . No Session found", message, username);
+            }
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
