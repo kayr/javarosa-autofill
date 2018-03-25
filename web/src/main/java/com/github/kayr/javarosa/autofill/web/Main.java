@@ -38,15 +38,11 @@ public class Main {
     static EventsWebSocket eventSocket;
     static Logger          LOG = org.slf4j.LoggerFactory.getLogger(Main.class);
     static ExecutorService e   = Executors.newCachedThreadPool();
-//    static Parser          parser   = Parser.builder().build();
-//    static HtmlRenderer    renderer = HtmlRenderer.builder().build();
 
     public static void main(String[] args) {
 
 
         Spark.staticFiles.location("/web");
-
-        //Spark.staticFiles.externalLocation("C:\\var\\code\\prsnl\\javarosa-autofill\\javarosa-autofil-api\\web\\src\\main\\resources\\web");
 
         port(9000);
 
@@ -156,8 +152,6 @@ public class Main {
         }
 
         try {
-            //Node node = parser.parse(labelText);
-            //String html = renderer.render(node);
             return Jsoup.clean(labelText, Whitelist.basic());
         }
         catch (Exception ignore) {
@@ -243,7 +237,7 @@ public class Main {
     }
 
     private static String getBrowserId(IFormElement element) {
-        return FormUtils.resolveVariable(element, "-");
+        return "qn-" + FormUtils.resolveVariable(element, "-");
     }
 
 
@@ -274,17 +268,6 @@ public class Main {
             }
 
         }
-    }
-
-    private static Object doSafely(Callable callable) {
-        try {
-            return callable.call();
-        }
-        catch (Exception x) {
-            LOG.error("Error processing request: ", x);
-
-        }
-        return null;
     }
 
     static void launch(String url) {
