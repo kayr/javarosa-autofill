@@ -214,12 +214,12 @@
 
     function persistExpressions() {
         var generexProperties = extractGenerexProperties();
-        localStorage.setItem(selectedForm.downloadUrl, JSON.stringify(generexProperties))
+        localStorage.setItem("expressions:" + selectedForm.downloadUrl, JSON.stringify(generexProperties))
     }
 
     function loadExpressions() {
 
-        var storedExpressions = localStorage.getItem(selectedForm.downloadUrl);
+        var storedExpressions = localStorage.getItem("expressions:" + selectedForm.downloadUrl);
 
         if (!storedExpressions) return;
 

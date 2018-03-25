@@ -44,7 +44,8 @@ function TourGuide() {
             {
                 element: "#c-generexExpressions",
                 title: "STEP 8: Generator/Calculate Expressions",
-                content: "Leave blank or enter Some calculate functions/formulas to influence the data generated. All javarosa functions are supported plus the ones on the left."
+                content: "Leave blank or enter Some calculate functions/formulas to influence the data generated. All javarosa functions are supported plus the ones on the right."
+                + " <i class='glyphicon glyphicon-hand-right'></i>"
                 + "<p>E.g</p>"
                 + "<p><code>fake('superhero','name')</code>  to generate a random super hero name </p>"
                 + "<p><code>random-number(10)</code> Produces a value less than 10</p>"
