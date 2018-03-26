@@ -126,7 +126,7 @@ pre,
 }
 
 .help {
-    background-color : #31B0D5;
+    background-color: #31B0D5;
     color: white;
     padding: 10px 20px;
     border-radius: 4px;
@@ -139,6 +139,11 @@ pre,
     right: 10px;
     z-index: 99999;
 
+}
+
+.c-question-generex {
+    color: deepskyblue;
+    font-style: italic;
 }
 
 .help-button {
@@ -154,12 +159,14 @@ pre,
     transform: scale(1);
     transition: all 200ms ease;
 }
+
 .help-button:hover,
 .help-button:focus,
 .help-button:active {
     box-shadow: 0 8px 17px 0 rgba(0, 0, 0, 0.2);
     outline: 0;
 }
+
 .help-button span {
     display: block;
     font-size: 2em;
