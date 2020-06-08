@@ -33,10 +33,10 @@ public class JavarosaClient {
 
     public static final String NAME_XML_SUBMISSION_FILE = "xml_submission_file";
 
-    private static OkHttpClient _client = new OkHttpClient.Builder().writeTimeout(30, TimeUnit.SECONDS)
-                                                                    .readTimeout(30, TimeUnit.SECONDS)
-                                                                    .connectTimeout(10, TimeUnit.SECONDS)
-                                                                    .build();
+    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder().writeTimeout(30, TimeUnit.SECONDS)
+                                                                                 .readTimeout(30, TimeUnit.SECONDS)
+                                                                                 .connectTimeout(10, TimeUnit.SECONDS)
+                                                                                 .build();
 
 
     private String serverUrl = "http://localhost:8080/oxd/mpsubmit/odk";
@@ -83,7 +83,8 @@ public class JavarosaClient {
         init();
         // req.setHeader(DATE_HEADER, DateFormat.format("E, dd MMM yyyy hh:mm:ss zz", g)
 
-        MultipartBody.Builder dataBuilder = createBodyBuilder(data);
+        MultipartBody.Builder dataBuilder = createBodyBuilder(data)
+                .setType(MultipartBody.FORM);
 
         Request build = buildRequest().url(submitUrl())
                                       .post(dataBuilder.build())
@@ -92,7 +93,7 @@ public class JavarosaClient {
 
         try (Response response = httpClient.newCall(build).execute()) {
             if (!response.isSuccessful()) {
-                throw new RuntimeException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
+                throw new IllegalStateException("Failed Submission: Message(" + response.message() + "): Body:" + response.body().string());
             }
 
         }
@@ -199,10 +200,10 @@ public class JavarosaClient {
                                                                                            .with("basic", basicAuthenticator)
                                                                                            .build();
 
-            httpClient = _client.newBuilder()
-                                .authenticator(new CachingAuthenticatorDecorator(authenticator, authCache))
-                                .addInterceptor(new AuthenticationCacheInterceptor(authCache))
-                                .build();
+            httpClient = OK_HTTP_CLIENT.newBuilder()
+                                       .authenticator(new CachingAuthenticatorDecorator(authenticator, authCache))
+                                       .addInterceptor(new AuthenticationCacheInterceptor(authCache))
+                                       .build();
 
             if (serverUrl.endsWith("/")) {
                 serverUrl = serverUrl.substring(0, serverUrl.length() - 1);

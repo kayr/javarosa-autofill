@@ -85,7 +85,7 @@ class FakerTests extends GroovyTestCase implements SmallFormEvaluator {
             assertBetween(
                     evalXpath("random-future-date(5,'seconds','12:00')"),
                     getDate(1970, 1, 1) + 12.hours,
-                    new Date(0) + 12.hours + 5.seconds)
+                    getDate(1970, 1, 1)  + 12.hours + 5.seconds)
 
             assertBetween(
                     evalXpath("random-future-date(5,'seconds','1980-1-1T12:00')"),
