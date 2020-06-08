@@ -1,5 +1,6 @@
 dependencies {
     compile group: 'org.opendatakit', name: 'opendatakit-javarosa', version: '2.7.0'
+    //    compile group: 'org.opendatakit', name: 'opendatakit-javarosa', version: '2.17.1'
     compile group: 'com.github.javafaker', name: 'javafaker', version: '0.14'//ds
     compile group: 'com.github.mifmif', name: 'generex', version: '1.0.2'
 
